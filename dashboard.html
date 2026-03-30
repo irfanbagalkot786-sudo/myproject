@@ -1,0 +1,525 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Smart Placement Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --teal:      #0aa3b5;
+  --teal-dark: #088a9a;
+  --teal-dim:  rgba(10,163,181,0.12);
+  --ink:       #0d1b2a;
+  --slate:     #3a4a5c;
+  --muted:     #7a8fa8;
+  --surface:   #ffffff;
+  --bg:        #eaf1f6;
+  --border:    #d6e4ed;
+  --gradient:  linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
+  --glow:      0 0 40px rgba(10,163,181,0.10);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ─── FULL SCREEN LAYOUT ─── */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px;
+  height: 62px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+  flex-shrink: 0;
+}
+
+.navbar-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.navbar-links a:hover  { color: var(--slate); background: var(--teal-dim); }
+.navbar-links a.active { color: var(--teal);  background: var(--teal-dim); }
+
+/* ── HERO — full width, generous height ── */
+.hero {
+  width: 100%;
+  min-height: 340px;
+  background: var(--gradient);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 48px 48px;
+  flex-shrink: 0;
+}
+
+/* grid texture */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.hero-blob1 {
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  top: -220px; right: -100px;
+  pointer-events: none;
+}
+.hero-blob2 {
+  position: absolute;
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  bottom: -100px; right: 340px;
+  pointer-events: none;
+}
+
+.hero-left {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.24);
+  border-radius: 99px;
+  padding: 5px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.88);
+  margin-bottom: 18px;
+}
+
+.pulse {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,100%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(1.7); opacity:0.4; }
+}
+
+.hero-left h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.18;
+  letter-spacing: -0.4px;
+  margin-bottom: 14px;
+}
+
+.hero-left p {
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 28px;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border-radius: 11px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-white { background: #fff; color: var(--teal-dark); box-shadow: 0 4px 18px rgba(0,0,0,0.13); }
+.btn-white:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.18); }
+.btn-ghost { background: rgba(255,255,255,0.14); color: #fff; border: 1.5px solid rgba(255,255,255,0.30); }
+.btn-ghost:hover { background: rgba(255,255,255,0.22); }
+
+/* right side stat boxes inside hero */
+.hero-right {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  flex-shrink: 0;
+  margin-left: 48px;
+}
+
+.hero-stat-box {
+  background: rgba(255,255,255,0.13);
+  border: 1px solid rgba(255,255,255,0.20);
+  border-radius: 14px;
+  padding: 18px 20px;
+  text-align: center;
+  min-width: 120px;
+  backdrop-filter: blur(6px);
+  transition: background 0.2s;
+}
+.hero-stat-box:hover { background: rgba(255,255,255,0.20); }
+
+.hsb-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.hsb-label {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.62);
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* ── DASHBOARD BODY ── */
+.dash-body {
+  flex: 1;
+  padding: 28px 32px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── FEATURE GRID — fills full width ── */
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.feat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--glow);
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  animation: fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) both;
+}
+.feat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 36px rgba(10,163,181,0.15);
+  border-color: var(--teal);
+}
+.feat-card:nth-child(1){ animation-delay:.04s }
+.feat-card:nth-child(2){ animation-delay:.08s }
+.feat-card:nth-child(3){ animation-delay:.12s }
+.feat-card:nth-child(4){ animation-delay:.16s }
+.feat-card:nth-child(5){ animation-delay:.20s }
+.feat-card:nth-child(6){ animation-delay:.24s }
+
+.feat-icon {
+  width: 48px; height: 48px;
+  border-radius: 13px;
+  background: var(--teal-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.feat-body { flex: 1; }
+
+.feat-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.feat-desc {
+  font-size: 0.81rem;
+  color: var(--muted);
+  line-height: 1.62;
+}
+
+.feat-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.feat-cta {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--teal);
+  text-decoration: none;
+}
+
+.feat-arrow {
+  font-size: 1rem;
+  color: var(--teal);
+  transition: transform 0.15s;
+}
+.feat-card:hover .feat-arrow { transform: translate(3px, -2px); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .hero-right { grid-template-columns: repeat(2,1fr); margin-left: 32px; }
+}
+@media (max-width: 900px) {
+  .hero { flex-direction: column; align-items: flex-start; padding: 36px 28px; }
+  .hero-right { margin-left: 0; margin-top: 28px; width: 100%; grid-template-columns: repeat(4,1fr); }
+  .feat-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 640px) {
+  .navbar { padding: 0 16px; }
+  .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
+  .dash-body { padding: 18px 14px 40px; }
+  .hero { padding: 28px 18px; }
+  .hero-right { grid-template-columns: repeat(2,1fr); }
+  .feat-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-brand">🎯 Smart Placement Portal</div>
+    <div class="navbar-links">
+      <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
+      <a href="{% url 'student_profile' %}">Profile</a>
+      <a href="{% url 'skills' %}">Skills</a>
+      <a href="{% url 'projects' %}">Projects</a>
+      <a href="{% url 'companies' %}">Companies</a>
+      <a href="{% url 'upload_resume' %}">Resume</a>
+      <a href="{% url 'recommendations' %}">Recs</a>
+      <a href="{% url 'learning_path' %}">Learning</a>
+      <a href="{% url 'test' %}">Test</a>
+      <a href="{% url 'jobs' %}">Jobs</a>
+    </div>
+  </nav>
+
+  <!-- HERO — full width -->
+  <div class="hero">
+    <div class="hero-blob1"></div>
+    <div class="hero-blob2"></div>
+
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <span class="pulse"></span> AI-Powered Placement Preparation
+      </div>
+      <h1>Welcome to Smart<br>Placement Portal</h1>
+      <p>Use AI tools, mock tests, resume analysis &amp; structured learning paths to get job-ready faster.</p>
+      <div class="hero-btns">
+        <a href="{% url 'test' %}" class="btn btn-white">📝 Take a Test</a>
+        <a href="{% url 'learning_path' %}" class="btn btn-ghost">🗺️ Learning Path</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-stat-box">
+        <div class="hsb-value">500+</div>
+        <div class="hsb-label">Companies Listed</div>
+      </div>
+      <div class="hero-stat-box">
+        <div class="hsb-value">120+</div>
+        <div class="hsb-label">Practice Tests</div>
+      </div>
+      <div class="hero-stat-box">
+        <div class="hsb-value">Agentic AI</div>
+        <div class="hsb-label">Resume Analysis</div>
+      </div>
+      <div class="hero-stat-box">
+        <div class="hsb-value">24/7</div>
+        <div class="hsb-label">Learning Support</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD BODY — full width -->
+  <div class="dash-body">
+
+    <div class="section-header">
+      <span class="section-title">Quick Access</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="feat-grid">
+
+      <a href="{% url 'test' %}" class="feat-card">
+        <div class="feat-icon">📝</div>
+        <div class="feat-body">
+          <div class="feat-title">Take a Basic Test</div>
+          <div class="feat-desc">Attempt topic-wise and company-specific tests to sharpen your aptitude and coding skills.</div>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-cta">Start Test</span>
+          <span class="feat-arrow">↗</span>
+        </div>
+      </a>
+
+      <a href="{% url 'upload_resume' %}" class="feat-card">
+        <div class="feat-icon">📄</div>
+        <div class="feat-body">
+          <div class="feat-title">Upload &amp; Analyse Resume</div>
+          <div class="feat-desc">Get instant AI feedback and improvement suggestions tailored to your target roles.</div>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-cta">Upload Now</span>
+          <span class="feat-arrow">↗</span>
+        </div>
+      </a>
+
+      <a href="{% url 'learning_path' %}" class="feat-card">
+        <div class="feat-icon">🗺️</div>
+        <div class="feat-body">
+          <div class="feat-title">Personalised Learning Path</div>
+          <div class="feat-desc">Follow a curated roadmap built around your skills and target companies.</div>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-cta">View Path</span>
+          <span class="feat-arrow">↗</span>
+        </div>
+      </a>
+
+      <a href="{% url 'skills' %}" class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-body">
+          <div class="feat-title">Manage Your Skills</div>
+          <div class="feat-desc">Add, update, and showcase technical &amp; soft skills to boost your profile visibility.</div>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-cta">Manage Skills</span>
+          <span class="feat-arrow">↗</span>
+        </div>
+      </a>
+
+      <a href="{% url 'recommendations' %}" class="feat-card">
+        <div class="feat-icon">✨</div>
+        <div class="feat-body">
+          <div class="feat-title">AI Recommendations</div>
+          <div class="feat-desc">Get smart job and course recommendations powered by your profile and industry trends.</div>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-cta">See Recs</span>
+          <span class="feat-arrow">↗</span>
+        </div>
+      </a>
+
+      <a href="{% url 'companies' %}" class="feat-card">
+        <div class="feat-icon">🏢</div>
+        <div class="feat-body">
+          <div class="feat-title">Explore Companies</div>
+          <div class="feat-desc">Browse hiring companies, their profiles, eligibility criteria, and placement details.</div>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-cta">Browse</span>
+          <span class="feat-arrow">↗</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

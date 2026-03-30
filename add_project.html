@@ -1,0 +1,381 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Project | SmartPlace</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS (same as portal) ─────────────────────────────── */
+:root {
+  --teal:      #0aa3b5;
+  --teal-dark: #088a9a;
+  --teal-glow: rgba(10,163,181,0.22);
+  --teal-dim:  rgba(10,163,181,0.10);
+  --ink:       #0b1622;
+  --slate:     #2e3f52;
+  --muted:     #5e7590;
+  --surface:   #ffffff;
+  --bg:        #eaf1f6;
+  --bg2:       #f0f6fa;
+  --border:    #d0e3ee;
+  --grad:      linear-gradient(135deg, #0aa3b5 0%, #055f6b 100%);
+  --grad-soft: linear-gradient(135deg, rgba(10,163,181,0.12) 0%, rgba(5,95,107,0.06) 100%);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* noise overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* dot grid bg */
+.page-dots {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(10,163,181,0.10) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 4vw;
+  background: rgba(234,241,246,0.92);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(10,163,181,0.10);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo-icon {
+  width: 34px; height: 34px; background: var(--grad); border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-logo-text { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+.nav-logo-text em { color: var(--teal); font-style: normal; }
+
+.nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+.nav-links a {
+  font-size: 13px; font-weight: 500; color: var(--slate);
+  text-decoration: none; padding: 7px 12px; border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-links a:hover { background: var(--teal-dim); color: var(--teal); }
+.nav-links a.active {
+  background: var(--teal-dim); color: var(--teal-dark); font-weight: 600;
+}
+
+/* ─── PAGE WRAPPER ────────────────────────────────────────── */
+.page-wrapper {
+  position: relative; z-index: 1;
+  min-height: calc(100vh-70px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 100px 20px 60px;
+}
+
+/* ─── FORM CARD ───────────────────────────────────────────── */
+.form-card {
+  width: 100%; max-width: 560px;
+  background: var(--surface);
+  border-radius: 24px;
+  border: 1.5px solid var(--border);
+  box-shadow: 0 20px 60px rgba(13,27,42,0.10);
+  animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* top accent bar */
+.form-card::before {
+  content: '';
+  display: block; height: 4px;
+  background: var(--grad);
+}
+
+.form-header {
+  padding: 30px 34px 0;
+}
+.form-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--teal);
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.form-eyebrow::before {
+  content: ''; width: 18px; height: 2px;
+  background: var(--teal); border-radius: 2px;
+}
+.form-title {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 28px; font-weight: 900;
+  letter-spacing: -0.03em; color: var(--ink);
+  margin-bottom: 6px;
+}
+.form-subtitle {
+  font-size: 14px; color: var(--muted); line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+/* divider */
+.form-divider {
+  height: 1px; background: var(--border); margin: 0 34px;
+}
+
+/* ─── FORM BODY ───────────────────────────────────────────── */
+.form-body { padding: 28px 34px 34px; }
+
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; font-weight: 600; color: var(--slate);
+  margin-bottom: 8px; letter-spacing: 0.01em;
+}
+.label-icon {
+  width: 22px; height: 22px; border-radius: 6px;
+  background: var(--teal-dim);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--ink);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.form-input::placeholder,
+.form-textarea::placeholder { color: var(--muted); }
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 4px var(--teal-dim);
+  background: var(--surface);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.65;
+}
+
+/* Tech tags input hint */
+.form-hint {
+  font-size: 11.5px; color: var(--muted); margin-top: 5px;
+  display: flex; align-items: center; gap: 5px;
+}
+.form-hint::before { content: 'ℹ'; font-size: 12px; color: var(--teal); }
+
+/* ─── SUBMIT BUTTON ───────────────────────────────────────── */
+.btn-submit {
+  width: 100%;
+  padding: 14px 28px;
+  background: var(--grad);
+  border: none; border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600; color: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  box-shadow: 0 6px 24px var(--teal-glow);
+  transition: transform 0.18s, box-shadow 0.18s;
+  margin-top: 8px;
+}
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px var(--teal-glow);
+}
+.btn-submit:active { transform: translateY(0); }
+
+/* back link */
+.back-link {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 18px;
+  font-size: 13px; color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--teal); }
+.back-link svg { transition: transform 0.2s; }
+.back-link:hover svg { transform: translateX(-3px); }
+
+/* ─── MESSAGES (Django) ───────────────────────────────────── */
+.messages-wrap { margin-bottom: 18px; }
+.message {
+  padding: 11px 14px; border-radius: 10px;
+  font-size: 13.5px; font-weight: 500; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.message.success { background: rgba(16,185,129,0.10); color: #065f46; border: 1px solid rgba(16,185,129,0.20); }
+.message.error   { background: rgba(244,63,94,0.08);  color: #9f1239; border: 1px solid rgba(244,63,94,0.18); }
+
+/* ─── FLOATING BLOB ───────────────────────────────────────── */
+.blob {
+  position: fixed; border-radius: 50%;
+  filter: blur(90px); pointer-events: none; z-index: 0; opacity: 0.18;
+}
+.blob-1 { width: 500px; height: 500px; background: var(--teal); top: -160px; right: -120px; animation: blobDrift 16s ease-in-out infinite alternate; }
+.blob-2 { width: 300px; height: 300px; background: #055f6b; bottom: -80px; left: 5%; animation: blobDrift2 20s ease-in-out infinite alternate; }
+@keyframes blobDrift  { to { transform: translate(30px, 40px) scale(1.08); } }
+@keyframes blobDrift2 { to { transform: translate(-20px, -30px) scale(1.05); } }
+
+/* ─── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .form-header { padding: 26px 22px 0; }
+  .form-body   { padding: 22px 22px 28px; }
+  .form-divider { margin: 0 22px; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-dots"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<!-- ── NAV ─────────────────────────────────────────────────── -->
+<nav>
+  <a href="{% url 'dashboard' %}" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Smart<em>Place</em></span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+    <li><a href="{% url 'student_profile' %}">Profile</a></li>
+    <li><a href="{% url 'skills' %}">Skills</a></li>
+    <li><a href="{% url 'projects' %}" class="active">Projects</a></li>
+    <li><a href="{% url 'companies' %}">Companies</a></li>
+    <li><a href="{% url 'upload_resume' %}">Resume</a></li>
+    <li><a href="{% url 'recommendations' %}">Recs</a></li>
+    <li><a href="{% url 'learning_path' %}">Learning</a></li>
+    <li><a href="{% url 'test' %}">Test</a></li>
+    <li><a href="{% url 'jobs' %}">Jobs</a></li>
+  </ul>
+</nav>
+
+<!-- ── PAGE ─────────────────────────────────────────────────── -->
+<div class="page-wrapper">
+  <div class="form-card">
+
+    <div class="form-header">
+        <div class="page-eyebrow">Projects</diV>
+      <h1 class="form-title">Add a Project</h1>
+      <p class="form-subtitle">Showcase what you've built. The AI will craft an impactful description to strengthen your placement profile.</p>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="form-body">
+
+      <!-- Django messages -->
+      {% if messages %}
+      <div class="messages-wrap">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+          {% if message.tags == 'success' %}✓{% else %}✕{% endif %}
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- Project Title -->
+        <div class="form-group">
+          <label class="form-label" for="title">
+            <div class="label-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0aa3b5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            Project Title
+          </label>
+          <input
+            class="form-input"
+            type="text"
+            id="title"
+            name="title"
+            placeholder="e.g. AI Resume Builder, E-Commerce App…"
+            required
+          >
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label" for="description">
+            <div class="label-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0aa3b5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            Project Description
+          </label>
+          <textarea
+            class="form-textarea"
+            id="description"
+            name="description"
+            placeholder="Describe what the project does, what problem it solves, and your role in building it…"
+            required
+          ></textarea>
+          <div class="form-hint">Be specific about the impact and tech stack — it helps the AI generate better recommendations.</div>
+        </div>
+
+        <!-- GitHub Link -->
+        <div class="form-group">
+          <label class="form-label" for="github_link">
+            <div class="label-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0aa3b5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            </div>
+            GitHub Link
+          </label>
+          <input
+            class="form-input"
+            type="url"
+            id="github_link"
+            name="github_link"
+            placeholder="https://github.com/yourusername/project"
+            required
+          >
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Save Project
+        </button>
+      </form>
+
+      <a href="{% url 'projects' %}" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Projects
+      </a>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

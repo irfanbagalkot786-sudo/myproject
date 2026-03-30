@@ -1,0 +1,480 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Result - Smart Placement Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --teal:       #0aa3b5;
+  --teal-dark:  #088a9a;
+  --teal-dim:   rgba(10,163,181,0.12);
+  --ink:        #0d1b2a;
+  --slate:      #3a4a5c;
+  --muted:      #7a8fa8;
+  --surface:    #ffffff;
+  --bg:         #eaf1f6;
+  --border:     #d6e4ed;
+  --gradient:   linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
+  --glow:       0 0 40px rgba(10,163,181,0.12);
+  --green:      #22c55e;
+  --green-dim:  rgba(34,197,94,0.10);
+  --yellow:     #f59e0b;
+  --yellow-dim: rgba(245,158,11,0.10);
+  --red:        #ef4444;
+  --red-dim:    rgba(239,68,68,0.10);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(10,163,181,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(8,138,154,0.06) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  height: 64px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+}
+
+.navbar-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.navbar-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.navbar-links a:hover  { color: var(--slate); background: var(--teal-dim); }
+.navbar-links a.active { color: var(--teal);  background: var(--teal-dim); }
+
+/* ── MAIN ── */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 50px 24px 60px;
+}
+
+/* ── SCORE HERO ── */
+.score-hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 48px 36px 40px;
+  text-align: center;
+  box-shadow: var(--glow);
+  animation: fadeUp 0.5s ease both;
+  margin-bottom: 24px;
+}
+
+.score-ring-wrap {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 24px;
+}
+
+.score-ring-wrap svg {
+  transform: rotate(-90deg);
+  width: 150px;
+  height: 150px;
+}
+
+.score-ring-wrap .ring-track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 10;
+}
+
+.score-ring-wrap .ring-fill {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 345;
+  stroke-dashoffset: 345;
+  transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1), stroke 0.3s ease;
+}
+
+.score-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.score-number {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.score-total {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.grade-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 20px;
+  border-radius: 99px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.grade-badge.excellent { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(34,197,94,0.25); }
+.grade-badge.good      { background: var(--teal-dim);   color: var(--teal);   border: 1px solid rgba(10,163,181,0.25); }
+.grade-badge.average   { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,158,11,0.25); }
+.grade-badge.poor      { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(239,68,68,0.25); }
+
+.score-hero h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.score-hero p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── STAT ROW ── */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.5s ease 0.1s both;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 16px;
+  text-align: center;
+  box-shadow: var(--glow);
+}
+
+.stat-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  margin: 0 auto 10px;
+}
+
+.stat-card-icon.correct { background: var(--green-dim); color: var(--green); }
+.stat-card-icon.wrong   { background: var(--red-dim);   color: var(--red);   }
+.stat-card-icon.percent { background: var(--teal-dim);  color: var(--teal);  }
+
+.stat-card strong {
+  display: block;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-card span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── ACTION BUTTONS ── */
+.action-row {
+  display: flex;
+  gap: 12px;
+  animation: fadeUp 0.5s ease 0.2s both;
+}
+
+.btn-primary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  background: var(--gradient);
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 18px rgba(10,163,181,0.28);
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(10,163,181,0.40);
+}
+
+.btn-secondary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  background: var(--surface);
+  color: var(--slate);
+  text-decoration: none;
+  border-radius: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border: 1.5px solid var(--border);
+  transition: transform 0.2s, border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .navbar { padding: 0 16px; }
+  .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
+  .main { padding: 28px 14px 40px; }
+  .score-hero { padding: 36px 20px 28px; }
+  .stat-row { grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .action-row { flex-direction: column; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <div class="navbar-links">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'student_profile' %}">Profile</a>
+    <a href="{% url 'skills' %}">Skills</a>
+    <a href="{% url 'projects' %}">Projects</a>
+    <a href="{% url 'companies' %}">Companies</a>
+    <a href="{% url 'upload_resume' %}">Resume</a>
+    <a href="{% url 'recommendations' %}">Recs</a>
+    <a href="{% url 'learning_path' %}">Learning</a>
+    <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'jobs' %}">Jobs</a>
+  </div>
+</nav>
+
+<!-- Django values in data attributes — keeps {{ }} completely out of <script> -->
+<div id="resultData" data-score="{{ score }}" data-total="{{ total }}" hidden></div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SCORE HERO CARD -->
+  <div class="score-hero">
+
+    <div class="score-ring-wrap">
+      <svg viewBox="0 0 120 120">
+        <circle class="ring-track" cx="60" cy="60" r="55"/>
+        <circle class="ring-fill"  cx="60" cy="60" r="55" id="ringFill"/>
+      </svg>
+      <div class="score-ring-center">
+        <span class="score-number" id="scoreNum">0</span>
+        <span class="score-total" id="totalDisplay">/ 0</span>
+      </div>
+    </div>
+
+    <div id="gradeBadge" class="grade-badge">
+      <i id="gradeIcon" class="fas fa-star"></i>
+      <span id="gradeLabel">Calculating...</span>
+    </div>
+
+    <h2 id="heroTitle">Test Complete!</h2>
+    <p id="heroSubtitle">Here's how you performed on the assessment.</p>
+
+  </div>
+
+  <!-- STAT ROW -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-card-icon correct"><i class="fas fa-circle-check"></i></div>
+      <strong id="correctStat">0</strong>
+      <span>Correct</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon wrong"><i class="fas fa-circle-xmark"></i></div>
+      <strong id="wrongStat">0</strong>
+      <span>Wrong</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon percent"><i class="fas fa-percent"></i></div>
+      <strong id="pctStat">0%</strong>
+      <span>Score</span>
+    </div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-row">
+    <a href="{% url 'dashboard' %}" class="btn-primary">
+      <i class="fas fa-house"></i> Go to Dashboard
+    </a>
+    <a href="{% url 'test' %}" class="btn-secondary">
+      <i class="fas fa-rotate-right"></i> Retake Test
+    </a>
+  </div>
+
+</div>
+
+<script>
+  /* read values from data attributes — zero {{ }} inside script */
+  var el        = document.getElementById('resultData');
+  var userScore = parseInt(el.getAttribute('data-score'), 10) || 0;
+  var totalQs   = parseInt(el.getAttribute('data-total'),  10) || 0;
+  var pct       = totalQs > 0 ? Math.round((userScore / totalQs) * 100) : 0;
+
+  /* fill static stats */
+  document.getElementById('totalDisplay').textContent = '/ ' + totalQs;
+  document.getElementById('correctStat').textContent  = userScore;
+  document.getElementById('wrongStat').textContent    = totalQs - userScore;
+  document.getElementById('pctStat').textContent      = pct + '%';
+
+  /* animate score number */
+  var scoreEl = document.getElementById('scoreNum');
+  var current = 0;
+  var stepVal = Math.ceil(userScore / 40) || 1;
+  var ticker  = setInterval(function() {
+    current = Math.min(current + stepVal, userScore);
+    scoreEl.textContent = current;
+    if (current >= userScore) { clearInterval(ticker); }
+  }, 30);
+
+  /* animate ring */
+  var ringEl  = document.getElementById('ringFill');
+  var offset  = 345 - (pct / 100) * 345;
+  setTimeout(function() {
+    ringEl.style.strokeDashoffset = offset;
+    if      (pct >= 80) { ringEl.style.stroke = '#22c55e'; }
+    else if (pct >= 60) { ringEl.style.stroke = '#0aa3b5'; }
+    else if (pct >= 40) { ringEl.style.stroke = '#f59e0b'; }
+    else                { ringEl.style.stroke = '#ef4444'; }
+  }, 200);
+
+  /* grade badge and message */
+  var badge    = document.getElementById('gradeBadge');
+  var icon     = document.getElementById('gradeIcon');
+  var lbl      = document.getElementById('gradeLabel');
+  var titleEl  = document.getElementById('heroTitle');
+  var subEl    = document.getElementById('heroSubtitle');
+
+  if (pct >= 80) {
+    badge.className   = 'grade-badge excellent';
+    icon.className    = 'fas fa-trophy';
+    lbl.textContent   = 'Excellent';
+    titleEl.textContent = 'Outstanding Performance! \uD83C\uDF89';
+    subEl.textContent   = 'You aced the assessment. Keep up the great work!';
+  } else if (pct >= 60) {
+    badge.className   = 'grade-badge good';
+    icon.className    = 'fas fa-thumbs-up';
+    lbl.textContent   = 'Good';
+    titleEl.textContent = 'Good Job!';
+    subEl.textContent   = 'Solid performance. A little more practice and you\'ll be at the top.';
+  } else if (pct >= 40) {
+    badge.className   = 'grade-badge average';
+    icon.className    = 'fas fa-circle-half-stroke';
+    lbl.textContent   = 'Average';
+    titleEl.textContent = 'Keep Practising';
+    subEl.textContent   = 'You\'re on the right track \u2014 review the topics and try again.';
+  } else {
+    badge.className   = 'grade-badge poor';
+    icon.className    = 'fas fa-book-open';
+    lbl.textContent   = 'Needs Work';
+    titleEl.textContent = 'Don\'t Give Up!';
+    subEl.textContent   = 'Check your learning path and revisit the fundamentals.';
+  }
+</script>
+
+</body>
+</html>

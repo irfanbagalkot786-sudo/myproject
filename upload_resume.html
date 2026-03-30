@@ -1,0 +1,408 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Resume - Smart Placement Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --teal:       #0aa3b5;
+  --teal-dark:  #088a9a;
+  --teal-dim:   rgba(10,163,181,0.12);
+  --ink:        #0d1b2a;
+  --slate:      #3a4a5c;
+  --muted:      #7a8fa8;
+  --surface:    #ffffff;
+  --bg:         #eaf1f6;
+  --border:     #d6e4ed;
+  --gradient:   linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
+  --glow:       0 0 40px rgba(10,163,181,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(10,163,181,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(8,138,154,0.06) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  height: 64px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+}
+
+.navbar-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.navbar-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.navbar-links a:hover { color: var(--slate); background: var(--teal-dim); }
+.navbar-links a.active { color: var(--teal); background: var(--teal-dim); }
+
+/* ── MAIN ── */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  margin-bottom: 28px;
+  animation: fadeUp 0.5s ease both;
+}
+
+.page-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+}
+
+.page-header p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px 36px;
+  box-shadow: var(--glow);
+  animation: fadeUp 0.5s ease 0.1s both;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(10,163,181,0.3);
+}
+
+.card-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.card-header p {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ── DROP ZONE ── */
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--bg);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+  margin-bottom: 22px;
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+  border-color: var(--teal);
+  background: var(--teal-dim);
+}
+
+.drop-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.drop-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: var(--teal-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 22px;
+  color: var(--teal);
+  transition: background 0.2s;
+}
+
+.drop-zone:hover .drop-icon { background: rgba(10,163,181,0.2); }
+
+.drop-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.drop-sub {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.drop-sub span {
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* selected file name */
+.file-chosen {
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: var(--teal);
+  font-weight: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ── FORMAT HINTS ── */
+.format-hints {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.hint-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: var(--slate);
+}
+
+.hint-pill i { color: var(--teal); font-size: 0.9rem; }
+
+/* ── SUBMIT BUTTON ── */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gradient);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.4px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(10,163,181,0.28);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(10,163,181,0.42);
+}
+
+.submit-btn:active { transform: translateY(0); }
+
+.submit-btn::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(rgba(255,255,255,0.1),transparent);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .navbar { padding: 0 16px; }
+  .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
+  .main { padding: 20px 14px 40px; }
+  .card { padding: 28px 18px; }
+  .format-hints { flex-direction: column; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <div class="navbar-links">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'student_profile' %}">Profile</a>
+    <a href="{% url 'skills' %}">Skills</a>
+    <a href="{% url 'projects' %}">Projects</a>
+    <a href="{% url 'companies' %}">Companies</a>
+    <a href="{% url 'upload_resume' %}" class="active">Resume</a>
+    <a href="{% url 'recommendations' %}">Recs</a>
+    <a href="{% url 'learning_path' %}">Learning</a>
+    <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'jobs' %}">Jobs</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>Upload Resume</h1>
+    <p>Upload your latest resume to improve placement recommendations</p>
+  </div>
+
+  <!-- CARD -->
+  <div class="card">
+
+    <div class="card-header">
+      <div class="card-icon"><i class="fas fa-file-arrow-up"></i></div>
+      <div>
+        <h2>Your Resume</h2>
+        <p>Supported formats: PDF, DOC, DOCX</p>
+      </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- DROP ZONE -->
+      <div class="drop-zone" id="dropZone">
+        <input type="file" name="resume" id="resumeInput" accept=".pdf,.doc,.docx" required>
+        <div class="drop-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+        <div class="drop-title">Drag & drop your resume here</div>
+        <div class="drop-sub">or <span>browse files</span> from your device</div>
+        <div class="file-chosen" id="fileChosen">
+          <i class="fas fa-file-check"></i>
+          <span id="fileName"></span>
+        </div>
+      </div>
+
+      <!-- FORMAT HINTS -->
+      <div class="format-hints">
+        <div class="hint-pill"><i class="fas fa-file-pdf"></i> PDF recommended</div>
+        <div class="hint-pill"><i class="fas fa-weight-hanging"></i> Max size 5 MB</div>
+        <div class="hint-pill"><i class="fas fa-shield-check"></i> Secure upload</div>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-upload" style="margin-right:8px;"></i>Upload Resume
+      </button>
+
+    </form>
+  </div>
+
+</div>
+
+<script>
+  const input = document.getElementById('resumeInput');
+  const fileChosen = document.getElementById('fileChosen');
+  const fileName = document.getElementById('fileName');
+  const dropZone = document.getElementById('dropZone');
+
+  input.addEventListener('change', () => {
+    if (input.files.length > 0) {
+      fileName.textContent = input.files[0].name;
+      fileChosen.style.display = 'flex';
+    }
+  });
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) {
+      input.files = e.dataTransfer.files;
+      fileName.textContent = e.dataTransfer.files[0].name;
+      fileChosen.style.display = 'flex';
+    }
+  });
+</script>
+
+</body>
+</html>

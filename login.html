@@ -1,0 +1,374 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login | Smart Placement Portal</title>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:      #0aa3b5;
+    --teal-dark: #088a9a;
+    --teal-dim:  rgba(10,163,181,0.12);
+    --ink:       #0d1b2a;
+    --slate:     #3a4a5c;
+    --muted:     #7a8fa8;
+    --surface:   #ffffff;
+    --bg:        #eaf1f6;
+    --border:    #d6e4ed;
+    --gradient:  linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
+    --glow:      0 0 40px rgba(10,163,181,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Background decorative blobs */
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before {
+    width: 520px; height: 520px;
+    background: var(--teal);
+    top: -160px; right: -100px;
+    animation: drift1 12s ease-in-out infinite alternate;
+  }
+  body::after {
+    width: 380px; height: 380px;
+    background: #088a9a;
+    bottom: -120px; left: -80px;
+    animation: drift2 15s ease-in-out infinite alternate;
+  }
+
+  @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(30px, 40px) scale(1.08); } }
+  @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-25px, -30px) scale(1.05); } }
+
+  /* Dot grid overlay */
+  .bg-grid {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(10,163,181,0.13) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Card */
+  .login-card {
+    position: relative; z-index: 10;
+    width: 100%; max-width: 440px;
+    background: var(--surface);
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(13,27,42,0.10), var(--glow);
+    overflow: hidden;
+    animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(36px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Card header band */
+  .card-header {
+    background: var(--gradient);
+    padding: 38px 40px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-header::after {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    right: -50px; top: -60px;
+  }
+  .card-header::before {
+    content: '';
+    position: absolute;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    left: -20px; bottom: -30px;
+  }
+
+  .portal-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .portal-label span {
+    display: inline-block;
+    width: 20px; height: 1.5px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 2px;
+  }
+
+  .card-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    position: relative; z-index: 1;
+  }
+  .card-header h1 em {
+    font-style: normal;
+    color: rgba(255,255,255,0.65);
+    font-weight: 700;
+  }
+
+  /* Card body */
+  .card-body {
+    padding: 36px 40px 40px;
+  }
+
+  /* Messages */
+  .messages {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .msg-error {
+    background: #fff2f2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #b91c1c;
+    font-weight: 500;
+  }
+
+  /* Form fields */
+  .field {
+    margin-bottom: 18px;
+  }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 7px;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+  .input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+  .input-wrap:focus-within .input-icon { color: var(--teal); }
+
+  .field input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px 0 42px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .field input::placeholder { color: var(--muted); }
+  .field input:focus {
+    border-color: var(--teal);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px var(--teal-dim);
+  }
+
+  /* Captcha area */
+  .captcha-wrap {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  /* Submit button */
+  .btn-login {
+    width: 100%;
+    height: 50px;
+    background: var(--gradient);
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 4px 18px rgba(10,163,181,0.30);
+    letter-spacing: 0.02em;
+  }
+  .btn-login::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.2s;
+  }
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(10,163,181,0.38);
+  }
+  .btn-login:hover::after { background: rgba(255,255,255,0.07); }
+  .btn-login:active { transform: translateY(0); }
+
+  /* Arrow icon inside button */
+  .btn-login svg {
+    vertical-align: middle;
+    margin-left: 8px;
+    transition: transform 0.2s;
+  }
+  .btn-login:hover svg { transform: translateX(4px); }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 26px 0 0;
+  }
+  .divider hr {
+    flex: 1; border: none;
+    border-top: 1px solid var(--border);
+  }
+  .divider span {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* Register link */
+  .register-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .register-link a {
+    color: var(--teal);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1.5px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .register-link a:hover { border-color: var(--teal); }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .login-card { border-radius: 0; min-height: 100vh; }
+    .card-header { padding: 30px 24px 26px; }
+    .card-body { padding: 28px 24px 32px; }
+  }
+</style>
+</head>
+
+<body>
+<div class="bg-grid"></div>
+
+<div class="login-card">
+
+  <div class="card-header">
+    <p class="portal-label"><span></span>Smart Placement Portal</p>
+    <h1>Login</h1>
+  </div>
+
+  <div class="card-body">
+
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div class="msg-error">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST" autocomplete="off">
+      {% csrf_token %}
+
+      <div class="field">
+        <label for="username">Username</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          <input type="text" id="username" name="username" placeholder="Enter your username" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+      </div>
+
+      <div class="captcha-wrap">
+        {{ form.captcha }}
+      </div>
+
+      <button type="submit" class="btn-login">
+        Login
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+      <div class="divider">
+        <hr><span>New here?</span><hr>
+      </div>
+
+      <p class="register-link">
+        Don't have an account? <a href="{% url 'register' %}">Register</a>
+      </p>
+
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
+

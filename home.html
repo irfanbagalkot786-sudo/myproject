@@ -1,0 +1,842 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SmartPlace | AI-Powered Placement Preparation Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --teal:      #0aa3b5;
+  --teal-dark: #088a9a;
+  --teal-glow: rgba(10,163,181,0.22);
+  --teal-dim:  rgba(10,163,181,0.10);
+  --ink:       #0b1622;
+  --slate:     #2e3f52;
+  --muted:     #5e7590;
+  --surface:   #ffffff;
+  --bg:        #eaf1f6;
+  --bg2:       #f0f6fa;
+  --border:    #d0e3ee;
+  --grad:      linear-gradient(135deg, #0aa3b5 0%, #055f6b 100%);
+  --grad-soft: linear-gradient(135deg, rgba(10,163,181,0.12) 0%, rgba(5,95,107,0.06) 100%);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ─── NOISE OVERLAY ───────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 6vw;
+  background: rgba(234,241,246,0.82);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(10,163,181,0.10);
+  transition: background 0.3s;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo-icon {
+  width: 38px; height: 38px; background: var(--grad); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-logo-text { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+.nav-logo-text em { color: var(--teal); font-style: normal; }
+.nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--slate); text-decoration: none; letter-spacing: 0.01em; transition: color 0.2s; }
+.nav-links a:hover { color: var(--teal); }
+.nav-cta { display: flex; gap: 10px; align-items: center; }
+.btn-ghost {
+  padding: 9px 20px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  color: var(--slate); background: transparent; text-decoration: none;
+  transition: border-color 0.2s, color 0.2s; cursor: pointer;
+}
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+.btn-primary {
+  padding: 9px 22px; background: var(--grad); border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: #fff;
+  text-decoration: none; box-shadow: 0 4px 16px var(--teal-glow);
+  transition: transform 0.18s, box-shadow 0.18s; cursor: pointer;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--teal-glow); }
+
+/* ─── HERO ────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 120px 6vw 80px; position: relative; overflow: hidden;
+}
+.hero-blob { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; opacity: 0.28; }
+.hero-blob-1 { width: 600px; height: 600px; background: var(--teal); top: -180px; right: -120px; animation: float1 14s ease-in-out infinite alternate; }
+.hero-blob-2 { width: 400px; height: 400px; background: #055f6b; bottom: -100px; left: 30%; animation: float2 18s ease-in-out infinite alternate; }
+@keyframes float1 { to { transform: translate(40px, 50px) scale(1.1); } }
+@keyframes float2 { to { transform: translate(-30px, -40px) scale(1.07); } }
+.hero-dots {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(10,163,181,0.14) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+.hero-inner {
+  position: relative; z-index: 2; max-width: 1200px; width: 100%; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--teal-dim); border: 1px solid rgba(10,163,181,0.22); border-radius: 100px;
+  padding: 6px 14px 6px 8px; margin-bottom: 26px;
+  font-size: 12px; font-weight: 600; color: var(--teal-dark);
+  letter-spacing: 0.06em; text-transform: uppercase; animation: fadeInDown 0.7s both;
+}
+.badge-dot { width: 22px; height: 22px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; }
+.hero-title {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: clamp(44px, 5.5vw, 76px); font-weight: 900;
+  line-height: 1.0; letter-spacing: -0.03em; color: var(--ink);
+  margin-bottom: 22px; animation: fadeInUp 0.8s 0.1s both;
+}
+.hero-title .accent { color: var(--teal); position: relative; display: inline-block; }
+.hero-title .accent::after {
+  content: ''; position: absolute; left: 0; bottom: 4px; right: 0; height: 6px;
+  background: var(--teal-dim); border-radius: 4px; z-index: -1;
+}
+.hero-desc { font-size: 17px; line-height: 1.7; color: var(--muted); max-width: 480px; margin-bottom: 36px; animation: fadeInUp 0.8s 0.2s both; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; animation: fadeInUp 0.8s 0.3s both; }
+.btn-hero {
+  padding: 14px 28px; font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600; border-radius: 12px;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.btn-hero-primary { background: var(--grad); color: #fff; box-shadow: 0 6px 24px var(--teal-glow); border: none; }
+.btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 32px var(--teal-glow); }
+.btn-hero-secondary { background: var(--surface); color: var(--ink); border: 1.5px solid var(--border); }
+.btn-hero-secondary:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-2px); }
+.hero-stats { display: flex; gap: 32px; margin-top: 48px; animation: fadeInUp 0.8s 0.4s both; }
+.stat { text-align: center; }
+.stat-num { font-family: 'Cabinet Grotesk', sans-serif; font-size: 30px; font-weight: 900; color: var(--ink); letter-spacing: -0.03em; line-height: 1; }
+.stat-num span { color: var(--teal); }
+.stat-label { font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* Hero right – Module Journey Card */
+.hero-visual { position: relative; animation: fadeInRight 0.9s 0.2s both; }
+.hero-card-main {
+  background: var(--surface); border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(13,27,42,0.12), 0 0 0 1px var(--border);
+  padding: 28px; overflow: hidden; position: relative;
+}
+.hero-card-main::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--grad); }
+.hc-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.hc-title { font-family: 'Cabinet Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: var(--ink); }
+.hc-badge { background: var(--teal-dim); color: var(--teal-dark); font-size: 11px; font-weight: 600; border-radius: 100px; padding: 4px 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* Module steps in hero card */
+.module-flow { display: flex; flex-direction: column; gap: 8px; }
+.module-step {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
+  border: 1.5px solid var(--border); transition: border-color 0.2s, background 0.2s;
+}
+.module-step.active { border-color: var(--teal); background: var(--teal-dim); }
+.module-step.done { border-color: rgba(10,163,181,0.20); background: rgba(10,163,181,0.04); }
+.module-icon { font-size: 16px; flex-shrink: 0; width: 28px; text-align: center; }
+.module-info { flex: 1; }
+.module-name { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.2; }
+.module-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.module-badge { font-size: 10px; font-weight: 700; border-radius: 6px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.mb-done { background: rgba(10,163,181,0.12); color: var(--teal-dark); }
+.mb-active { background: var(--teal-dim); color: var(--teal-dark); }
+.mb-next { background: rgba(94,117,144,0.10); color: var(--muted); }
+
+.hero-ai-tip { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+.hero-ai-tip-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.hero-ai-tip-box { background: var(--teal-dim); border-radius: 12px; padding: 12px 14px; font-size: 13px; color: var(--teal-dark); line-height: 1.5; font-weight: 500; }
+
+/* Floating mini-cards */
+.float-card {
+  position: absolute; background: var(--surface); border-radius: 16px; padding: 14px 18px;
+  box-shadow: 0 10px 40px rgba(13,27,42,0.10), 0 0 0 1px var(--border);
+  display: flex; align-items: center; gap: 12px; animation: floatCard 6s ease-in-out infinite;
+}
+.float-card-1 { top: -28px; right: -20px; animation-delay: 0s; }
+.float-card-2 { bottom: -24px; left: -28px; animation-delay: 3s; }
+@keyframes floatCard { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+.fc-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--teal-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.fc-text { display: flex; flex-direction: column; gap: 4px; }
+.fc-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+.fc-value { font-family: 'Cabinet Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+
+/* ─── FEATURES ────────────────────────────────────────────── */
+.section { padding: 100px 6vw; position: relative; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+}
+.section-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--teal); border-radius: 2px; }
+.section-title { font-family: 'Cabinet Grotesk', sans-serif; font-size: clamp(32px, 3.5vw, 52px); font-weight: 900; letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; margin-bottom: 16px; }
+.section-title .accent { color: var(--teal); }
+.section-sub { font-size: 16px; color: var(--muted); line-height: 1.7; max-width: 520px; margin-bottom: 60px; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.feature-card {
+  background: var(--surface); border-radius: 20px; padding: 30px 26px;
+  border: 1.5px solid var(--border); position: relative; overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+.feature-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(10,163,181,0.10); border-color: rgba(10,163,181,0.30); }
+.feature-card::before { content: ''; position: absolute; inset: 0; background: var(--grad-soft); opacity: 0; transition: opacity 0.3s; }
+.feature-card:hover::before { opacity: 1; }
+.feature-icon {
+  width: 52px; height: 52px; border-radius: 14px; background: var(--teal-dim);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+  position: relative; z-index: 1; transition: background 0.2s; font-size: 22px;
+}
+.feature-card:hover .feature-icon { background: var(--teal); }
+.feature-title { font-family: 'Cabinet Grotesk', sans-serif; font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 10px; position: relative; z-index: 1; }
+.feature-desc { font-size: 14px; line-height: 1.65; color: var(--muted); position: relative; z-index: 1; }
+
+/* ─── MODULE JOURNEY (DARK) ───────────────────────────────── */
+.how-section {
+  background: var(--ink); padding: 100px 6vw; position: relative; overflow: hidden;
+}
+.how-section::before {
+  content: ''; position: absolute; width: 700px; height: 700px; border-radius: 50%;
+  background: rgba(10,163,181,0.08); top: -200px; right: -200px; filter: blur(60px); pointer-events: none;
+}
+.how-section .section-eyebrow { color: rgba(10,163,181,0.9); }
+.how-section .section-eyebrow::before { background: var(--teal); }
+.how-section .section-title { color: #fff; }
+.how-section .section-sub { color: rgba(255,255,255,0.45); }
+
+/* Timeline */
+.timeline-wrap { max-width: 900px; margin: 0 auto; position: relative; }
+.timeline-wrap::before {
+  content: ''; position: absolute; left: 27px; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(to bottom, var(--teal), rgba(10,163,181,0.05));
+}
+.tl-item { display: flex; gap: 32px; align-items: flex-start; margin-bottom: 24px; }
+.tl-num-wrap { flex-shrink: 0; width: 56px; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.tl-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 1.5px solid rgba(10,163,181,0.30); background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cabinet Grotesk', sans-serif; font-size: 18px; font-weight: 900; color: var(--teal);
+  position: relative; z-index: 1; transition: background 0.2s, border-color 0.2s;
+}
+.tl-item:hover .tl-num { background: var(--teal); color: #fff; border-color: var(--teal); }
+.tl-tag-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em; color: rgba(10,163,181,0.50); }
+.tl-card {
+  flex: 1; background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 18px; padding: 20px 22px;
+  transition: border-color 0.25s, background 0.25s, transform 0.25s;
+}
+.tl-card:hover { border-color: rgba(10,163,181,0.35); background: rgba(10,163,181,0.05); transform: translateX(5px); }
+.tl-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.tl-card-title { font-family: 'Cabinet Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 9px; }
+.tl-emoji { font-size: 18px; }
+.tl-chip { font-size: 10px; font-weight: 700; border-radius: 7px; padding: 3px 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+.chip-teal { background: rgba(10,163,181,0.15); color: var(--teal); }
+.chip-warm { background: rgba(245,158,11,0.15); color: #d97706; }
+.chip-green { background: rgba(16,185,129,0.12); color: #059669; }
+.chip-rose { background: rgba(244,63,94,0.12); color: #e11d48; }
+.chip-violet { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+.tl-card-desc { font-size: 13.5px; line-height: 1.65; color: rgba(255,255,255,0.42); margin-bottom: 12px; }
+.tl-features { display: flex; flex-wrap: wrap; gap: 7px; }
+.tl-feat {
+  display: flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 500;
+  color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; padding: 4px 10px;
+}
+.tl-feat::before { content: '✓'; color: var(--teal); font-size: 10px; font-weight: 700; }
+
+/* ─── AI AGENT SECTION ────────────────────────────────────── */
+.agent-section { padding: 100px 6vw; background: var(--bg2); }
+.agent-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
+.chat-mockup { background: var(--surface); border-radius: 24px; border: 1.5px solid var(--border); box-shadow: 0 20px 60px rgba(13,27,42,0.10); overflow: hidden; }
+.chat-header { padding: 16px 20px; background: var(--ink); display: flex; align-items: center; gap: 12px; }
+.chat-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.chat-name { font-size: 14px; font-weight: 600; color: #fff; }
+.chat-online { font-size: 11px; color: #10B981; display: flex; align-items: center; gap: 4px; }
+.chat-online::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #10B981; animation: blink 1.4s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.chat-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.chat-bubble { max-width: 86%; border-radius: 16px; padding: 12px 16px; font-size: 13px; line-height: 1.6; }
+.bubble-ai { background: var(--teal-dim); border: 1px solid rgba(10,163,181,0.15); color: var(--slate); border-bottom-left-radius: 4px; align-self: flex-start; }
+.bubble-user { background: var(--grad); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+.chat-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 6px; }
+.chat-tag { background: rgba(10,163,181,0.12); color: var(--teal-dark); font-size: 11px; font-weight: 600; border-radius: 6px; padding: 3px 9px; }
+.chat-typing { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; padding: 0 4px; }
+.typing-dots { display: flex; gap: 3px; }
+.typing-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); opacity: 0.5; animation: typingBounce 1.2s ease-in-out infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce { 0%,60%,100%{transform:translateY(0);opacity:0.5} 30%{transform:translateY(-5px);opacity:1} }
+.agent-features { display: flex; flex-direction: column; gap: 16px; margin-top: 36px; }
+.agent-feat { display: flex; align-items: flex-start; gap: 14px; padding: 18px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; transition: border-color 0.2s, transform 0.2s; }
+.agent-feat:hover { border-color: rgba(10,163,181,0.30); transform: translateX(4px); }
+.af-icon { width: 42px; height: 42px; border-radius: 12px; background: var(--teal-dim); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.af-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.af-desc { font-size: 13px; line-height: 1.55; color: var(--muted); }
+
+/* ─── COMPANIES ───────────────────────────────────────────── */
+.companies-section { padding: 80px 6vw; background: var(--bg2); text-align: center; }
+.companies-label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 36px; }
+.company-logos { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
+.company-pill { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 100px; padding: 10px 22px; font-family: 'Cabinet Grotesk', sans-serif; font-size: 15px; font-weight: 800; color: var(--slate); letter-spacing: -0.01em; transition: border-color 0.2s, color 0.2s, transform 0.2s; cursor: default; }
+.company-pill:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-3px); }
+.company-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); }
+
+/* ─── HIGHLIGHT / WHY US ──────────────────────────────────── */
+.highlight-section { padding: 100px 6vw; }
+.highlight-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.highlight-text .section-sub { margin-bottom: 32px; }
+.feature-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.feature-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 15px; color: var(--slate); line-height: 1.5; }
+.check { width: 24px; height: 24px; border-radius: 8px; background: var(--teal-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.stat-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 20px; padding: 28px; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(10,163,181,0.10); }
+.stat-card-num { font-family: 'Cabinet Grotesk', sans-serif; font-size: 42px; font-weight: 900; color: var(--ink); letter-spacing: -0.04em; line-height: 1; margin-bottom: 6px; }
+.stat-card-num span { color: var(--teal); }
+.stat-card-label { font-size: 13px; color: var(--muted); font-weight: 500; line-height: 1.4; }
+
+/* ─── CTA BANNER ──────────────────────────────────────────── */
+.cta-section { padding: 80px 6vw; }
+.cta-inner { max-width: 1200px; margin: 0 auto; background: var(--ink); border-radius: 28px; padding: 70px 60px; text-align: center; position: relative; overflow: hidden; }
+.cta-inner::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(10,163,181,0.25) 0%, transparent 70%); pointer-events: none; }
+.cta-inner::after { content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; background: rgba(10,163,181,0.07); bottom: -80px; right: -80px; filter: blur(40px); }
+.cta-label { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 16px; position: relative; z-index: 1; }
+.cta-title { font-family: 'Cabinet Grotesk', sans-serif; font-size: clamp(32px, 4vw, 56px); font-weight: 900; color: #fff; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 16px; position: relative; z-index: 1; }
+.cta-title .accent { color: var(--teal); }
+.cta-sub { font-size: 16px; color: rgba(255,255,255,0.45); margin-bottom: 36px; position: relative; z-index: 1; }
+.cta-buttons { display: flex; gap: 14px; justify-content: center; position: relative; z-index: 1; }
+.btn-cta-primary { padding: 14px 32px; background: var(--grad); color: #fff; border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; box-shadow: 0 6px 24px rgba(10,163,181,0.35); transition: transform 0.18s, box-shadow 0.18s; display: inline-flex; align-items: center; gap: 8px; }
+.btn-cta-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(10,163,181,0.45); }
+.btn-cta-ghost { padding: 14px 28px; background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.80); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: background 0.18s, color 0.18s; }
+.btn-cta-ghost:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+/* ─── FOOTER ──────────────────────────────────────────────── */
+footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.footer-brand { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--ink); }
+.footer-brand em { color: var(--teal); font-style: normal; }
+.footer-copy { font-size: 13px; color: var(--muted); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--teal); }
+
+/* ─── ANIMATIONS ──────────────────────────────────────────── */
+@keyframes fadeInDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeInUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeInRight{ from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 50px; }
+  .hero-visual { display: none; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .agent-inner { grid-template-columns: 1fr; }
+  .highlight-inner { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+}
+@media (max-width: 560px) {
+  .features-grid { grid-template-columns: 1fr; }
+  .cta-inner { padding: 48px 28px; }
+  .stat-cards { grid-template-columns: 1fr 1fr; }
+  footer { flex-direction: column; gap: 16px; text-align: center; }
+  .footer-links { justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────── -->
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Smart<em>Place</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#prepare">What You'll Master</a></li>
+    <li><a href="#modules">Your Journey</a></li>
+    <li><a href="#ai-agent">AI Agent</a></li>
+    <li><a href="#companies">Companies</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="{% url 'login' %}" class="btn-ghost">Login</a>
+    <a href="{% url 'register' %}" class="btn-primary">Get Started →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-dots"></div>
+
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <div class="badge-dot">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        Powered by Agentic AI
+      </div>
+
+      <h1 class="hero-title">
+        Crack Every<br>
+        Placement Drive<br>
+        <span class="accent">Confidently.</span>
+      </h1>
+
+      <p class="hero-desc">
+        SmartPlace is your AI-powered placement preparation portal — build skills, master aptitude, take mock tests, sharpen communication, and walk into every interview fully ready.
+      </p>
+
+      <div class="hero-actions">
+        <a href="{% url 'register' %}" class="btn-hero btn-hero-primary">
+          Start Preparing Free
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#modules" class="btn-hero btn-hero-secondary">
+          See The Journey
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">500<span>+</span></div>
+          <div class="stat-label">Students Prepared</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">10K<span>+</span></div>
+          <div class="stat-label">Mock Tests Taken</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">95<span>%</span></div>
+          <div class="stat-label">Satisfaction Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Module Journey Card -->
+    <div class="hero-visual">
+      <div class="float-card float-card-1">
+        <div class="fc-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0aa3b5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="fc-text">
+          <div class="fc-label">AI Target Today</div>
+          <div class="fc-value">Verbal Reasoning</div>
+        </div>
+      </div>
+
+      <div class="hero-card-main">
+        <div class="hc-topbar">
+          <span class="hc-title">Your Preparation Journey</span>
+          <span class="hc-badge">AI Guided</span>
+        </div>
+        <div class="module-flow">
+          <div class="module-step done">
+            <div class="module-icon">👤</div>
+            <div class="module-info">
+              <div class="module-name">Profile & Skills</div>
+              <div class="module-sub">Education, goals & skill mapping</div>
+            </div>
+            <span class="module-badge mb-done">Done</span>
+          </div>
+          <div class="module-step done">
+            <div class="module-icon">📄</div>
+            <div class="module-info">
+              <div class="module-name">Resume Analysis</div>
+              <div class="module-sub">With Agentic AI</div>
+            </div>
+            <span class="module-badge mb-done">Done</span>
+          </div>
+          <div class="module-step active">
+            <div class="module-icon">📚</div>
+            <div class="module-info">
+              <div class="module-name">Learning Path</div>
+              <div class="module-sub">Custom AI roadmap for your gaps</div>
+            </div>
+            <span class="module-badge mb-active">Active</span>
+          </div>
+          <div class="module-step">
+            <div class="module-icon">🧠</div>
+            <div class="module-info">
+              <div class="module-name">Aptitude & Mock Tests</div>
+              <div class="module-sub">Quant, verbal, reasoning, coding</div>
+            </div>
+            <span class="module-badge mb-next">Next</span>
+          </div>
+        </div>
+        <div class="hero-ai-tip">
+          <div class="hero-ai-tip-label">AI Recommendation</div>
+          <div class="hero-ai-tip-box">
+            ✦ Complete <strong>Quantitative Aptitude</strong> next — it appears in 94% of all placement drives.
+          </div>
+        </div>
+      </div>
+
+      <div class="float-card float-card-2">
+        <div class="fc-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0aa3b5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="fc-text">
+          <div class="fc-label">Readiness Score</div>
+          <div class="fc-value">67% → Keep Going!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHAT YOU'LL MASTER ────────────────────────────────────── -->
+<section class="section" id="prepare">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">What You'll Master</div>
+    <h2 class="section-title reveal">Everything Placement<br>Drives <span class="accent">Test You On</span></h2>
+    <p class="section-sub reveal">We don't find jobs for you — we make sure you're fully ready when the opportunity arrives. Our AI prepares you across every area that matters in a placement drive.</p>
+
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">🔢</div>
+        <h3 class="feature-title">Quantitative Aptitude</h3>
+        <p class="feature-desc">Numbers, percentages, time & work, probability — the AI finds your weak topics and drills them with adaptive practice sets perfectly calibrated to your level.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🧩</div>
+        <h3 class="feature-title">Logical Reasoning</h3>
+        <p class="feature-desc">Puzzles, syllogisms, blood relations, coding-decoding — sharpen the pattern recognition and analytical thinking that every placement aptitude round demands.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📖</div>
+        <h3 class="feature-title">Verbal Ability</h3>
+        <p class="feature-desc">Reading comprehension, grammar, vocabulary, and sentence correction — improve your English to clear every written round with complete confidence.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">💻</div>
+        <h3 class="feature-title">Technical & Coding Skills</h3>
+        <p class="feature-desc">Data structures, algorithms, OOP, and DBMS — the AI tracks your coding progress and recommends the right problems based on your skill gaps and company targets.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🎙️</div>
+        <h3 class="feature-title">Communication Skills</h3>
+        <p class="feature-desc">Group discussion practice, mock interviews, and presentation skills — become the candidate every recruiter wants to hire by mastering how you speak and express ideas.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🤝</div>
+        <h3 class="feature-title">Soft Skills & HR Prep</h3>
+        <p class="feature-desc">Answer "tell me about yourself", tackle HR rounds confidently, and learn to present your strengths and profile in the most impactful way possible.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MODULE JOURNEY TIMELINE (DARK) ───────────────────────── -->
+<section class="how-section" id="modules">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Your Complete Journey</div>
+    <h2 class="section-title reveal">8 Modules. One Clear<br>Path to <span class="accent">Placement Readiness.</span></h2>
+    <p class="section-sub reveal">Our agentic AI walks you through each module in sequence — every step builds on the last, and nothing gets skipped. This is your full preparation roadmap.</p>
+
+    <div class="timeline-wrap">
+
+      <div class="tl-item reveal">
+        <div class="tl-num-wrap"><div class="tl-num">01</div><div class="tl-tag-label">Start</div></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div class="tl-card-title"><span class="tl-emoji">👤</span> Profile Setup</div>
+            <span class="tl-chip chip-teal">Foundation</span>
+          </div>
+          <p class="tl-card-desc">Create your student profile with education, branch, CGPA, and career goals. This becomes the foundation every AI recommendation is built upon.</p>
+          <div class="tl-features"><span class="tl-feat">Education details</span><span class="tl-feat">Career goals</span><span class="tl-feat">Target companies</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num-wrap"><div class="tl-num">02</div><div class="tl-tag-label">Skills</div></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div class="tl-card-title"><span class="tl-emoji">⚡</span> Skill Mapping</div>
+            <span class="tl-chip chip-warm">Assessment</span>
+          </div>
+          <p class="tl-card-desc">Tell the AI what you already know. It maps your technical and soft skills, evaluates your current readiness, and pinpoints exactly where the gaps are.</p>
+          <div class="tl-features"><span class="tl-feat">Technical skills</span><span class="tl-feat">Soft skills</span><span class="tl-feat">Gap analysis</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num-wrap"><div class="tl-num">03</div><div class="tl-tag-label">Resume</div></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div class="tl-card-title"><span class="tl-emoji">📄</span> Resume Analyse</div>
+            <span class="tl-chip chip-green">AI Generated</span>
+          </div>
+          <p class="tl-card-desc">Upload your existing resume or let AI build one from scratch. Get an ATS-friendly resume that reflects your skills, projects, and achievements perfectly.</p>
+          <div class="tl-features"><span class="tl-feat">Resume upload</span><span class="tl-feat">AI enhancement</span><span class="tl-feat">ATS score check</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num-wrap"><div class="tl-num">04</div><div class="tl-tag-label">Projects</div></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div class="tl-card-title"><span class="tl-emoji">🛠️</span> Projects Showcase</div>
+            <span class="tl-chip chip-teal">Portfolio</span>
+          </div>
+          <p class="tl-card-desc">Add your academic and personal projects. The AI helps you write impactful descriptions that interviewers love — highlighting what you built and the impact it had.</p>
+          <div class="tl-features"><span class="tl-feat">Project descriptions</span><span class="tl-feat">Tech stack tagging</span><span class="tl-feat">Impact phrasing</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num-wrap"><div class="tl-num">05</div><div class="tl-tag-label">Learn</div></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div class="tl-card-title"><span class="tl-emoji">📚</span> Personalized Learning Path</div>
+            <span class="tl-chip chip-teal">AI Curated</span>
+          </div>
+          <p class="tl-card-desc">Based on your skill gaps, the AI builds a custom preparation roadmap — study the right topics in the right order, with no more guessing what to learn next.</p>
+          <div class="tl-features"><span class="tl-feat">Custom roadmap</span><span class="tl-feat">Curated resources</span><span class="tl-feat">Progress tracking</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num-wrap"><div class="tl-num">06</div><div class="tl-tag-label">Test</div></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div class="tl-card-title"><span class="tl-emoji">🧠</span> Aptitude & Mock Tests</div>
+            <span class="tl-chip chip-rose">Practice</span>
+          </div>
+          <p class="tl-card-desc">AI-generated aptitude, reasoning, verbal, and coding tests. Get instant scores, weak-area breakdowns, and targeted next steps after every single test you take.</p>
+          <div class="tl-features"><span class="tl-feat">Aptitude rounds</span><span class="tl-feat">Coding challenges</span><span class="tl-feat">Mock interviews</span><span class="tl-feat">Instant feedback</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num-wrap"><div class="tl-num">07</div><div class="tl-tag-label">AI Picks</div></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div class="tl-card-title"><span class="tl-emoji">🤖</span> AI Recommendations</div>
+            <span class="tl-chip chip-teal">Smart Agent</span>
+          </div>
+          <p class="tl-card-desc">Your agentic AI continuously analyses your progress and recommends exactly what to focus on next — courses, practice topics, study plans, and daily preparation nudges.</p>
+          <div class="tl-features"><span class="tl-feat">Daily suggestions</span><span class="tl-feat">Readiness score</span><span class="tl-feat">Smart nudges</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num-wrap"><div class="tl-num">08</div><div class="tl-tag-label">Ready!</div></div>
+        <div class="tl-card" style="border-color: rgba(10,163,181,0.25); background: rgba(10,163,181,0.04);">
+          <div class="tl-card-top">
+            <div class="tl-card-title"><span class="tl-emoji">🏢</span> Company Readiness</div>
+            <span class="tl-chip chip-green">Final Stage</span>
+          </div>
+          <p class="tl-card-desc">Explore companies visiting your campus. See their test patterns, eligibility criteria, and get AI-guided last-mile preparation tailored to each company's placement drive.</p>
+          <div class="tl-features"><span class="tl-feat">Company profiles</span><span class="tl-feat">Test patterns</span><span class="tl-feat">Interview tips</span><span class="tl-feat">Eligibility check</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── AI AGENT SECTION ──────────────────────────────────────── -->
+<section class="agent-section" id="ai-agent">
+  <div class="agent-inner">
+    <div>
+      <div class="section-eyebrow reveal">Your AI Companion</div>
+      <h2 class="section-title reveal">Not Just a Portal.<br>Your <span class="accent">AI Prep Coach.</span></h2>
+      <p class="section-sub reveal">The SmartPlace AI agent doesn't just assign tests — it thinks, adapts, and guides you like a personal mentor who knows exactly where you stand and what you need next.</p>
+      <div class="agent-features">
+        <div class="agent-feat reveal">
+          <div class="af-icon">📈</div>
+          <div>
+            <div class="af-title">Tracks Your Progress Daily</div>
+            <div class="af-desc">Monitors what you've studied and tested, calculates your placement readiness score, and updates your preparation plan in real time.</div>
+          </div>
+        </div>
+        <div class="agent-feat reveal">
+          <div class="af-icon">🎯</div>
+          <div>
+            <div class="af-title">Pinpoints Your Weak Areas</div>
+            <div class="af-desc">After every test or activity, the AI identifies exactly which topics need more attention and creates a targeted action plan to fix them fast.</div>
+          </div>
+        </div>
+        <div class="agent-feat reveal">
+          <div class="af-icon">🗓️</div>
+          <div>
+            <div class="af-title">Builds a Daily Study Plan</div>
+            <div class="af-desc">Based on your schedule and goals, the AI suggests a realistic day-by-day preparation schedule you can actually follow and complete.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-mockup reveal">
+      <div class="chat-header">
+        <div class="chat-avatar">🤖</div>
+        <div>
+          <div class="chat-name">SmartPlace AI Agent</div>
+          <div class="chat-online">Active now</div>
+        </div>
+      </div>
+      <div class="chat-body">
+        <div class="chat-bubble bubble-ai">
+          👋 Hi Arjun! I've analysed your last 3 mock tests. You're doing great in Verbal but <strong>Quantitative Aptitude</strong> needs work — especially Time & Work and Probability.
+        </div>
+        <div class="chat-bubble bubble-user">
+          What should I focus on today?
+        </div>
+        <div class="chat-bubble bubble-ai">
+          Here's your plan for today:
+          <div class="chat-tags">
+            <span class="chat-tag">⏱ Time & Work — 30 min</span>
+            <span class="chat-tag">🔢 Probability — 20 min</span>
+            <span class="chat-tag">💻 Arrays (DSA) — 45 min</span>
+          </div>
+        </div>
+        <div class="chat-bubble bubble-ai">
+          After this, your readiness score will jump from <strong>67% → 80%</strong>. You'll be ready to attempt the TCS NQT Mock Test! 🚀
+        </div>
+        <div class="chat-bubble bubble-user">
+          Start the Quantitative module now!
+        </div>
+        <div class="chat-typing">
+          <div class="typing-dots">
+            <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+          </div>
+          AI is generating your practice set…
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMPANIES ─────────────────────────────────────────────── -->
+<section class="companies-section" id="companies">
+  <p class="companies-label reveal">Prepare for placement drives at</p>
+  <div class="company-logos reveal">
+    <div class="company-pill"><span class="company-dot"></span>TCS</div>
+    <div class="company-pill"><span class="company-dot"></span>Infosys</div>
+    <div class="company-pill"><span class="company-dot"></span>Wipro</div>
+    <div class="company-pill"><span class="company-dot"></span>Accenture</div>
+    <div class="company-pill"><span class="company-dot"></span>Cognizant</div>
+    <div class="company-pill"><span class="company-dot"></span>HCL Tech</div>
+    <div class="company-pill"><span class="company-dot"></span>Capgemini</div>
+    <div class="company-pill"><span class="company-dot"></span>Tech Mahindra</div>
+  </div>
+</section>
+
+<!-- ── WHY SMARTPLACE ────────────────────────────────────────── -->
+<section class="highlight-section">
+  <div class="highlight-inner section-inner">
+    <div class="highlight-text">
+      <div class="section-eyebrow reveal">Why SmartPlace?</div>
+      <h2 class="section-title reveal">Not Just a Portal.<br>Your <span class="accent">AI Career Coach.</span></h2>
+      <p class="section-sub reveal">Unlike traditional placement portals, our agentic AI actively works for you — learning your profile, adjusting recommendations, and improving your preparation every single day.</p>
+      <ul class="feature-list reveal">
+        <li>
+          <div class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0aa3b5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          Agentic AI that adapts to your pace, gaps, and goals every day
+        </li>
+        <li>
+          <div class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0aa3b5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          Real-time skill gap analysis with a curated learning path
+        </li>
+        <li>
+          <div class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0aa3b5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          AI-proctored aptitude tests, mock tests & communication practice
+        </li>
+        <li>
+          <div class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0aa3b5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          End-to-end module journey from profile setup to placement readiness
+        </li>
+      </ul>
+    </div>
+    <div class="stat-cards reveal">
+      <div class="stat-card">
+        <div class="stat-card-num">500<span>+</span></div>
+        <div class="stat-card-label">Students Successfully Prepared</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num">10K<span>+</span></div>
+        <div class="stat-card-label">Mock Tests Completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num">3<span>x</span></div>
+        <div class="stat-card-label">Faster Preparation vs Manual</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num">95<span>%</span></div>
+        <div class="stat-card-label">Student Satisfaction Score</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA BANNER ────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-inner reveal">
+    <p class="cta-label">Start Today — It's Free</p>
+    <h2 class="cta-title">Your Placement Drive<br>is Coming. Are You<br><span class="accent">Ready For It?</span></h2>
+    <p class="cta-sub">Join hundreds of students already using SmartPlace to prepare smarter, not harder.</p>
+    <div class="cta-buttons">
+      <a href="{% url 'register' %}" class="btn-cta-primary">
+        Begin Preparation Free
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="{% url 'login' %}" class="btn-cta-ghost">Already have an account?</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-brand">Smart<em>Place</em> · AI Placement Prep</div>
+  <p class="footer-copy">© 2026 SmartPlace. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'register' %}">Register</a>
+  </div>
+</footer>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+reveals.forEach(r => observer.observe(r));
+
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  nav.style.background = window.scrollY > 40
+    ? 'rgba(234,241,246,0.96)'
+    : 'rgba(234,241,246,0.82)';
+});
+</script>
+</body>
+</html>

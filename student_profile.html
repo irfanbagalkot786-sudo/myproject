@@ -1,0 +1,714 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Profile - Smart Placement Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --teal:       #0aa3b5;
+  --teal-dark:  #088a9a;
+  --teal-dim:   rgba(10,163,181,0.12);
+  --ink:        #0d1b2a;
+  --slate:      #3a4a5c;
+  --muted:      #7a8fa8;
+  --surface:    #ffffff;
+  --bg:         #eaf1f6;
+  --border:     #d6e4ed;
+  --sidebar-w:  230px;
+
+  --surface2:   #ddeaf3;
+  --accent:     var(--teal);
+  --accent2:    var(--teal-dark);
+  --accent3:    #10b981;
+  --text:       var(--ink);
+  --gradient:   linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+  --glow:       0 0 40px rgba(10,163,181,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(10,163,181,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(8,138,154,0.06) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  height: 64px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+}
+
+.navbar-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.navbar-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.navbar-links a:hover { color: var(--slate); background: var(--surface2); }
+.navbar-links a.active {
+  color: var(--teal);
+  background: var(--teal-dim);
+}
+
+/* ── MAIN ── */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  grid-column: 1/-1;
+  margin-bottom: 8px;
+  animation: fadeUp 0.5s ease both;
+}
+
+.page-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+}
+
+.page-header p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+/* ── PROFILE CARD ── */
+.profile-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 36px 28px;
+  text-align: center;
+  position: sticky;
+  top: 88px;
+  box-shadow: var(--glow);
+  animation: fadeUp 0.5s ease 0.1s both;
+}
+
+.avatar-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.avatar-wrap img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 0 0 0 3px rgba(10,163,181,0.35), 0 8px 32px rgba(13,27,42,0.1);
+}
+
+.avatar-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent3);
+  border: 2px solid var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-badge i { font-size: 10px; color: #fff; }
+
+.profile-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+.profile-role {
+  font-size: 0.82rem;
+  color: var(--teal);
+  font-weight: 500;
+  margin-bottom: 20px;
+  background: var(--teal-dim);
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(10,163,181,0.25);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  background: var(--bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  transition: border-color 0.2s;
+}
+
+.info-item:hover { border-color: rgba(10,163,181,0.35); }
+
+.info-item .icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--teal-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--teal);
+}
+
+.info-item .icon.green  { background: rgba(16,185,129,0.1);  color: var(--accent3); }
+.info-item .icon.purple { background: rgba(8,138,154,0.12);  color: var(--teal-dark); }
+
+.info-item span { color: var(--slate); font-weight: 400; }
+.info-item a { color: var(--teal); text-decoration: none; font-weight: 500; }
+.info-item a:hover { text-decoration: underline; }
+
+/* ── SKILLS SECTION IN PROFILE CARD ── */
+.skills-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skills-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  text-align: left;
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+/* Color by proficiency level */
+.skill-tag.beginner {
+  background: rgba(251,191,36,0.12);
+  color: #b45309;
+  border-color: rgba(251,191,36,0.35);
+}
+.skill-tag.intermediate {
+  background: rgba(10,163,181,0.10);
+  color: var(--teal-dark);
+  border-color: rgba(10,163,181,0.28);
+}
+.skill-tag.advanced {
+  background: rgba(16,185,129,0.10);
+  color: #065f46;
+  border-color: rgba(16,185,129,0.30);
+}
+.skill-tag.expert {
+  background: rgba(139,92,246,0.10);
+  color: #5b21b6;
+  border-color: rgba(139,92,246,0.28);
+}
+
+.skill-tag i { font-size: 10px; }
+
+.no-skills-msg {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: left;
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+/* ── FORM CARD ── */
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 36px;
+  animation: fadeUp 0.5s ease 0.2s both;
+}
+
+.form-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.form-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.form-card-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.form-card-header p {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.form-section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group { margin-bottom: 18px; }
+.form-group.full { grid-column: 1/-1; }
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 7px;
+  letter-spacing: 0.3px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input::placeholder { color: var(--muted); opacity: 0.7; }
+
+input:focus, select:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(10,163,181,0.13);
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a8fa8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+}
+
+select option { background: var(--surface); color: var(--ink); }
+
+input[type="file"] {
+  padding: 10px 14px;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  background: var(--teal-dim);
+  border: 1px solid rgba(10,163,181,0.3);
+  color: var(--teal);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  margin-right: 12px;
+  transition: background 0.2s;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background: rgba(10,163,181,0.22);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gradient);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.4px;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(10,163,181,0.28);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(10,163,181,0.42);
+}
+
+.submit-btn:active { transform: translateY(0); }
+
+.submit-btn::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(rgba(255,255,255,0.1),transparent);
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; }
+  .profile-card { position:static; }
+  .page-header { grid-column:1; }
+}
+
+@media (max-width: 600px) {
+  .navbar { padding:0 16px; }
+  .navbar-links { gap: 2px; }
+  .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
+  .main { padding: 20px 14px 40px; }
+  .form-row { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+  .form-card { padding: 24px 18px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <div class="navbar-links">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'student_profile' %}" class="active">Profile</a>
+    <a href="{% url 'skills' %}">Skills</a>
+    <a href="{% url 'projects' %}">Projects</a>
+    <a href="{% url 'companies' %}">Companies</a>
+    <a href="{% url 'upload_resume' %}">Resume</a>
+    <a href="{% url 'recommendations' %}">Recs</a>
+    <a href="{% url 'learning_path' %}">Learning</a>
+    <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'jobs' %}">Jobs</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>My Profile</h1>
+    <p>Manage your personal information and placement preferences</p>
+  </div>
+
+  <!-- PROFILE CARD -->
+  <div class="profile-card">
+
+    <div class="avatar-wrap">
+      <img src="{% if student.profile_photo %}{{ student.profile_photo.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="Profile Photo">
+      <div class="avatar-badge"><i class="fas fa-check"></i></div>
+    </div>
+
+    <h3>{{ student.full_name|default:"Student Name" }}</h3>
+
+    {% if student.job_role %}
+    <div class="profile-role"><i class="fas fa-briefcase" style="margin-right:6px;font-size:0.75rem;"></i>{{ student.job_role }}</div>
+    {% endif %}
+
+    <div class="divider"></div>
+
+    <div class="info-list">
+
+      <div class="info-item">
+        <div class="icon"><i class="fas fa-university"></i></div>
+        <span>{{ student.college }}</span>
+      </div>
+
+      <div class="info-item">
+        <div class="icon purple"><i class="fas fa-code-branch"></i></div>
+        <span>{{ student.get_branch_display }}</span>
+      </div>
+
+      {% if student.cgpa %}
+      <div class="info-item">
+        <div class="icon green"><i class="fas fa-star"></i></div>
+        <span>CGPA: <strong>{{ student.cgpa }}</strong></span>
+      </div>
+      {% endif %}
+
+      {% if student.phone %}
+      <div class="info-item">
+        <div class="icon"><i class="fas fa-phone"></i></div>
+        <span>{{ student.phone }}</span>
+      </div>
+      {% endif %}
+
+      {% if student.linkedin_url %}
+      <div class="info-item">
+        <div class="icon purple"><i class="fab fa-linkedin"></i></div>
+        <a href="{{ student.linkedin_url }}" target="_blank">LinkedIn Profile</a>
+      </div>
+      {% endif %}
+
+      {% if student.github_url %}
+      <div class="info-item">
+        <div class="icon"><i class="fab fa-github"></i></div>
+        <a href="{{ student.github_url }}" target="_blank">GitHub Profile</a>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- ── SKILLS DISPLAY ── -->
+    <div class="divider"></div>
+    <div class="skills-section-title">
+      <i class="fas fa-code" style="color:var(--teal);font-size:11px;"></i> Skills
+    </div>
+
+    {% if student_skills %}
+      <div class="skills-tags">
+        {% for ss in student_skills %}
+          <span class="skill-tag {{ ss.proficiency_level|lower }}">
+            <i class="fas fa-circle" style="font-size:6px;"></i>
+            {{ ss.skill.name }}
+          </span>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-skills-msg">
+        <i class="fas fa-info-circle" style="color:var(--teal);margin-right:6px;"></i>
+        No skills added yet. <a href="{% url 'skills' %}" style="color:var(--teal);font-weight:600;">Add skills →</a>
+      </div>
+    {% endif %}
+
+  </div><!-- end profile-card -->
+
+  <!-- FORM CARD -->
+  <div class="form-card">
+
+    <div class="form-card-header">
+      <div class="form-card-icon">✏️</div>
+      <div>
+        <h2>Edit Profile</h2>
+        <p>Keep your information up to date for better placement matches</p>
+      </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-section-label">Basic Information</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="full_name" value="{{ student.full_name }}" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label>College</label>
+          <input type="text" name="college" value="{{ student.college }}" placeholder="College name">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Branch</label>
+          <select name="branch">
+            {% for value,label in student.BRANCH_CHOICES %}
+            <option value="{{ value }}" {% if student.branch == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>CGPA</label>
+          <input type="number" step="0.01" name="cgpa" value="{{ student.cgpa }}" placeholder="e.g. 8.5">
+        </div>
+      </div>
+
+      <div class="form-section-label">Contact & Career</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" name="phone" value="{{ student.phone }}" placeholder="+91 00000 00000">
+        </div>
+        <div class="form-group">
+          <label>Desired Job Role</label>
+          <input type="text" name="job_role" value="{{ student.job_role }}" placeholder="e.g. Software Engineer">
+        </div>
+      </div>
+
+      <div class="form-section-label">Online Presence</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>LinkedIn URL</label>
+          <input type="url" name="linkedin_url" value="{{ student.linkedin_url }}" placeholder="https://linkedin.com/in/...">
+        </div>
+        <div class="form-group">
+          <label>GitHub URL</label>
+          <input type="url" name="github_url" value="{{ student.github_url }}" placeholder="https://github.com/...">
+        </div>
+      </div>
+
+      <div class="form-section-label">Profile Photo</div>
+
+      <div class="form-group full">
+        <label>Upload Photo</label>
+        <input type="file" name="profile_photo" accept="image/*">
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-save" style="margin-right:8px;"></i>Update Profile
+      </button>
+
+    </form>
+  </div>
+
+</div>
+
+</body>
+</html>

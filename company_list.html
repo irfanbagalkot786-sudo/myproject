@@ -1,0 +1,343 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Companies - Smart Placement Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --teal:       #0aa3b5;
+  --teal-dark:  #088a9a;
+  --teal-dim:   rgba(10,163,181,0.12);
+  --ink:        #0d1b2a;
+  --slate:      #3a4a5c;
+  --muted:      #7a8fa8;
+  --surface:    #ffffff;
+  --bg:         #eaf1f6;
+  --border:     #d6e4ed;
+  --gradient:   linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
+  --glow:       0 0 40px rgba(10,163,181,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(10,163,181,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(8,138,154,0.06) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  height: 64px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+}
+
+.navbar-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.navbar-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.navbar-links a:hover { color: var(--slate); background: var(--teal-dim); }
+.navbar-links a.active { color: var(--teal); background: var(--teal-dim); }
+
+/* ── MAIN ── */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  margin-bottom: 28px;
+  animation: fadeUp 0.5s ease both;
+}
+
+.page-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+}
+
+.page-header p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
+/* ── COMPANIES GRID ── */
+.companies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
+}
+
+/* ── COMPANY CARD ── */
+.company-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--glow);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  animation: fadeUp 0.5s ease both;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.company-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(10,163,181,0.14);
+  border-color: rgba(10,163,181,0.3);
+}
+
+.company-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.company-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: white;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.company-title h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.company-industry {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--teal);
+  background: var(--teal-dim);
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(10,163,181,0.2);
+}
+
+.company-desc {
+  font-size: 0.85rem;
+  color: var(--slate);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.company-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+.visit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  background: var(--gradient);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(10,163,181,0.25);
+}
+
+.visit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(10,163,181,0.38);
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--muted);
+}
+
+.empty-state i {
+  font-size: 2.8rem;
+  margin-bottom: 14px;
+  opacity: 0.4;
+  color: var(--teal);
+  display: block;
+}
+
+.empty-state p { font-size: 0.9rem; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* stagger cards */
+.company-card:nth-child(1) { animation-delay: 0.05s; }
+.company-card:nth-child(2) { animation-delay: 0.10s; }
+.company-card:nth-child(3) { animation-delay: 0.15s; }
+.company-card:nth-child(4) { animation-delay: 0.20s; }
+.company-card:nth-child(5) { animation-delay: 0.25s; }
+.company-card:nth-child(6) { animation-delay: 0.30s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .navbar { padding: 0 16px; }
+  .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
+  .main { padding: 20px 14px 40px; }
+  .companies-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <div class="navbar-links">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'student_profile' %}">Profile</a>
+    <a href="{% url 'skills' %}">Skills</a>
+    <a href="{% url 'projects' %}">Projects</a>
+    <a href="{% url 'companies' %}" class="active">Companies</a>
+    <a href="{% url 'upload_resume' %}">Resume</a>
+    <a href="{% url 'recommendations' %}">Recs</a>
+    <a href="{% url 'learning_path' %}">Learning</a>
+    <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'jobs' %}">Jobs</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>Companies</h1>
+    <p>Explore companies and opportunities available for placement</p>
+  </div>
+
+  <!-- COMPANIES GRID -->
+  <div class="companies-grid">
+
+    {% for company in companies %}
+    <div class="company-card">
+
+      <div class="company-top">
+        <div class="company-logo">{{ company.name|slice:":2"|upper }}</div>
+        <div class="company-title">
+          <h3>{{ company.name }}</h3>
+          <span class="company-industry">
+            <i class="fas fa-industry" style="font-size:0.65rem;"></i>
+            {{ company.industry }}
+          </span>
+        </div>
+      </div>
+
+      {% if company.description %}
+      <p class="company-desc">{{ company.description }}</p>
+      {% endif %}
+
+      {% if company.website %}
+      <div class="company-footer">
+        <a href="{{ company.website }}" target="_blank" class="visit-btn">
+          <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i>
+          Visit Website
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+    {% empty %}
+    <div class="empty-state">
+      <i class="fas fa-building"></i>
+      <p>No companies available at the moment.</p>
+    </div>
+    {% endfor %}
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,556 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assessment Test - Smart Placement Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --teal:       #0aa3b5;
+  --teal-dark:  #088a9a;
+  --teal-dim:   rgba(10,163,181,0.12);
+  --ink:        #0d1b2a;
+  --slate:      #3a4a5c;
+  --muted:      #7a8fa8;
+  --surface:    #ffffff;
+  --bg:         #eaf1f6;
+  --border:     #d6e4ed;
+  --gradient:   linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
+  --glow:       0 0 40px rgba(10,163,181,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(10,163,181,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(8,138,154,0.06) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  height: 64px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+}
+
+.navbar-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.navbar-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.navbar-links a:hover  { color: var(--slate); background: var(--teal-dim); }
+.navbar-links a.active { color: var(--teal);  background: var(--teal-dim); }
+
+/* ── MAIN ── */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  margin-bottom: 32px;
+  animation: fadeUp 0.5s ease both;
+}
+
+.page-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+}
+
+.page-header p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
+/* ── PROGRESS BAR ── */
+.test-progress {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  box-shadow: var(--glow);
+  animation: fadeUp 0.5s ease 0.05s both;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.test-progress-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.progress-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--gradient);
+  border-radius: 99px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.progress-count {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--teal);
+  white-space: nowrap;
+}
+
+/* ── QUESTION CARDS ── */
+.question-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 26px 28px;
+  box-shadow: var(--glow);
+  animation: fadeUp 0.5s ease both;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.question-card.answered {
+  border-color: rgba(10,163,181,0.30);
+  box-shadow: 0 0 0 3px rgba(10,163,181,0.06), var(--glow);
+}
+
+.question-card:nth-child(1)  { animation-delay: 0.06s; }
+.question-card:nth-child(2)  { animation-delay: 0.10s; }
+.question-card:nth-child(3)  { animation-delay: 0.14s; }
+.question-card:nth-child(4)  { animation-delay: 0.18s; }
+.question-card:nth-child(5)  { animation-delay: 0.22s; }
+.question-card:nth-child(6)  { animation-delay: 0.26s; }
+.question-card:nth-child(7)  { animation-delay: 0.30s; }
+.question-card:nth-child(8)  { animation-delay: 0.34s; }
+.question-card:nth-child(9)  { animation-delay: 0.38s; }
+.question-card:nth-child(10) { animation-delay: 0.42s; }
+
+.question-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.question-number {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--gradient);
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(10,163,181,0.25);
+}
+
+.question-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.6;
+  padding-top: 5px;
+}
+
+/* ── OPTIONS ── */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-size: 0.88rem;
+  color: var(--slate);
+  user-select: none;
+}
+
+.option-label:hover {
+  border-color: var(--teal);
+  background: var(--teal-dim);
+  color: var(--teal);
+}
+
+.option-label input[type="radio"] { display: none; }
+
+.radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+
+.radio-dot::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  opacity: 0;
+  transition: opacity 0.18s;
+}
+
+.option-label input[type="radio"]:checked ~ .radio-dot {
+  border-color: var(--teal);
+  background: var(--teal-dim);
+}
+
+.option-label input[type="radio"]:checked ~ .radio-dot::after { opacity: 1; }
+
+.option-label:has(input[type="radio"]:checked) {
+  border-color: var(--teal);
+  background: var(--teal-dim);
+  color: var(--teal);
+  font-weight: 500;
+}
+
+/* ── UNANSWERED WARNING ── */
+.warning-toast {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245,158,11,0.12);
+  border: 1.5px solid rgba(245,158,11,0.35);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: #b45309;
+  font-weight: 500;
+  margin-bottom: 14px;
+  animation: fadeUp 0.3s ease both;
+}
+
+.warning-toast.show { display: flex; }
+
+/* ── SUBMIT SECTION ── */
+.submit-section {
+  margin-top: 28px;
+  animation: fadeUp 0.5s ease 0.45s both;
+}
+
+.submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px 24px;
+  background: var(--gradient);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 18px rgba(10,163,181,0.30);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(10,163,181,0.42);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 64px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  animation: fadeUp 0.5s ease 0.1s both;
+}
+
+.empty-state i {
+  font-size: 2.8rem;
+  color: var(--teal);
+  opacity: 0.4;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.empty-state h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.empty-state p { font-size: 0.85rem; color: var(--muted); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .navbar { padding: 0 16px; }
+  .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
+  .main { padding: 20px 14px 40px; }
+  .question-card { padding: 18px 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <div class="navbar-links">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'student_profile' %}">Profile</a>
+    <a href="{% url 'skills' %}">Skills</a>
+    <a href="{% url 'projects' %}">Projects</a>
+    <a href="{% url 'companies' %}">Companies</a>
+    <a href="{% url 'upload_resume' %}">Resume</a>
+    <a href="{% url 'recommendations' %}">Recs</a>
+    <a href="{% url 'learning_path' %}">Learning</a>
+    <a href="{% url 'test' %}" class="active">Test</a>
+    <a href="{% url 'jobs' %}">Jobs</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="page-header">
+    <h1>Assessment Test</h1>
+    <p>Answer all questions carefully — your score helps tailor your recommendations</p>
+  </div>
+
+  {% if questions %}
+
+  <!-- PROGRESS BAR -->
+  <div class="test-progress">
+    <span class="test-progress-label">Progress</span>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <span class="progress-count" id="progressCount">0 / {{ questions|length }}</span>
+  </div>
+
+  <!-- UNANSWERED WARNING -->
+  <div class="warning-toast" id="warningToast">
+    <i class="fas fa-triangle-exclamation"></i>
+    Please answer all questions before submitting.
+  </div>
+
+  <!-- FORM — posts to result view -->
+  <form method="POST" action="{% url 'result' %}" id="testForm">
+    {% csrf_token %}
+
+    <div class="question-list">
+      {% for q in questions %}
+      <div class="question-card" id="card-{{ q.id }}">
+
+        <div class="question-header">
+          <div class="question-number">{{ forloop.counter }}</div>
+          <p class="question-text">{{ q.question_text }}</p>
+        </div>
+
+        <div class="options-list">
+          <label class="option-label">
+            <input type="radio" name="{{ q.id }}" value="{{ q.option1 }}" onchange="updateProgress()">
+            <span class="radio-dot"></span>
+            {{ q.option1 }}
+          </label>
+          <label class="option-label">
+            <input type="radio" name="{{ q.id }}" value="{{ q.option2 }}" onchange="updateProgress()">
+            <span class="radio-dot"></span>
+            {{ q.option2 }}
+          </label>
+          <label class="option-label">
+            <input type="radio" name="{{ q.id }}" value="{{ q.option3 }}" onchange="updateProgress()">
+            <span class="radio-dot"></span>
+            {{ q.option3 }}
+          </label>
+          <label class="option-label">
+            <input type="radio" name="{{ q.id }}" value="{{ q.option4 }}" onchange="updateProgress()">
+            <span class="radio-dot"></span>
+            {{ q.option4 }}
+          </label>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="submit-section">
+      <button type="button" class="submit-btn" onclick="handleSubmit()">
+        <i class="fas fa-paper-plane"></i> Submit Test
+      </button>
+    </div>
+
+  </form>
+
+  {% else %}
+
+  <div class="empty-state">
+    <i class="fas fa-clipboard-question"></i>
+    <h3>No questions available</h3>
+    <p>The assessment test hasn't been set up yet. Please check back later.</p>
+  </div>
+
+  {% endif %}
+
+</div>
+
+<script>
+  const total = document.querySelectorAll('.question-card').length;
+
+  function updateProgress() {
+    const answered = new Set(
+      [...document.querySelectorAll('input[type="radio"]:checked')]
+        .map(el => el.name)
+    ).size;
+
+    const pct = total ? (answered / total) * 100 : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = answered + ' / ' + total;
+
+    document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
+      const card = el.closest('.question-card');
+      if (card) card.classList.add('answered');
+    });
+
+    // hide warning once all answered
+    if (answered === total) {
+      document.getElementById('warningToast').classList.remove('show');
+    }
+  }
+
+  function handleSubmit() {
+    const answered = new Set(
+      [...document.querySelectorAll('input[type="radio"]:checked')]
+        .map(el => el.name)
+    ).size;
+
+    if (answered < total) {
+      // show warning and scroll to first unanswered card
+      document.getElementById('warningToast').classList.add('show');
+
+      const allNames = [...document.querySelectorAll('.question-card')]
+        .map(card => card.querySelector('input[type="radio"]').name);
+      const answeredNames = new Set(
+        [...document.querySelectorAll('input[type="radio"]:checked')].map(el => el.name)
+      );
+
+      for (const name of allNames) {
+        if (!answeredNames.has(name)) {
+          const firstUnanswered = document.querySelector(`input[name="${name}"]`).closest('.question-card');
+          firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstUnanswered.style.borderColor = 'rgba(245,158,11,0.6)';
+          setTimeout(() => firstUnanswered.style.borderColor = '', 2000);
+          break;
+        }
+      }
+      return;
+    }
+
+    document.getElementById('testForm').submit();
+  }
+
+  updateProgress();
+</script>
+
+</body>
+</html>

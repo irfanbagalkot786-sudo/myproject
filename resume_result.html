@@ -1,0 +1,210 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume Analysis - Smart Placement Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal: #0aa3b5; --teal-dark: #088a9a;
+  --teal-dim: rgba(10,163,181,0.12);
+  --ink: #0d1b2a; --slate: #3a4a5c; --muted: #7a8fa8;
+  --surface: #ffffff; --bg: #eaf1f6; --border: #d6e4ed;
+  --gradient: linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
+  --glow: 0 0 40px rgba(10,163,181,0.12);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
+
+.navbar {
+  position:sticky; top:0; z-index:100;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0 40px; height:64px;
+  background:rgba(255,255,255,0.88); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.navbar-brand {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
+  background:var(--gradient); -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; background-clip:text;
+}
+.navbar-links { display:flex; gap:4px; flex-wrap:nowrap; overflow-x:auto; }
+.navbar-links a {
+  color:var(--muted); text-decoration:none; font-size:0.8rem;
+  font-weight:500; padding:6px 12px; border-radius:8px; transition:all 0.2s; white-space:nowrap;
+}
+.navbar-links a:hover { color:var(--slate); background:var(--teal-dim); }
+.navbar-links a.active { color:var(--teal); background:var(--teal-dim); }
+
+.main { max-width:680px; margin:0 auto; padding:40px 24px 60px; }
+
+.page-header { margin-bottom:28px; }
+.page-header h1 { font-family:'Syne',sans-serif; font-size:1.9rem; font-weight:800; color:var(--ink); }
+.page-header p { color:var(--muted); font-size:0.9rem; margin-top:4px; }
+
+.score-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:24px; padding:36px; margin-bottom:20px;
+  box-shadow:var(--glow); text-align:center;
+}
+.score-ring { position:relative; display:inline-block; margin-bottom:16px; }
+.score-ring svg { transform:rotate(-90deg); }
+.score-num {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+}
+.score-num span:first-child {
+  font-family:'Syne',sans-serif; font-size:2.2rem;
+  font-weight:800; color:var(--ink); line-height:1;
+}
+.score-num span:last-child { font-size:0.78rem; color:var(--muted); margin-top:2px; }
+.score-label { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:700; margin-bottom:6px; }
+.score-sublabel { font-size:0.85rem; color:var(--muted); }
+
+.card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:28px; margin-bottom:20px;
+  box-shadow:var(--glow);
+}
+.card-title {
+  font-family:'Syne',sans-serif; font-size:1rem; font-weight:700;
+  color:var(--ink); margin-bottom:16px;
+  display:flex; align-items:center; gap:10px;
+}
+.card-title i { color:var(--teal); font-size:0.9rem; }
+.feedback-text {
+  font-size:0.9rem; color:var(--slate); line-height:1.7;
+  background:var(--bg); border-radius:12px; padding:16px;
+  border-left:3px solid var(--teal);
+}
+.roles-wrap { display:flex; flex-wrap:wrap; gap:10px; }
+.role-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 16px; border-radius:20px;
+  background:var(--teal-dim); color:var(--teal-dark);
+  border:1px solid rgba(10,163,181,0.25);
+  font-size:0.83rem; font-weight:600;
+}
+.actions { display:flex; gap:12px; margin-top:8px; }
+.btn {
+  flex:1; padding:13px; border:none; border-radius:12px;
+  font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center;
+  gap:8px; text-decoration:none;
+}
+.btn-primary { background:var(--gradient); color:white; box-shadow:0 4px 16px rgba(10,163,181,0.28); }
+.btn-primary:hover { transform:translateY(-2px); }
+.btn-outline { background:var(--surface); color:var(--teal); border:1px solid rgba(10,163,181,0.35); }
+.btn-outline:hover { background:var(--teal-dim); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.score-card, .card { animation:fadeUp 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <div class="navbar-links">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'student_profile' %}">Profile</a>
+    <a href="{% url 'skills' %}">Skills</a>
+    <a href="{% url 'projects' %}">Projects</a>
+    <a href="{% url 'companies' %}">Companies</a>
+    <a href="{% url 'upload_resume' %}" class="active">Resume</a>
+    <a href="{% url 'recommendations' %}">Recs</a>
+    <a href="{% url 'learning_path' %}">Learning</a>
+    <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'jobs' %}">Jobs</a>
+  </div>
+</nav>
+
+<div class="main">
+
+  <div class="page-header">
+    <h1>Resume Analysis</h1>
+    <p>AI-powered feedback based on your uploaded resume</p>
+  </div>
+
+  <!-- SCORE CARD -->
+  <div class="score-card">
+    <div class="score-ring">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="58" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+        <circle cx="70" cy="70" r="58" fill="none"
+          stroke="{% if analysis.analysis_score >= 75 %}#10b981{% elif analysis.analysis_score >= 50 %}#f59e0b{% else %}#ef4444{% endif %}"
+          stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="364"
+          stroke-dashoffset="364"
+          id="scoreRing"/>
+      </svg>
+      <div class="score-num">
+        <span>{{ analysis.analysis_score }}</span>
+        <span>/ 100</span>
+      </div>
+    </div>
+
+<div class="score-label" id="scoreLabel"></div>    
+      {% if analysis.analysis_score >= 75 %}Excellent Resume!
+      {% elif analysis.analysis_score >= 50 %}Good Resume
+      {% else %}Needs Improvement{% endif %}
+    </div>
+    <div class="score-sublabel">Based on AI analysis of your resume content</div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-comment-dots"></i> AI Feedback</div>
+    <div class="feedback-text">{{ analysis.feedback }}</div>
+  </div>
+
+  <!-- RECOMMENDED ROLES -->
+  {% if recommended_roles %}
+  <div class="card">
+    <div class="card-title"><i class="fas fa-briefcase"></i> Recommended Job Roles</div>
+    <div class="roles-wrap">
+      {% for role in recommended_roles %}
+        <span class="role-tag">
+          <i class="fas fa-circle" style="font-size:6px;"></i>{{ role }}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <a href="{% url 'upload_resume' %}" class="btn btn-outline">
+      <i class="fas fa-redo"></i> Re-upload
+    </a>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">
+      <i class="fas fa-home"></i> Dashboard
+    </a>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var score = parseInt("{{ analysis.analysis_score }}");
+    var ring = document.getElementById('scoreRing');
+    var label = document.getElementById('scoreLabel');
+    var circumference = 364;
+
+    ring.style.strokeDashoffset = circumference - (circumference * score / 100);
+
+    if (score >= 75) {
+      label.style.color = '#10b981';
+    } else if (score >= 50) {
+      label.style.color = '#f59e0b';
+    } else {
+      label.style.color = '#ef4444';
+    }
+  });
+</script>
+</body>
+</html>
