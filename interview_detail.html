@@ -1,0 +1,283 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interview Analysis - {{ interview.company_name }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:      #0aa3b5;
+      --teal-dark: #088a9a;
+      --teal-dim:  rgba(10,163,181,0.12);
+      --ink:       #0d1b2a;
+      --slate:     #3a4a5c;
+      --muted:     #7a8fa8;
+      --surface:   #ffffff;
+      --bg:        #eaf1f6;
+      --border:    #d6e4ed;
+      --gradient:  linear-gradient(135deg,#0aa3b5 0%,#088a9a 100%);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
+
+    .navbar {
+      position:sticky; top:0; z-index:100;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:0 40px; height:64px;
+      background:rgba(255,255,255,0.88); backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+    }
+    .navbar-brand {
+      font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
+      background:var(--gradient); -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .navbar a {
+      text-decoration:none; color:var(--slate);
+      font-weight:700; font-size:0.9rem;
+      display:flex; align-items:center; gap:8px;
+      transition:color 0.2s;
+    }
+    .navbar a:hover { color:var(--teal); }
+
+    .container {
+      max-width:1200px; margin:40px auto; padding:0 20px;
+      display:grid; grid-template-columns:1.5fr 1fr; gap:40px;
+    }
+
+    .video-card {
+      background:#000; border-radius:24px; overflow:hidden;
+      position:relative; aspect-ratio:16/9;
+      box-shadow:0 20px 50px rgba(0,0,0,0.15); margin-bottom:30px;
+    }
+    video { width:100%; height:100%; object-fit:cover; }
+
+    .analysis-card {
+      background:var(--surface); border-radius:24px; padding:32px;
+      border:1px solid var(--border);
+      box-shadow:0 10px 30px rgba(10,163,181,0.05);
+    }
+    .card-header {
+      display:flex; justify-content:space-between;
+      align-items:center; margin-bottom:24px;
+    }
+    .card-title {
+      font-family:'Syne',sans-serif; font-weight:800;
+      font-size:1.4rem; color:var(--ink);
+    }
+    .transcript-box {
+      background:var(--bg); border:1px solid var(--border);
+      border-radius:16px; padding:20px; color:var(--slate);
+      font-size:0.95rem; line-height:1.7;
+      max-height:400px; overflow-y:auto;
+    }
+    .transcript-box b { color:var(--teal); font-weight:700; }
+
+    .metric-card {
+      background:var(--surface); border-radius:24px; padding:32px;
+      border:1px solid var(--border);
+      box-shadow:0 10px 30px rgba(10,163,181,0.05);
+    }
+
+    /* AVATAR BLOCK */
+    .avatar-block {
+      position:relative;
+      width:160px;
+      margin:0 auto 28px;
+    }
+    .avatar-ring {
+      width:160px; height:160px;
+      border-radius:50%;
+      background:var(--gradient);
+      padding:4px;
+      box-shadow:0 0 0 6px var(--teal-dim), 0 8px 28px rgba(10,163,181,0.28);
+      animation:pulse-ring 3s ease-in-out infinite;
+    }
+    @keyframes pulse-ring {
+      0%,100% { box-shadow:0 0 0 6px var(--teal-dim), 0 8px 28px rgba(10,163,181,0.28); }
+      50%      { box-shadow:0 0 0 12px rgba(10,163,181,0.08), 0 8px 36px rgba(10,163,181,0.38); }
+    }
+    .avatar-ring img {
+      width:100%; height:100%;
+      border-radius:50%;
+      object-fit:cover;
+      object-position:top center;
+      display:block;
+      background:var(--bg);
+    }
+    .score-badge {
+      position:absolute;
+      bottom:4px; right:-6px;
+      width:52px; height:52px;
+      border-radius:50%;
+      background:var(--gradient);
+      border:3px solid var(--surface);
+      box-shadow:0 4px 14px rgba(10,163,181,0.4);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      z-index:2;
+    }
+    .score-badge .score-num {
+      font-family:'Syne',sans-serif; font-weight:800;
+      font-size:1rem; color:#fff; line-height:1;
+    }
+    .score-badge .score-pct {
+      font-size:0.55rem; font-weight:700;
+      color:rgba(255,255,255,0.8); line-height:1;
+      margin-top:1px;
+    }
+    .avatar-label { text-align:center; margin-top:12px; }
+    .avatar-label .ai-name {
+      font-family:'Syne',sans-serif; font-weight:700;
+      font-size:1rem; color:var(--ink);
+    }
+    .avatar-label .ai-role {
+      font-size:0.78rem; color:var(--muted);
+      font-weight:500; margin-top:2px;
+    }
+
+    .feedback-section { display:flex; flex-direction:column; gap:16px; margin-top:4px; }
+    .feedback-item {
+      display:flex; gap:14px; align-items:flex-start;
+      padding:14px 16px; border-radius:14px;
+      background:var(--bg); border:1px solid transparent;
+    }
+    .feedback-item i { font-size:1.1rem; margin-top:2px; }
+    .feedback-item.good {
+      border-color:rgba(10,163,181,0.2);
+      background:rgba(10,163,181,0.05);
+    }
+    .feedback-item.good i { color:var(--teal); }
+    .feedback-text { font-size:0.88rem; line-height:1.55; font-weight:500; color:var(--slate); }
+    .feedback-text strong { color:var(--ink); }
+
+    .session-details { margin-top:6px; }
+    .session-details h4 {
+      font-family:'Syne',sans-serif; font-size:0.92rem;
+      margin-bottom:10px; color:var(--ink);
+    }
+    .session-meta {
+      font-size:0.83rem; color:var(--muted);
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .session-meta div { display:flex; align-items:center; gap:8px; }
+    .session-meta i { width:16px; color:var(--teal); font-size:0.85rem; }
+    .session-meta b { color:var(--slate); font-weight:600; }
+
+    .btn-dashboard {
+      display:block; width:100%; margin-top:22px;
+      padding:14px; background:var(--gradient); color:#fff;
+      border:none; border-radius:14px;
+      font-family:'Syne',sans-serif; font-weight:700;
+      font-size:0.95rem; cursor:pointer; text-align:center;
+      text-decoration:none;
+      box-shadow:0 4px 18px rgba(10,163,181,0.30);
+      transition:transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-dashboard:hover {
+      transform:translateY(-2px);
+      box-shadow:0 8px 28px rgba(10,163,181,0.38);
+    }
+
+    @media (max-width:1000px) {
+      .container { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <a href="{% url 'interview_results' %}">
+    <i class="fas fa-arrow-left"></i> All Interviews
+  </a>
+</nav>
+
+<div class="container">
+
+  <div class="left-col">
+    <div class="video-card">
+      <video controls>
+        <source src="{{ interview.video_file.url }}" type="video/webm">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+      
+    <div class="analysis-card">
+      <div class="card-header">
+        <h2 class="card-title">Interview Transcript</h2>
+      </div>
+      <div class="transcript-box">
+        <p>{% if interview.transcript %}
+              {{ interview.transcript }}
+           {% else %}
+               Transcript not generated yet
+           {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-col">
+    <div class="metric-card">
+
+      <div class="card-header">
+        <h2 class="card-title">AI Feedback</h2>
+      </div>
+
+      <div class="avatar-block">
+        <div class="avatar-ring">
+         #<img src="{% static 'ai_interviewer.jpg' %}" alt="AI Interviewer Avatar">
+        </div>
+        <div class="score-badge">
+          <span class="score-num">{{ interview.ai_score }}</span>
+          <span class="score-pct">/ 100</span>
+        </div>
+      </div>
+
+      <div class="avatar-label">
+        <div class="ai-name">Aria · AI Interviewer</div>
+        <div class="ai-role">Powered by Gemini</div>
+      </div>
+
+      <div class="feedback-section">
+
+        <div class="feedback-item good">
+          <i class="fas fa-magic"></i>
+          <div class="feedback-text">
+            <strong>Key Strength:</strong> {{ interview.ai_feedback|truncatewords:80 }}
+          </div>
+        </div>
+
+        <div class="session-details">
+          <h4>Session Details</h4>
+          <div class="session-meta">
+            <div>
+              <i class="fas fa-building"></i>
+              <span><b>Target:</b> {{ interview.company_name }}</span>
+            </div>
+            <div>
+              <i class="fas fa-clock"></i>
+              <span><b>Date:</b> {{ interview.created_at|date:"M d, Y" }}</span>
+            </div>
+            <div>
+              <i class="fas fa-history"></i>
+              <span><b>Duration:</b> Simulated via Gemini</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="{% url 'dashboard' %}" class="btn-dashboard">
+          Return to Dashboard
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
