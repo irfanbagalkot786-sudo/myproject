@@ -265,7 +265,7 @@ body::before {
   align-items: center;
   justify-content: center;
   font-family: 'Syne', sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 800;
   color: var(--teal);
 }
@@ -408,9 +408,10 @@ body::before {
     <a href="{% url 'companies' %}">Companies</a>
     <a href="{% url 'upload_resume' %}">Resume</a>
     <a href="{% url 'recommendations' %}" class="active">Recs</a>
-    <a href="{% url 'learning_path' %}">Learning</a>
     <a href="{% url 'test' %}">Test</a>
     <a href="{% url 'jobs' %}">Jobs</a>
+    <a href="{% url 'logout' %}">Logout</a>
+
   </div>
 </nav>
 
@@ -446,10 +447,10 @@ body::before {
           </div>
         </div>
 
-        <div class="match-badge">
-          <div class="match-circle">
+          <div class="match-circle" data-pct="{{ rec.match_percentage|floatformat:0 }}">
             <svg viewBox="0 0 56 56">
               <circle class="track" cx="28" cy="28" r="26"/>
+              <circle class="fill" cx="28" cy="28" r="26"/>
             </svg>
             <div class="match-text">{{ rec.match_percentage|floatformat:0 }}%</div>
           </div>
@@ -494,6 +495,29 @@ body::before {
 
   </div>
 </div>
+
+<script>
+window.addEventListener('load', () => {
+  // Animate match circles
+  document.querySelectorAll('.match-circle').forEach(circle => {
+    const pct = parseInt(circle.getAttribute('data-pct'));
+    const fill = circle.querySelector('.fill');
+    const radius = 26;
+    const circ = 2 * Math.PI * radius;
+    
+    // Set dasharray
+    fill.style.strokeDasharray = circ;
+    
+    // Calculate offset
+    const offset = circ - (pct / 100) * circ;
+    
+    // Trigger animation after a small delay
+    setTimeout(() => {
+      fill.style.strokeDashoffset = offset;
+    }, 100);
+  });
+});
+</script>
 
 </body>
 </html>
