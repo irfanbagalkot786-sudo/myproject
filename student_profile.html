@@ -98,10 +98,7 @@ body::before {
 }
 
 .navbar-links a:hover { color: var(--slate); background: var(--surface2); }
-.navbar-links a.active {
-  color: var(--teal);
-  background: var(--teal-dim);
-}
+.navbar-links a.active { color: var(--teal); background: var(--teal-dim); }
 
 /* ── MAIN ── */
 .main {
@@ -202,12 +199,135 @@ body::before {
   border: 1px solid rgba(10,163,181,0.25);
 }
 
+/* ── PROFILE COMPLETION PROGRESS ── */
+.progress-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.progress-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.progress-title i { color: var(--teal); font-size: 0.8rem; }
+
+.progress-pct {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--teal);
+}
+
+.progress-bar-wrap {
+  height: 8px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--gradient);
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+
+.progress-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.progress-step.done { color: var(--slate); }
+
+.step-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 8px;
+  color: var(--muted);
+  background: var(--surface);
+  transition: all 0.3s;
+}
+
+.progress-step.done .step-dot {
+  background: var(--accent3);
+  border-color: var(--accent3);
+  color: #fff;
+}
+
+.progress-step.pending .step-dot {
+  border-color: var(--border);
+  color: transparent;
+}
+
+.step-label { flex: 1; }
+
+.step-action {
+  font-size: 0.72rem;
+  color: var(--teal);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.step-action:hover { text-decoration: underline; }
+
+.progress-msg {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--teal-dim);
+  border-radius: 8px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(10,163,181,0.18);
+}
+
+.progress-msg i { color: var(--teal); font-size: 0.8rem; flex-shrink: 0; }
+
+/* ── DIVIDER ── */
 .divider {
   height: 1px;
   background: var(--border);
   margin: 20px 0;
 }
 
+/* ── INFO LIST ── */
 .info-list {
   display: flex;
   flex-direction: column;
@@ -288,28 +408,10 @@ body::before {
   border: 1px solid;
 }
 
-/* Color by proficiency level */
-.skill-tag.beginner {
-  background: rgba(251,191,36,0.12);
-  color: #b45309;
-  border-color: rgba(251,191,36,0.35);
-}
-.skill-tag.intermediate {
-  background: rgba(10,163,181,0.10);
-  color: var(--teal-dark);
-  border-color: rgba(10,163,181,0.28);
-}
-.skill-tag.advanced {
-  background: rgba(16,185,129,0.10);
-  color: #065f46;
-  border-color: rgba(16,185,129,0.30);
-}
-.skill-tag.expert {
-  background: rgba(139,92,246,0.10);
-  color: #5b21b6;
-  border-color: rgba(139,92,246,0.28);
-}
-
+.skill-tag.beginner    { background: rgba(251,191,36,0.12);  color: #b45309;  border-color: rgba(251,191,36,0.35); }
+.skill-tag.intermediate{ background: rgba(10,163,181,0.10);  color: var(--teal-dark); border-color: rgba(10,163,181,0.28); }
+.skill-tag.advanced    { background: rgba(16,185,129,0.10);  color: #065f46;  border-color: rgba(16,185,129,0.30); }
+.skill-tag.expert      { background: rgba(139,92,246,0.10);  color: #5b21b6;  border-color: rgba(139,92,246,0.28); }
 .skill-tag i { font-size: 10px; }
 
 .no-skills-msg {
@@ -488,6 +590,41 @@ input[type="file"]::-webkit-file-upload-button:hover {
   background:linear-gradient(rgba(255,255,255,0.1),transparent);
 }
 
+/* ── BUTTON ROW ── */
+.btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-row .submit-btn {
+  margin-top: 0;
+  flex: 1;
+}
+
+.reset-btn {
+  flex: 1;
+  padding: 14px;
+  background: var(--surface);
+  color: var(--teal);
+  border: 1.5px solid rgba(10,163,181,0.4);
+  border-radius: 14px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.4px;
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.reset-btn:hover {
+  background: var(--teal-dim);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(10,163,181,0.15);
+}
+
+.reset-btn:active { transform: translateY(0); }
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
 
@@ -529,9 +666,10 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
     <a href="{% url 'companies' %}">Companies</a>
     <a href="{% url 'upload_resume' %}">Resume</a>
     <a href="{% url 'recommendations' %}">Recs</a>
-    <a href="{% url 'learning_path' %}">Learning</a>
     <a href="{% url 'test' %}">Test</a>
     <a href="{% url 'jobs' %}">Jobs</a>
+    <a href="{% url 'logout' %}">Logout</a>
+
   </div>
 </nav>
 
@@ -554,9 +692,93 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
 
     <h3>{{ student.full_name|default:"Student Name" }}</h3>
 
-    {% if student.job_role %}
-    <div class="profile-role"><i class="fas fa-briefcase" style="margin-right:6px;font-size:0.75rem;"></i>{{ student.job_role }}</div>
-    {% endif %}
+
+
+    <!-- ── PROFILE COMPLETION PROGRESS ── -->
+    <div class="progress-block">
+      <div class="progress-header">
+        <div class="progress-title">
+          <i class="fas fa-chart-line"></i> Profile Completion
+        </div>
+        <div class="progress-pct" id="progressPct">0%</div>
+      </div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+
+      <div class="progress-steps">
+
+        <div class="progress-step {% if student.full_name %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">Full Name</span>
+          {% if not student.full_name %}<a href="#" class="step-action">Add →</a>{% endif %}
+        </div>
+
+        <div class="progress-step {% if student.college %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">College</span>
+          {% if not student.college %}<a href="#" class="step-action">Add →</a>{% endif %}
+        </div>
+
+        <div class="progress-step {% if student.branch %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">Branch</span>
+          {% if not student.branch %}<a href="#" class="step-action">Add →</a>{% endif %}
+        </div>
+
+        <div class="progress-step {% if student.cgpa %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">CGPA</span>
+          {% if not student.cgpa %}<a href="#" class="step-action">Add →</a>{% endif %}
+        </div>
+
+        <div class="progress-step {% if student.phone %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">Phone Number</span>
+          {% if not student.phone %}<a href="#" class="step-action">Add →</a>{% endif %}
+        </div>
+
+
+        <div class="progress-step {% if student.linkedin_url %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">LinkedIn URL</span>
+          {% if not student.linkedin_url %}<a href="#" class="step-action">Add →</a>{% endif %}
+        </div>
+
+        <div class="progress-step {% if student.github_url %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">GitHub URL</span>
+          {% if not student.github_url %}<a href="#" class="step-action">Add →</a>{% endif %}
+        </div>
+
+        <div class="progress-step {% if student.profile_photo %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">Profile Photo</span>
+          {% if not student.profile_photo %}<a href="#" class="step-action">Upload →</a>{% endif %}
+        </div>
+
+        <div class="progress-step {% if student.work_mode %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">Work Mode Preference</span>
+          {% if not student.work_mode %}<a href="#" class="step-action">Add →</a>{% endif %}
+        </div>
+
+        <div class="progress-step {% if student_skills %}done{% else %}pending{% endif %}">
+          <div class="step-dot"><i class="fas fa-check"></i></div>
+          <span class="step-label">Skills Added</span>
+          {% if not student_skills %}<a href="{% url 'skills' %}" class="step-action">Add →</a>{% endif %}
+        </div>
+
+      </div>
+
+      <!-- Dynamic motivational message rendered by JS -->
+      <div class="progress-msg" id="progressMsg">
+        <i class="fas fa-info-circle"></i>
+        <span id="progressMsgText">Complete your profile to improve placement matches.</span>
+      </div>
+    </div>
+    <!-- end progress-block -->
 
     <div class="divider"></div>
 
@@ -571,6 +793,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
         <div class="icon purple"><i class="fas fa-code-branch"></i></div>
         <span>{{ student.get_branch_display }}</span>
       </div>
+
 
       {% if student.cgpa %}
       <div class="info-item">
@@ -597,6 +820,18 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
       <div class="info-item">
         <div class="icon"><i class="fab fa-github"></i></div>
         <a href="{{ student.github_url }}" target="_blank">GitHub Profile</a>
+      </div>
+      {% endif %}
+
+      {% if student.work_mode %}
+      <div class="info-item">
+        <div class="icon green"><i class="fas fa-laptop-house"></i></div>
+        <span>
+          {% if student.work_mode == 'wfh' %}Work From Home
+          {% elif student.work_mode == 'office' %}Office
+          {% elif student.work_mode == 'hybrid' %}Hybrid
+          {% else %}{{ student.work_mode }}{% endif %}
+        </span>
       </div>
       {% endif %}
 
@@ -671,13 +906,21 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
       <div class="form-section-label">Contact & Career</div>
 
       <div class="form-row">
-        <div class="form-group">
+        <div class="form-group full">
           <label>Phone</label>
           <input type="text" name="phone" value="{{ student.phone }}" placeholder="+91 00000 00000">
         </div>
+      </div>
+
+      <div class="form-row">
         <div class="form-group">
-          <label>Desired Job Role</label>
-          <input type="text" name="job_role" value="{{ student.job_role }}" placeholder="e.g. Software Engineer">
+          <label>Work Mode Preference</label>
+          <select name="work_mode">
+            <option value="" {% if not student.work_mode %}selected{% endif %}>-- Select Work Mode --</option>
+            <option value="wfh"    {% if student.work_mode == 'wfh'    %}selected{% endif %}>Work From Home</option>
+            <option value="office" {% if student.work_mode == 'office' %}selected{% endif %}>Office</option>
+            <option value="hybrid" {% if student.work_mode == 'hybrid' %}selected{% endif %}>Hybrid</option>
+          </select>
         </div>
       </div>
 
@@ -701,14 +944,60 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
         <input type="file" name="profile_photo" accept="image/*">
       </div>
 
-      <button type="submit" class="submit-btn">
-        <i class="fas fa-save" style="margin-right:8px;"></i>Update Profile
-      </button>
+      <div class="btn-row">
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-save" style="margin-right:8px;"></i>Update Profile
+        </button>
+        <button type="reset" class="reset-btn">
+          <i class="fas fa-rotate-left" style="margin-right:8px;"></i>Reset
+        </button>
+      </div>
 
     </form>
   </div>
 
 </div>
+
+<!-- Progress bar animation — reads done steps count from DOM, no Django tags in JS -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var steps    = document.querySelectorAll('.progress-step');
+    var total    = steps.length;
+    var done     = document.querySelectorAll('.progress-step.done').length;
+    var pct      = Math.round((done / total) * 100);
+
+    var bar      = document.getElementById('progressBar');
+    var pctEl    = document.getElementById('progressPct');
+    var msgEl    = document.getElementById('progressMsgText');
+
+    // Animate bar after a short delay so the transition is visible
+    setTimeout(function () {
+      bar.style.width = pct + '%';
+    }, 300);
+
+    pctEl.textContent = pct + '%';
+
+    // Color the percentage text based on completion
+    if (pct >= 80) {
+      pctEl.style.color = '#10b981';
+    } else if (pct >= 50) {
+      pctEl.style.color = '#f59e0b';
+    } else {
+      pctEl.style.color = '#ef4444';
+    }
+
+    // Motivational message
+    if (pct === 100) {
+      msgEl.textContent = '🎉 Your profile is 100% complete. You\'re placement ready!';
+    } else if (pct >= 80) {
+      msgEl.textContent = '✅ Almost there! Fill the remaining fields to maximise your chances.';
+    } else if (pct >= 50) {
+      msgEl.textContent = '👍 Good progress! A complete profile gets 3x more recruiter attention.';
+    } else {
+      msgEl.textContent = '💡 Complete your profile to improve placement matches.';
+    }
+  });
+</script>
 
 </body>
 </html>
