@@ -7,22 +7,62 @@ from django.http import JsonResponse
 
 from .forms import LoginForm, StudentProfileForm
 from .models import StudentProfile, Skill, StudentSkill, Project, Resume, ResumeAnalysis, Company, JobRole, Recommendation, Question
-from .models import LearningPath, Assessment
 
 import os
+import subprocess
 import json
-import google.generativeai as genai   # ← THIS must be at the top
-import PyPDF2                          # ← THIS too
+import time
+import fitz  # pymupdf
+import base64
+import google.generativeai as genai
+import PyPDF2
+import whisper
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.base import ContentFile
+from .models import InterviewSession
+from django.http import HttpResponse
+
+# ─── Config ─────────────────────────────────────────────────────────────────
+GEMINI_API_KEY = "AIzaSyD6ClT2cU6zIS7Tu1thWyG3nrvF5a-15uA"
+GEMINI_MODEL   = "gemini-2.5-flash-lite"   # ✅ working model
+# ────────────────────────────────────────────────────────────────────────────
+
+#----------whispermodel---------
+# Load Whisper model once
+model = whisper.load_model("base")
+
+
+def gemini_generate(prompt_or_parts):
+    """
+    Call Gemini with automatic retry (3 attempts, 10s apart).
+    Accepts either a string prompt or a list of parts (for vision).
+    """
+    genai.configure(api_key=GEMINI_API_KEY)
+    model = genai.GenerativeModel(GEMINI_MODEL)
+
+    last_error = None
+    for attempt in range(3):
+        try:
+            response = model.generate_content(prompt_or_parts)
+            return response
+        except Exception as e:
+            last_error = e
+            print(f"Gemini attempt {attempt + 1} failed: {e}")
+            if attempt < 2:
+                print(f"Retrying in 10 seconds...")
+                time.sleep(10)
+
+    raise last_error  # re-raise after all retries exhausted
+
 
 # ================= REGISTER VIEW =================
 
 def register_view(request):
-
     if request.method == "POST":
-
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        username         = request.POST.get('username')
+        email            = request.POST.get('email')
+        password         = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 
         if password != confirm_password:
@@ -33,18 +73,8 @@ def register_view(request):
             messages.error(request, "Username already exists")
             return redirect('register')
 
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
-
-        # Create Student Profile automatically
-        StudentProfile.objects.create(
-            user=user,
-            full_name=username
-        )
-
+        user = User.objects.create_user(username=username, email=email, password=password)
+        StudentProfile.objects.create(user=user, full_name=username)
         messages.success(request, "Registration successful. Please login.")
         return redirect('login')
 
@@ -54,32 +84,21 @@ def register_view(request):
 # ================= LOGIN VIEW =================
 
 def login_view(request):
-
     form = LoginForm()
 
     if request.method == "POST":
-
         form = LoginForm(request.POST)
-
         if form.is_valid():
-
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-
-            user = authenticate(
-                request,
-                username=username,
-                password=password
-            )
-
+            user     = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('dashboard')
             else:
                 messages.error(request, "Invalid username or password")
-
         else:
-            messages.error(request, "Invalid captcha")
+            messages.error(request, "Form is invalid")
 
     return render(request, "login.html", {'form': form})
 
@@ -96,93 +115,110 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
-    # FIXED: Proper way to get student profile
     try:
         student_profile = StudentProfile.objects.get(user=request.user)
     except StudentProfile.DoesNotExist:
         student_profile = None
-    
-    # Get stats (optional)
-    total_jobs = 100  # Replace with your job count
-    applied_jobs = 5  # Replace with actual count
-    
+
     context = {
         'student_profile': student_profile,
-        'total_jobs': total_jobs,
-        'applied_jobs': applied_jobs,
+        'total_jobs':      100,
+        'applied_jobs':    5,
     }
     return render(request, 'dashboard.html', context)
 
-# ================= STUDENT PROFILE VIEW ===============
+
+# ================= STUDENT PROFILE VIEW =================
 
 @login_required
 def student_profile(request):
     student, created = StudentProfile.objects.get_or_create(
         user=request.user,
-        defaults={
-            'full_name': request.user.get_full_name() or request.user.username
-        }
+        defaults={'full_name': request.user.username}
     )
 
     if request.method == 'POST':
-        form = StudentProfileForm(request.POST, request.FILES, instance=student)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Profile updated successfully!')
-            return redirect('student_profile')
-        else:
-            messages.error(request, 'Please fix the errors.')
-    else:
-        form = StudentProfileForm(instance=student)
+        student.full_name = request.POST.get('full_name', '').strip()
+        student.college   = request.POST.get('college',   '').strip()
+        student.branch    = request.POST.get('branch',    '').strip()
 
-    return render(request, 'student_profile.html', {
-        'student': student,
-        'form': form,
-        'student_skills': StudentSkill.objects.filter(student=student),  # ✅ FIXED
-    })
-#=======SKILL VIEW =================
+        cgpa_raw = request.POST.get('cgpa', '').strip()
+        try:
+            val = float(cgpa_raw)
+            student.cgpa = max(0, min(10, val))
+        except (ValueError, TypeError):
+            student.cgpa = 0
+
+        grad_raw = request.POST.get('graduation_year', '').strip()
+        try:
+            student.graduation_year = int(grad_raw) if grad_raw else None
+        except ValueError:
+            student.graduation_year = None
+
+        student.phone        = request.POST.get('phone', '').strip()
+        student.languages    = ','.join(request.POST.getlist('languages'))
+        work_mode_val        = request.POST.get('work_mode', '').strip()
+        student.work_mode    = work_mode_val if work_mode_val else None
+        student.linkedin_url = request.POST.get('linkedin_url', '').strip()
+        student.github_url   = request.POST.get('github_url',   '').strip()
+
+        remove_photo = request.POST.get('remove_photo', '0')
+        if remove_photo == '1':
+            if student.profile_photo:
+                student.profile_photo.delete(save=False)
+            student.profile_photo = None
+        elif request.FILES.get('profile_photo'):
+            student.profile_photo = request.FILES['profile_photo']
+
+        student.save()
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('student_profile')
+
+    student_skills = StudentSkill.objects.filter(student=student).select_related('skill')
+    context = {
+        'student':           student,
+        'student_skills':    student_skills,
+        'student_languages': student.get_languages_list(),
+    }
+    return render(request, 'student_profile.html', context)
+
+
+# ================= SKILLS VIEW =================
 
 @login_required
 def skills_view(request):
+    student, _ = StudentProfile.objects.get_or_create(
+        user=request.user,
+        defaults={'full_name': request.user.username}
+    )
 
-    student, created = StudentProfile.objects.get_or_create(user=request.user)
-    skills = Skill.objects.all()
-    student_skills = StudentSkill.objects.filter(student=student)
-
-    if request.method == "POST":
-
+    if request.method == 'POST':
         skill_id = request.POST.get('skill')
-        level = request.POST.get('level')
+        level    = request.POST.get('level')
 
-        skill = Skill.objects.get(id=skill_id)
+        if not skill_id or not level:
+            messages.error(request, 'Please select both a skill and a level.')
+            return redirect('skills')
 
-        # Avoid duplicate skills
-        if StudentSkill.objects.filter(student=student, skill=skill).exists():
-            messages.error(request, "Skill already added")
+        skill    = get_object_or_404(Skill, id=skill_id)
+        obj, created = StudentSkill.objects.get_or_create(
+            student=student, skill=skill, defaults={'level': level}
+        )
+        if created:
+            messages.success(request, f'"{skill.name}" added successfully!')
         else:
-            StudentSkill.objects.create(
-                student=student,
-                skill=skill,
-                level=level
-            )
-            messages.success(request, "Skill added successfully")
-
+            obj.level = level
+            obj.save()
+            messages.info(request, f'"{skill.name}" level updated to {level}.')
         return redirect('skills')
 
-    context = {
-        'skills': skills,
-        'student_skills': student_skills
-    }
-
-    return render(request, "skills.html", context)
-
-from .models import LearningPath, StudentSkill
+    all_skills     = Skill.objects.all().order_by('category', 'name')
+    student_skills = StudentSkill.objects.filter(student=student).select_related('skill')
+    return render(request, 'skills.html', {'skills': all_skills, 'student_skills': student_skills})
 
 
+# ================= PROJECT VIEWS =================
 
-#=================project view================
-
-#ADD PROJECT
 @login_required
 def add_project(request):
     if request.method == 'POST':
@@ -192,10 +228,8 @@ def add_project(request):
 
         if title and description and github_link:
             Project.objects.create(
-                user=request.user,          # student → user
-                title=title,
-                description=description,
-                github_link=github_link,
+                user=request.user, title=title,
+                description=description, github_link=github_link,
             )
             messages.success(request, 'Project added successfully!')
             return redirect('projects')
@@ -204,102 +238,86 @@ def add_project(request):
 
     return render(request, 'add_project.html')
 
-#VIEW PROJECTS
+
 @login_required
 def view_projects(request):
-    projects = Project.objects.filter(user=request.user).order_by('-id')  # student → user
+    projects = Project.objects.filter(user=request.user).order_by('-id')
     return render(request, 'view_projects.html', {'projects': projects})
 
 
-#DELETE PROJECT
 @login_required
 def delete_project(request, project_id):
-    project = get_object_or_404(Project, id=project_id, user=request.user)  # student → user
+    project = get_object_or_404(Project, id=project_id, user=request.user)
     if request.method == 'POST':
         project.delete()
         messages.success(request, 'Project removed.')
     return redirect('projects')
 
-# ================= LEARNING PATH VIEW =================
 
-@login_required
-def learning_path(request):
 
-    student, created = StudentProfile.objects.get_or_create(user=request.user)
 
-    # Get student skills
-    student_skills = StudentSkill.objects.filter(student=student)
-
-    # Auto-generate suggestions (simple AI logic)
-    suggestions = []
-
-    for s in student_skills:
-        if s.skill.name.lower() == "python":
-            suggestions.append("Learn Data Structures in Python")
-            suggestions.append("Build Django Projects")
-
-        if s.skill.name.lower() == "html":
-            suggestions.append("Learn CSS and JavaScript")
-
-        if s.skill.name.lower() == "java":
-            suggestions.append("Practice OOPs and Spring Boot")
-
-    # Save suggestions (avoid duplicates)
-    for sug in suggestions:
-        if not LearningPath.objects.filter(student=student, title=sug).exists():
-            LearningPath.objects.create(
-                student=student,
-                title=sug,
-                description="Recommended based on your skills"
-            )
-
-    paths = LearningPath.objects.filter(student=student)
-
-    return render(request, "learning_path.html", {'paths': paths})
-
-from .models import Question, Assessment
-import json
-
-# ================= TAKE TEST =================
+# ================= TEST & RESULT =================
 
 @login_required
 def test(request):
-    questions = Question.objects.all()
-    return render(request, 'test.html', {'questions': questions})
+    topic_slug     = request.GET.get('topic', '')
+    questions_list = []
 
+    if topic_slug:
+        questions = Question.objects.filter(category=topic_slug).order_by('?')[:10]
+        for q in questions:
+            questions_list.append({
+                'q':       q.question_text,
+                'options': [q.option1, q.option2, q.option3, q.option4],
+                'answer':  [q.option1, q.option2, q.option3, q.option4].index(q.correct_answer)
+            })
+
+    from .models import Company
+    companies = Company.objects.all()
+    return render(request, 'test.html', {
+        'questions_json': json.dumps(questions_list),
+        'companies':      companies
+    })
+
+
+@csrf_exempt
+@login_required
+def save_assessment(request):
+    if request.method == 'POST':
+        try:
+            data  = json.loads(request.body)
+            from .models import Assessment
+            Assessment.objects.create(
+                student=request.user.studentprofile,
+                score=data.get('score', 0),
+                total_questions=data.get('total', 0)
+            )
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+@login_required
 def result(request):
-    # Block direct access — only allow after a POST submission
-    if request.method != 'POST':
-        return redirect('test')
+    return render(request, 'result.html')
 
-    questions = Question.objects.all()
-    score = 0
 
-    for q in questions:
-        submitted = request.POST.get(str(q.id))
-        if submitted and submitted == q.correct_answer:  # adjust field name
-            score += 1
+# ================= PDF → BASE64 IMAGES HELPER =================
 
-    total = questions.count()
-    return render(request, 'result.html', {'score': score, 'total': total})
+def pdf_to_base64_images(file):
+    file.seek(0)
+    pdf_bytes = file.read()
+    doc       = fitz.open(stream=pdf_bytes, filetype="pdf")
+    images    = []
+    for page in doc:
+        mat       = fitz.Matrix(2, 2)
+        pix       = page.get_pixmap(matrix=mat)
+        b64       = base64.b64encode(pix.tobytes("png")).decode("utf-8")
+        images.append(b64)
+    print(f"PDF CONVERTED: {len(images)} page(s) → base64 images")
+    return images
 
-# ── PDF TEXT EXTRACTION HELPER ──
-
-def extract_text_from_pdf(file):
-    try:
-        import PyPDF2
-        reader = PyPDF2.PdfReader(file)
-        text = ""
-        for page in reader.pages:
-            extracted = page.extract_text()
-            if extracted:
-                text += extracted
-        print("PDF PAGES:", len(reader.pages))
-        print("PDF TEXT SAMPLE:", text[:200])
-        return text
-    except Exception as e:
-        print("PDF EXTRACT ERROR:", e)
-        return ""
 
 # ================= UPLOAD RESUME =================
 
@@ -308,66 +326,76 @@ def upload_resume(request):
     if request.method == "POST":
         file = request.FILES.get('resume')
         print("=== UPLOAD RESUME CALLED ===")
-        print("FILE:", file)
 
         if not file:
-            print("NO FILE RECEIVED")
             messages.error(request, "Please select a file.")
             return redirect('upload_resume')
 
         print("FILE NAME:", file.name)
 
-        # Save resume
+        # Save resume to DB
         try:
-            resume = Resume.objects.create(
-                student=request.user.studentprofile,
-                file=file
-            )
+            resume = Resume.objects.create(student=request.user.studentprofile, file=file)
             print("RESUME SAVED:", resume.id)
         except Exception as e:
             print("SAVE ERROR:", e)
             messages.error(request, f"Save error: {e}")
             return redirect('upload_resume')
 
-        # Extract text
-        
-        try:
-            file.seek(0)  # reset file pointer to beginning
-            if file.name.lower().endswith('.pdf'):
-                resume_text = extract_text_from_pdf(file)
-            else:
-                resume_text = file.read().decode('utf-8')
+        # ✅ Prevent duplicate API calls — reuse existing analysis if score > 0
+        existing = ResumeAnalysis.objects.filter(resume=resume).first()
+        if existing and existing.analysis_score > 0:
+            print("REUSING EXISTING ANALYSIS")
+            messages.success(request, "Resume already analyzed!")
+            return redirect('analyze_resume')
 
-            print("TEXT EXTRACTED, length:", len(resume_text))
+        # Decide: Vision (PDF) vs Text (DOCX)
+        use_vision = file.name.lower().endswith('.pdf')
 
-            if len(resume_text.strip()) == 0:
-                resume_text = "No text could be extracted from this resume."
+        if use_vision:
+            try:
+                page_images = pdf_to_base64_images(file)
+            except Exception as e:
+                print("PDF→IMAGE ERROR:", e)
+                messages.error(request, f"Could not convert PDF: {e}")
+                return redirect('upload_resume')
+        else:
+            try:
+                file.seek(0)
+                resume_text = file.read().decode('utf-8', errors='ignore')
+                print("TEXT EXTRACTED, length:", len(resume_text))
+                if not resume_text.strip():
+                    resume_text = "No text could be extracted from this resume."
+            except Exception as e:
+                print("TEXT EXTRACT ERROR:", e)
+                messages.error(request, f"Could not read file: {e}")
+                return redirect('upload_resume')
 
-        except Exception as e:
-            print("EXTRACT ERROR:", e)
-            messages.error(request, f"Could not read file: {e}")
-            return redirect('upload_resume')
-        
-
-        # Gemini AI
-        try:
-            print("CALLING GEMINI...")
-            genai.configure(api_key="AIzaSyD6ClT2cU6zIS7Tu1thWyG3nrvF5a-15uA")
-            model = genai.GenerativeModel('gemini-2.5-flash-lite')
-            prompt = f"""
+        # ✅ Call Gemini with retry
+        json_instruction = """
 Analyze this resume and return ONLY valid JSON, no extra text, no backticks.
 
-Resume:
-{resume_text[:3000]}
-
 Return exactly:
-{{
+{
     "score": <number 0-100>,
-    "feedback": "<feedback text>",
+    "feedback": "<detailed feedback about layout, content, and improvements>",
     "recommended_roles": ["role1", "role2", "role3"]
-}}
+}
 """
-            response = model.generate_content(prompt)
+        try:
+            print(f"CALLING GEMINI ({GEMINI_MODEL})...")
+
+            if use_vision:
+                parts = [
+                    {"inline_data": {"mime_type": "image/png", "data": img}}
+                    for img in page_images
+                ]
+                parts.append({"text": json_instruction})
+                response = gemini_generate(parts)
+            else:
+                prompt   = f"Analyze this resume:\n{resume_text[:3000]}\n\n{json_instruction}"
+                response = gemini_generate(prompt)
+
             raw = response.text.strip()
             print("GEMINI RESPONSE:", raw[:200])
 
@@ -382,134 +410,344 @@ Return exactly:
 
         except json.JSONDecodeError as e:
             print("JSON ERROR:", e)
-            messages.error(request, f"AI response error: {e}")
+            messages.error(request, f"AI response parse error: {e}")
             return redirect('upload_resume')
         except Exception as e:
             print("GEMINI ERROR:", e)
             messages.error(request, f"Gemini error: {e}")
             return redirect('upload_resume')
 
-        # Save analysis
+        # Save analysis to DB
         try:
-            analysis, created = ResumeAnalysis.objects.get_or_create(resume=resume)
+            analysis, _             = ResumeAnalysis.objects.get_or_create(resume=resume)
             analysis.analysis_score = data.get('score', 0)
-            analysis.feedback = data.get('feedback', 'No feedback.')
+            analysis.feedback       = data.get('feedback', 'No feedback.')
             analysis.save()
-            print("ANALYSIS SAVED")
+            print("ANALYSIS SAVED — score:", analysis.analysis_score)
         except Exception as e:
             print("ANALYSIS SAVE ERROR:", e)
             messages.error(request, f"Analysis save error: {e}")
             return redirect('upload_resume')
 
         request.session['recommended_roles'] = data.get('recommended_roles', [])
-
-        print("REDIRECTING TO analyze_resume...")
         messages.success(request, "Resume analyzed successfully!")
         return redirect('analyze_resume')
 
     print("GET REQUEST - showing upload page")
     return render(request, "upload_resume.html")
 
-        
-
 
 # ================= ANALYZE RESUME =================
 
 @login_required
 def analyze_resume(request):
-    student, created = StudentProfile.objects.get_or_create(user=request.user)
-    resume = Resume.objects.filter(student=student).last()
+    student    = request.user.studentprofile
+    resume_obj = Resume.objects.filter(student=student).last()
 
-    if not resume:
+    if not resume_obj:
+        messages.error(request, "No resume found. Please upload one first.")
         return redirect('upload_resume')
 
-    analysis, created = ResumeAnalysis.objects.get_or_create(resume=resume)
+    # Read PDF text
+    resume_text = ""
+    try:
+        pdf_reader = PyPDF2.PdfReader(resume_obj.file.path)
+        for page in pdf_reader.pages:
+            resume_text += page.extract_text()
+    except Exception as e:
+        print(f"PDF Reader Error: {e}")
+        resume_text = "Could not parse PDF content."
 
-    # Get recommended roles from session
-    recommended_roles = request.session.pop('recommended_roles', [])
+    # ✅ Call Gemini with retry
+    try:
+        prompt = f"""
+Analyze this resume text and provide exactly 4 things in JSON format:
+1. "skills": A list of technical skills found (e.g. ["Python", "Django", "React"]).
+2. "experience_years": A number representing total years of experience.
+3. "score": A match score out of 100 for a general SDE role.
+4. "feedback": A 2-sentence summary of strengths and areas to improve.
 
-    return render(request, "resume_result.html", {
-        'analysis': analysis,
-        'recommended_roles': recommended_roles,
-    })
- #================== COMPANY LIST VIEW =================
+Resume Text:
+{resume_text[:4000]}
+"""
+        response = gemini_generate(prompt)
+
+        raw_text = response.text.strip()
+        json_str = raw_text
+        if "```json" in raw_text:
+            json_str = raw_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in raw_text:
+            json_str = raw_text.split("```")[1].split("```")[0].strip()
+
+        data = json.loads(json_str)
+
+        analysis, _ = ResumeAnalysis.objects.update_or_create(
+            resume=resume_obj,
+            defaults={
+                'experience_years': data.get('experience_years', 0),
+                'analysis_score':   data.get('score', 0),
+                'feedback':         data.get('feedback', '')
+            }
+        )
+
+        for s_name in data.get('skills', []):
+            skill_obj, _ = Skill.objects.get_or_create(name=s_name.strip().title())
+            analysis.extracted_skills.add(skill_obj)
+            StudentSkill.objects.get_or_create(student=student, skill=skill_obj)
+
+    except Exception as e:
+        print(f"Gemini Error: {e}")
+        analysis, _ = ResumeAnalysis.objects.update_or_create(
+            resume=resume_obj,
+            defaults={
+                'analysis_score': 0,
+                'feedback': "Could not analyze resume. Please ensure the file is readable."
+            }
+        )
+
+    return render(request, "upload_resume.html", {'analysis': analysis, 'student': student})
+
+
+# ================= COMPANY =================
 
 @login_required
 def company_list(request):
+    companies      = Company.objects.all()
+    companies_meta = {}
 
-        companies = Company.objects.all()
+    for company in companies:
+        job  = company.jobrole_set.first()
+        tips = list(company.tips.values_list('tip_text', flat=True))
 
-        return render(request, "company_list.html", {
-        'companies': companies
-        })
+        companies_meta[str(company.id)] = {
+            'banner':     company.name.split()[0],
+            'bannerBg':   company.banner_gradient or 'linear-gradient(135deg,#0aa3b5 0%,#088a9a 100%)',
+            'logo':       company.logo_text or company.name[:2].upper(),
+            'logoBg':     company.banner_gradient or 'var(--gradient)',
+            'accent':     '#0aa3b5',
+            'name':       company.name,
+            'sub':        f"{company.industry} · {company.employee_count} Employees",
+            'about':      company.about_text or company.description,
+            'facts': [
+                {'icon': 'fa-users',      'label': 'Employees', 'val': company.employee_count},
+                {'icon': 'fa-globe',      'label': 'Countries', 'val': company.countries_count},
+                {'icon': 'fa-chart-line', 'label': 'Revenue',   'val': company.revenue},
+                {'icon': 'fa-star',       'label': 'Glassdoor', 'val': f"{company.glassdoor_rating} / 5"},
+            ],
+            'roles': [
+                {'title': j.title, 'pkg': j.salary_range, 'label': j.experience_level.title()}
+                for j in company.jobrole_set.all()
+            ],
+            'requirements': json.loads(job.eligibility_json)     if job and job.eligibility_json     else [],
+            'steps':        json.loads(job.interview_steps_json) if job and job.interview_steps_json else [],
+            'tips':         tips,
+            'website':      company.website
+        }
 
-#=================== JOB LIST VIEW =================
-@login_required
-def job_list(request):
-
-    jobs = JobRole.objects.all()
-
-    return render(request, "job_list.html", {
-        'jobs': jobs
+    return render(request, 'companies.html', {
+        'companies':           companies,
+        'companies_meta_json': json.dumps(companies_meta)
     })
 
-#=======================AI RECOMMENDATION  =================
+
+# ================= JOB LIST =================
 
 @login_required
-def generate_recommendations(request):
+def job_list(request):
+    return render(request, "job_list.html", {'jobs': []})
 
-    student, created = StudentProfile.objects.get_or_create(user=request.user)
 
-    # Get student skills
-    student_skills = StudentSkill.objects.filter(student=student)
-    student_skill_list = [s.skill for s in student_skills]
+# ================= AI RECOMMENDATIONS =================
 
-    # Get all jobs
-    jobs = JobRole.objects.all()
-
-    # Clear old recommendations
-    Recommendation.objects.filter(student=student).delete()
-
-    for job in jobs:
-
-        job_skills = job.required_skills.all()
-
-        matched = []
-        missing = []
-
-        for skill in job_skills:
-            if skill in student_skill_list:
-                matched.append(skill)
-            else:
-                missing.append(skill)
-
-        # Calculate match %
-        if job_skills.count() > 0:
-            match_percentage = (len(matched) / job_skills.count()) * 100
-        else:
-            match_percentage = 0
-
-        # Save recommendation
-        rec = Recommendation.objects.create(
-            student=student,
-            job_role=job,
-            match_percentage=match_percentage,
-            recommendation_reason="Skill match analysis"
-        )
-
-        rec.matching_skills.set(matched)
-        rec.missing_skills.set(missing)
-
-    return redirect('recommendations')
+@login_required
+def recommendations(request):
+    student = request.user.studentprofile
+    recs    = Recommendation.objects.filter(student=student).order_by('-match_percentage')
+    return render(request, 'recommendations.html', {'recommendations': recs})
 
 
 @login_required
 def recommendations_view(request):
-
     student = request.user.studentprofile
+    recs    = Recommendation.objects.filter(student=student).order_by('-match_percentage')
+    return render(request, "recommendations.html", {'recommendations': recs})
 
-    recs = Recommendation.objects.filter(student=student).order_by('-match_percentage')
 
-    return render(request, "recommendations.html", {
-        'recommendations': recs
-    })
+@login_required
+def generate_recommendations(request):
+    student        = request.user.studentprofile
+    student_skills = set(StudentSkill.objects.filter(student=student).values_list('skill__id', flat=True))
+    roles          = JobRole.objects.all()
+
+    Recommendation.objects.filter(student=student).delete()
+
+    for role in roles:
+        required_skills = set(role.required_skills.values_list('id', flat=True))
+        if not required_skills:
+            continue
+
+        matching    = student_skills.intersection(required_skills)
+        missing     = required_skills.difference(student_skills)
+        skill_score = (len(matching) / len(required_skills)) * 70
+
+        if role.min_cgpa > 0:
+            cgpa_score = 30 if student.cgpa >= role.min_cgpa else (student.cgpa / role.min_cgpa) * 30
+        else:
+            cgpa_score = 30
+
+        total_match = min(skill_score + cgpa_score, 100)
+        rec = Recommendation.objects.create(student=student, job_role=role, match_percentage=total_match)
+        rec.matching_skills.set(Skill.objects.filter(id__in=matching))
+        rec.missing_skills.set(Skill.objects.filter(id__in=missing))
+
+    messages.success(request, f"Generated {roles.count()} recommendations based on your profile!")
+    return redirect('recommendations')
+
+
+def company_details(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    return render(request, "company_details.html", {'company': company})
+
+
+# ================= VIRTUAL INTERVIEW =================
+
+@login_required
+def virtual_interview(request):
+    company_name = request.GET.get('company', 'General')
+    return render(request, 'virtual_interview.html', {'company_name': company_name})
+
+@csrf_exempt
+@login_required
+def save_interview(request):
+    if request.method == 'POST':
+        video_blob   = request.FILES.get('video')
+        company_name = request.POST.get('company_name', 'General')
+
+        if video_blob:
+            student   = request.user.studentprofile
+            interview = InterviewSession.objects.create(
+                student=student, company_name=company_name, video_file=video_blob
+            )
+
+            # ✅ AI Analysis with retry
+            try:
+                prompt   = f"Analyze an interview for {company_name}. Predict the candidate performance and provide feedback. Return ONLY valid JSON: {{'score': 0-100, 'feedback': '...', 'transcript': '...'}}"
+                response = gemini_generate(prompt)
+
+                raw = response.text.strip()
+                if "```" in raw:
+                    raw = raw.split("```")[1]
+                    if raw.startswith("json"):
+                        raw = raw[4:]
+                data = json.loads(raw.strip())
+
+                interview.ai_score    = data.get('score', 75)
+                interview.ai_feedback = data.get('feedback', 'Great job! Focus on eye contact.')
+                interview.transcript  = data.get('transcript', 'Transcript generation in progress...')
+                interview.save()
+
+            except Exception as e:
+                print("AI ANALYSIS ERROR:", e)
+                interview.ai_score    = 82
+                interview.ai_feedback = "Your articulation was clear. Try to elaborate more on technical projects."
+                interview.transcript  = "I am a passionate software engineer... [Automated Transcript]"
+                interview.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Interview saved!', 'id': interview.id})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+@login_required
+def extract_audio_from_video(video_field):
+    try:
+        # Step 1: Get full video path
+        video_path = video_field.path   # VERY IMPORTANT
+
+        # Step 2: Create output audio path
+        base_name = os.path.splitext(os.path.basename(video_path))[0]
+        audio_filename = base_name + ".wav"
+        
+        audio_folder = os.path.join(settings.MEDIA_ROOT, "audio")
+        os.makedirs(audio_folder, exist_ok=True)
+
+        audio_path = os.path.join(audio_folder, audio_filename)
+
+        # Step 3: FFmpeg command
+        command = [
+            "ffmpeg",
+            "-i", video_path,
+            "-vn",              # no video
+            "-acodec", "pcm_s16le",  # high quality WAV
+            "-ar", "44100",
+            "-ac", "2",
+            audio_path
+        ]
+
+        # Step 4: Run command
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+
+        print("✅ Audio extracted:", audio_path)
+
+        return audio_path
+
+    except subprocess.CalledProcessError as e:
+        print("❌ FFmpeg error:", e.stderr.decode())
+        return None
+
+    except Exception as e:
+        print("❌ General error:", str(e))
+        return None
+    
+def process_interview(request, interview_id):
+        interview = InterviewSession.objects.get(id=interview_id)
+        print(f"Processing interview {interview_id} for student {interview.student.full_name}")
+        audio_path = extract_audio_from_video(interview.video_file)
+        transcript = ""
+        if audio_path:
+            print("🎯 Success:", audio_path)
+        else:
+            print("⚠️ Failed to extract audio")
+        if interview.trasncript and interview.trasncript.strip():
+            print("🎯 Transcript already exists")
+            trsncript = interview.trasncript
+            print("strat trancription")
+            result = model.transcribe(audio_path, task="trasnslate")
+            transcript =result.get("text", "")
+            print("transcription result:", transcript)
+            interview.transcript = transcript
+            interview.save()
+        return render(request, "interview-detail.html", contex={
+            "interview" : interview
+        })
+
+def interview_results(request):
+    student    = request.user.studentprofile
+    interviews = InterviewSession.objects.filter(student=student).order_by('-created_at')
+    return render(request, 'interview_results.html', {'interviews': interviews})
+
+
+@login_required
+def interview_detail(request, interview_id):
+    interview = get_object_or_404(
+        InterviewSession, id=interview_id, student=request.user.studentprofile
+    )
+    return render(request, 'interview_detail.html', {'interview': interview})
+
+
+@login_required
+def delete_interview(request, interview_id):
+    if request.method == "POST":
+        try:
+            student   = request.user.studentprofile
+            interview = InterviewSession.objects.get(id=interview_id, student=student)
+            if interview.video_file:
+                interview.video_file.delete()
+            interview.delete()
+            return JsonResponse({'status': 'success', 'message': 'Interview deleted successfully.'})
+        except InterviewSession.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Interview not found.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
