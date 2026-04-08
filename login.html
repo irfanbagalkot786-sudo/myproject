@@ -35,7 +35,6 @@
     position: relative;
   }
 
-  /* Background decorative blobs */
   body::before, body::after {
     content: '';
     position: fixed;
@@ -61,14 +60,47 @@
   @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(30px, 40px) scale(1.08); } }
   @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-25px, -30px) scale(1.05); } }
 
-  /* Dot grid overlay */
   .bg-grid {
     position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background-image: radial-gradient(circle, rgba(10,163,181,0.13) 1px, transparent 1px);
     background-size: 28px 28px;
   }
 
-  /* Card */
+  /* ── BACK TO HOME BUTTON ── */
+  .back-home {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    background: rgba(255,255,255,0.92);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--slate);
+    text-decoration: none;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 2px 12px rgba(10,163,181,0.08);
+    transition: all 0.2s;
+  }
+  .back-home:hover {
+    background: var(--teal-dim);
+    border-color: var(--teal);
+    color: var(--teal);
+    transform: translateX(-2px);
+  }
+  .back-home svg {
+    transition: transform 0.2s;
+  }
+  .back-home:hover svg {
+    transform: translateX(-3px);
+  }
+
   .login-card {
     position: relative; z-index: 10;
     width: 100%; max-width: 440px;
@@ -84,7 +116,6 @@
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  /* Card header band */
   .card-header {
     background: var(--gradient);
     padding: 38px 40px 32px;
@@ -142,12 +173,10 @@
     font-weight: 700;
   }
 
-  /* Card body */
   .card-body {
     padding: 36px 40px 40px;
   }
 
-  /* Messages */
   .messages {
     margin-bottom: 20px;
     display: flex;
@@ -165,7 +194,6 @@
     font-weight: 500;
   }
 
-  /* Form fields */
   .field {
     margin-bottom: 18px;
   }
@@ -193,7 +221,8 @@
   }
   .input-wrap:focus-within .input-icon { color: var(--teal); }
 
-  .field input {
+  .field input[type="text"],
+  .field input[type="password"] {
     width: 100%;
     height: 48px;
     padding: 0 14px 0 42px;
@@ -206,22 +235,101 @@
     outline: none;
     transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   }
-  .field input::placeholder { color: var(--muted); }
-  .field input:focus {
+  .field input[type="text"]::placeholder,
+  .field input[type="password"]::placeholder { color: var(--muted); }
+  .field input[type="text"]:focus,
+  .field input[type="password"]:focus {
     border-color: var(--teal);
     background: var(--surface);
     box-shadow: 0 0 0 4px var(--teal-dim);
   }
 
-  /* Captcha area */
   .captcha-wrap {
     margin-bottom: 24px;
+  }
+  .captcha-wrap label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 7px;
+  }
+  .captcha-row {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    gap: 10px;
   }
 
-  /* Submit button */
+  .captcha-display {
+    flex-shrink: 0;
+    width: 140px;
+    height: 48px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    cursor: default;
+    user-select: none;
+  }
+  .captcha-display canvas {
+    display: block;
+    width: 140px;
+    height: 48px;
+  }
+
+  .captcha-answer-input {
+    flex: 1;
+    height: 48px;
+    padding: 0 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .captcha-answer-input::placeholder { color: var(--muted); }
+  .captcha-answer-input:focus {
+    border-color: var(--teal);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px var(--teal-dim);
+  }
+
+  .captcha-refresh {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--teal);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .captcha-refresh:hover {
+    background: var(--teal-dim);
+    border-color: var(--teal);
+  }
+
+  .captcha-error {
+    display: none;
+    margin-top: 7px;
+    font-size: 13px;
+    color: #b91c1c;
+    font-weight: 500;
+  }
+
   .btn-login {
     width: 100%;
     height: 50px;
@@ -253,7 +361,6 @@
   .btn-login:hover::after { background: rgba(255,255,255,0.07); }
   .btn-login:active { transform: translateY(0); }
 
-  /* Arrow icon inside button */
   .btn-login svg {
     vertical-align: middle;
     margin-left: 8px;
@@ -261,7 +368,6 @@
   }
   .btn-login:hover svg { transform: translateX(4px); }
 
-  /* Divider */
   .divider {
     display: flex;
     align-items: center;
@@ -278,7 +384,6 @@
     white-space: nowrap;
   }
 
-  /* Register link */
   .register-link {
     text-align: center;
     margin-top: 20px;
@@ -294,17 +399,25 @@
   }
   .register-link a:hover { border-color: var(--teal); }
 
-  /* Responsive */
   @media (max-width: 480px) {
     .login-card { border-radius: 0; min-height: 100vh; }
     .card-header { padding: 30px 24px 26px; }
     .card-body { padding: 28px 24px 32px; }
+    .back-home { top: 12px; left: 12px; padding: 7px 12px; font-size: 12px; }
   }
 </style>
 </head>
 
 <body>
 <div class="bg-grid"></div>
+
+<!-- BACK TO HOME BUTTON -->
+<a href="{% url 'home' %}" class="back-home">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 12H5M12 5l-7 7 7 7"/>
+  </svg>
+  Back to Home
+</a>
 
 <div class="login-card">
 
@@ -323,7 +436,7 @@
     </div>
     {% endif %}
 
-    <form method="POST" autocomplete="off">
+    <form method="POST" autocomplete="off" id="login-form">
       {% csrf_token %}
 
       <div class="field">
@@ -346,8 +459,30 @@
         </div>
       </div>
 
+      <!-- ── CAPTCHA ── -->
       <div class="captcha-wrap">
-        {{ form.captcha }}
+        <label>Verify you're human</label>
+        <div class="captcha-row">
+          <div class="captcha-display">
+            <canvas id="captcha-canvas" width="140" height="48"></canvas>
+          </div>
+          <input
+            type="text"
+            id="captcha-answer"
+            class="captcha-answer-input"
+            placeholder="Enter captcha"
+            autocomplete="off"
+            maxlength="8"
+          >
+          <button type="button" class="captcha-refresh" onclick="generateCaptcha()" title="Refresh captcha">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 4v6h-6"/>
+              <path d="M1 20v-6h6"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+          </button>
+        </div>
+        <div class="captcha-error" id="captcha-error">Incorrect captcha, please try again.</div>
       </div>
 
       <button type="submit" class="btn-login">
@@ -369,6 +504,90 @@
   </div>
 </div>
 
+<script>
+  let captchaCode = '';
+
+  const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+  function randomChar() {
+    return CHARS[Math.floor(Math.random() * CHARS.length)];
+  }
+
+  function generateCaptcha() {
+    captchaCode = '';
+    for (let i = 0; i < 6; i++) captchaCode += randomChar();
+
+    drawCaptcha(captchaCode);
+    document.getElementById('captcha-answer').value = '';
+    document.getElementById('captcha-error').style.display = 'none';
+  }
+
+  function drawCaptcha(code) {
+    const canvas = document.getElementById('captcha-canvas');
+    const ctx    = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.fillStyle = '#eaf1f6';
+    ctx.fillRect(0, 0, W, H);
+
+    for (let i = 0; i < 6; i++) {
+      ctx.beginPath();
+      ctx.moveTo(Math.random() * W, Math.random() * H);
+      ctx.lineTo(Math.random() * W, Math.random() * H);
+      ctx.strokeStyle = `rgba(10,163,181,${(Math.random() * 0.25 + 0.08).toFixed(2)})`;
+      ctx.lineWidth   = Math.random() * 1.5 + 0.5;
+      ctx.stroke();
+    }
+
+    for (let i = 0; i < 30; i++) {
+      ctx.beginPath();
+      ctx.arc(Math.random() * W, Math.random() * H, Math.random() * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(58,74,92,${(Math.random() * 0.3 + 0.1).toFixed(2)})`;
+      ctx.fill();
+    }
+
+    const charW  = W / (code.length + 1);
+    const fonts  = ['Syne', 'DM Sans', 'serif', 'monospace'];
+    const colors = ['#0aa3b5', '#088a9a', '#0d1b2a', '#3a4a5c', '#1a6e7a'];
+
+    for (let i = 0; i < code.length; i++) {
+      ctx.save();
+
+      const x    = charW * (i + 0.9) + Math.random() * 4 - 2;
+      const y    = H / 2 + Math.random() * 6 - 3;
+      const angle = (Math.random() - 0.5) * 0.45;
+      const size  = Math.floor(Math.random() * 6) + 18;
+
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      ctx.font        = `${Math.random() > 0.5 ? 'bold ' : ''}${size}px ${fonts[Math.floor(Math.random() * fonts.length)]}`;
+      ctx.fillStyle   = colors[Math.floor(Math.random() * colors.length)];
+      ctx.textAlign   = 'center';
+      ctx.textBaseline = 'middle';
+
+      ctx.shadowColor   = 'rgba(10,163,181,0.15)';
+      ctx.shadowBlur    = 2;
+      ctx.shadowOffsetX = Math.random() * 2 - 1;
+      ctx.shadowOffsetY = Math.random() * 2 - 1;
+
+      ctx.fillText(code[i], 0, 0);
+      ctx.restore();
+    }
+  }
+
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    const userInput = document.getElementById('captcha-answer').value.trim().toUpperCase();
+    if (userInput !== captchaCode) {
+      e.preventDefault();
+      document.getElementById('captcha-error').style.display = 'block';
+      generateCaptcha();
+    }
+  });
+
+  generateCaptcha();
+</script>
+
 </body>
 </html>
-
