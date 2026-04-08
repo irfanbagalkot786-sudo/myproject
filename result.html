@@ -33,33 +33,22 @@
 
 body {
   font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-  overflow-x: hidden;
+  background: var(--bg); color: var(--ink);
+  min-height: 100vh; overflow-x: hidden;
 }
 
 body::before {
-  content:'';
-  position:fixed;
-  inset:0;
+  content:''; position:fixed; inset:0;
   background:
     radial-gradient(ellipse 60% 50% at 10% 20%, rgba(10,163,181,0.06) 0%, transparent 60%),
     radial-gradient(ellipse 50% 60% at 90% 80%, rgba(8,138,154,0.06) 0%, transparent 60%);
-  pointer-events:none;
-  z-index:0;
+  pointer-events:none; z-index:0;
 }
 
-/* ── NAVBAR ── */
 .navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 40px;
-  height: 64px;
+  position: sticky; top: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 40px; height: 64px;
   background: rgba(255,255,255,0.88);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
@@ -67,121 +56,57 @@ body::before {
 }
 
 .navbar-brand {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 1.1rem;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  white-space: nowrap;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+  background: var(--gradient); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
 }
 
-.navbar-links {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-}
+.navbar-links { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow-x: auto; }
 
 .navbar-links a {
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: 8px;
-  transition: all 0.2s;
-  white-space: nowrap;
+  color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500;
+  padding: 6px 12px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
 }
 
 .navbar-links a:hover  { color: var(--slate); background: var(--teal-dim); }
 .navbar-links a.active { color: var(--teal);  background: var(--teal-dim); }
 
-/* ── MAIN ── */
 .main {
-  position: relative;
-  z-index: 1;
-  max-width: 680px;
-  margin: 0 auto;
+  position: relative; z-index: 1;
+  max-width: 720px; margin: 0 auto;
   padding: 50px 24px 60px;
 }
 
 /* ── SCORE HERO ── */
 .score-hero {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 48px 36px 40px;
-  text-align: center;
-  box-shadow: var(--glow);
-  animation: fadeUp 0.5s ease both;
-  margin-bottom: 24px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 24px; padding: 48px 36px 40px; text-align: center;
+  box-shadow: var(--glow); animation: fadeUp 0.5s ease both; margin-bottom: 24px;
 }
 
-.score-ring-wrap {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 24px;
-}
+.score-ring-wrap { position: relative; width: 150px; height: 150px; margin: 0 auto 24px; }
 
-.score-ring-wrap svg {
-  transform: rotate(-90deg);
-  width: 150px;
-  height: 150px;
-}
-
-.score-ring-wrap .ring-track {
-  fill: none;
-  stroke: var(--border);
-  stroke-width: 10;
-}
-
+.score-ring-wrap svg { transform: rotate(-90deg); width: 150px; height: 150px; }
+.score-ring-wrap .ring-track { fill: none; stroke: var(--border); stroke-width: 10; }
 .score-ring-wrap .ring-fill {
-  fill: none;
-  stroke-width: 10;
-  stroke-linecap: round;
-  stroke-dasharray: 345;
-  stroke-dashoffset: 345;
+  fill: none; stroke-width: 10; stroke-linecap: round;
+  stroke-dasharray: 345; stroke-dashoffset: 345;
   transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1), stroke 0.3s ease;
 }
 
 .score-ring-center {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2px;
 }
 
-.score-number {
-  font-family: 'Syne', sans-serif;
-  font-size: 2.4rem;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--ink);
-}
-
-.score-total {
-  font-size: 0.78rem;
-  color: var(--muted);
-  font-weight: 500;
-}
+.score-number { font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; line-height: 1; color: var(--ink); }
+.score-total  { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
 
 .grade-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 20px;
-  border-radius: 99px;
-  font-family: 'Syne', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 700;
-  margin-bottom: 16px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 20px; border-radius: 99px;
+  font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; margin-bottom: 16px;
 }
 
 .grade-badge.excellent { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(34,197,94,0.25); }
@@ -189,148 +114,248 @@ body::before {
 .grade-badge.average   { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,158,11,0.25); }
 .grade-badge.poor      { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(239,68,68,0.25); }
 
-.score-hero h2 {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--ink);
-  margin-bottom: 6px;
+.score-hero h2 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+.score-hero p  { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+.stats-row {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+  margin-top: 28px;
 }
 
-.score-hero p {
-  font-size: 0.88rem;
-  color: var(--muted);
-  line-height: 1.6;
+.stat-box {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 10px; text-align: center;
 }
 
-/* ── STAT ROW ── */
-.stat-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
-  animation: fadeUp 0.5s ease 0.1s both;
+.stat-box-val { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
+.stat-box-key { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ── PROCTORING REPORT ── */
+.proctor-report {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 24px; box-shadow: var(--glow);
+  animation: fadeUp 0.5s 0.08s ease both; margin-bottom: 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.proctor-report-left { display: flex; align-items: center; gap: 14px; }
+.proctor-report-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+}
+.proctor-report-info h4 { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.proctor-report-info p { font-size: 0.75rem; color: var(--muted); }
+
+.proctor-status-pill {
+  padding: 6px 14px; border-radius: 99px; font-size: 0.72rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.status-trusted { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+.status-flagged { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+
+/* ── ACTIONS ── */
+.actions-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 28px; box-shadow: var(--glow);
+  animation: fadeUp 0.5s 0.1s ease both; margin-bottom: 20px;
 }
 
-.stat-card {
-  background: var(--surface);
+.actions-card h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 16px; }
+
+.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.action-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px; border-radius: 12px; font-family: 'Syne', sans-serif;
+  font-size: 0.82rem; font-weight: 700; text-decoration: none; cursor: pointer;
+  border: none; transition: all 0.2s;
+}
+
+.action-btn.primary { background: var(--gradient); color: white; box-shadow: 0 4px 16px rgba(10,163,181,0.3); }
+.action-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10,163,181,0.4); }
+.action-btn.secondary { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(10,163,181,0.25); }
+.action-btn.secondary:hover { background: rgba(10,163,181,0.2); }
+.action-btn.outline { background: var(--bg); color: var(--slate); border: 1px solid var(--border); }
+.action-btn.outline:hover { background: var(--border); }
+
+/* ── ANSWER REVIEW SECTION ── */
+.review-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 28px; box-shadow: var(--glow);
+  animation: fadeUp 0.5s 0.15s ease both; margin-bottom: 20px;
+}
+
+.review-card h3 {
+  font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+  color: var(--ink); margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.review-subtitle {
+  font-size: 0.8rem; color: var(--muted); margin-bottom: 20px;
+}
+
+.review-legend {
+  display: flex; gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.75rem; font-weight: 600; color: var(--slate);
+}
+
+.legend-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+}
+
+.legend-dot.correct { background: var(--green); }
+.legend-dot.wrong   { background: var(--red); }
+
+/* ── Individual question review card ── */
+.q-review {
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 18px 16px;
-  text-align: center;
-  box-shadow: var(--glow);
+  border-radius: 14px; padding: 16px 18px; margin-bottom: 12px;
+  transition: box-shadow 0.2s;
 }
 
-.stat-card-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  margin: 0 auto 10px;
+.q-review:last-child { margin-bottom: 0; }
+
+.q-review.correct-ans {
+  border-color: rgba(34,197,94,0.4);
+  background: rgba(34,197,94,0.03);
 }
 
-.stat-card-icon.correct { background: var(--green-dim); color: var(--green); }
-.stat-card-icon.wrong   { background: var(--red-dim);   color: var(--red);   }
-.stat-card-icon.percent { background: var(--teal-dim);  color: var(--teal);  }
+.q-review.wrong-ans {
+  border-color: rgba(239,68,68,0.35);
+  background: rgba(239,68,68,0.03);
+}
 
-.stat-card strong {
-  display: block;
+.q-review-header {
+  display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px;
+}
+
+.q-num-badge {
   font-family: 'Syne', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--ink);
-  line-height: 1;
-  margin-bottom: 4px;
+  font-size: 0.7rem; font-weight: 800;
+  width: 26px; height: 26px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
 }
 
-.stat-card span {
-  font-size: 0.72rem;
+.q-num-badge.correct { background: var(--green-dim); color: var(--green); }
+.q-num-badge.wrong   { background: var(--red-dim);   color: var(--red); }
+
+.q-review-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem; font-weight: 700; color: var(--ink); line-height: 1.45;
+  flex: 1;
+}
+
+.q-status-icon {
+  font-size: 0.9rem; flex-shrink: 0; margin-top: 2px;
+}
+
+.q-status-icon.correct { color: var(--green); }
+.q-status-icon.wrong   { color: var(--red); }
+
+/* Options inside each review */
+.q-options-grid {
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.q-opt {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: 10px; font-size: 0.8rem;
+  border: 1.5px solid transparent;
+}
+
+.q-opt-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.68rem; font-weight: 800;
+  width: 22px; height: 22px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; background: var(--bg); color: var(--muted);
+}
+
+.q-opt.correct-opt {
+  background: var(--green-dim);
+  border-color: rgba(34,197,94,0.4);
+  color: #15803d;
   font-weight: 600;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-  color: var(--muted);
 }
 
-/* ── ACTION BUTTONS ── */
-.action-row {
-  display: flex;
-  gap: 12px;
-  animation: fadeUp 0.5s ease 0.2s both;
+.q-opt.correct-opt .q-opt-label {
+  background: var(--green); color: white;
 }
 
-.btn-primary {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 13px 20px;
-  background: var(--gradient);
-  color: white;
-  text-decoration: none;
-  border-radius: 12px;
-  font-family: 'Syne', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 700;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 18px rgba(10,163,181,0.28);
-  white-space: nowrap;
+.q-opt.wrong-opt {
+  background: var(--red-dim);
+  border-color: rgba(239,68,68,0.3);
+  color: #b91c1c;
+  font-weight: 600;
 }
 
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 26px rgba(10,163,181,0.40);
+.q-opt.wrong-opt .q-opt-label {
+  background: var(--red); color: white;
 }
 
-.btn-secondary {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 13px 20px;
-  background: var(--surface);
-  color: var(--slate);
-  text-decoration: none;
-  border-radius: 12px;
-  font-family: 'Syne', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 700;
-  border: 1.5px solid var(--border);
-  transition: transform 0.2s, border-color 0.2s, color 0.2s;
-  white-space: nowrap;
+.q-opt-badge {
+  margin-left: auto; flex-shrink: 0;
+  font-size: 0.62rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 99px;
 }
 
-.btn-secondary:hover {
-  transform: translateY(-2px);
-  border-color: var(--teal);
-  color: var(--teal);
+.q-opt.correct-opt .q-opt-badge { background: var(--green); color: white; }
+.q-opt.wrong-opt   .q-opt-badge { background: var(--red);   color: white; }
+
+/* skipped */
+.q-skipped-note {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--yellow-dim); border: 1px dashed rgba(245,158,11,0.4);
+  border-radius: 10px; font-size: 0.78rem; color: #92400e;
+  display: flex; align-items: center; gap: 7px;
 }
 
-/* ── ANIMATIONS ── */
+/* ── TIPS ── */
+.tips-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 24px; box-shadow: var(--glow);
+  animation: fadeUp 0.5s 0.2s ease both;
+}
+
+.tips-card h3 { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 14px; }
+
+.tip-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 0.82rem; color: var(--slate); line-height: 1.6;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+
+.tip-row:last-child { border-bottom: none; }
+.tip-row i { color: var(--teal); font-size: 0.75rem; margin-top: 3px; flex-shrink: 0; }
+
 @keyframes fadeUp {
-  from { opacity:0; transform:translateY(18px); }
+  from { opacity:0; transform:translateY(16px); }
   to   { opacity:1; transform:translateY(0); }
 }
 
-/* ── RESPONSIVE ── */
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .navbar { padding: 0 16px; }
   .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
-  .main { padding: 28px 14px 40px; }
-  .score-hero { padding: 36px 20px 28px; }
-  .stat-row { grid-template-columns: repeat(3,1fr); gap: 10px; }
-  .action-row { flex-direction: column; }
+  .main { padding: 30px 16px 40px; }
+  .score-hero { padding: 32px 20px; }
+  .stats-row { grid-template-columns: repeat(3,1fr); }
+  .actions-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
+<!-- ── Store URLs from Django ── -->
+<span id="testBaseUrl"      data-url="{% url 'test' %}"      style="display:none;"></span>
+<span id="companiesBaseUrl" data-url="{% url 'companies' %}" style="display:none;"></span>
+<span id="dashboardBaseUrl" data-url="{% url 'dashboard' %}" style="display:none;"></span>
+
 <nav class="navbar">
   <div class="navbar-brand">🎯 Smart Placement Portal</div>
   <div class="navbar-links">
@@ -341,21 +366,18 @@ body::before {
     <a href="{% url 'companies' %}">Companies</a>
     <a href="{% url 'upload_resume' %}">Resume</a>
     <a href="{% url 'recommendations' %}">Recs</a>
-    <a href="{% url 'learning_path' %}">Learning</a>
-    <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'test' %}" class="active">Test</a>
     <a href="{% url 'jobs' %}">Jobs</a>
+    <a href="{% url 'logout' %}">Logout</a>
+
+
   </div>
 </nav>
 
-<!-- Django values in data attributes — keeps {{ }} completely out of <script> -->
-<div id="resultData" data-score="{{ score }}" data-total="{{ total }}" hidden></div>
-
-<!-- MAIN -->
 <div class="main">
 
-  <!-- SCORE HERO CARD -->
+  <!-- ── SCORE HERO ── -->
   <div class="score-hero">
-
     <div class="score-ring-wrap">
       <svg viewBox="0 0 120 120">
         <circle class="ring-track" cx="60" cy="60" r="55"/>
@@ -363,117 +385,428 @@ body::before {
       </svg>
       <div class="score-ring-center">
         <span class="score-number" id="scoreNum">0</span>
-        <span class="score-total" id="totalDisplay">/ 0</span>
+        <span class="score-total"  id="scoreTotal">/10</span>
       </div>
     </div>
 
-    <div id="gradeBadge" class="grade-badge">
-      <i id="gradeIcon" class="fas fa-star"></i>
-      <span id="gradeLabel">Calculating...</span>
+    <div class="grade-badge" id="gradeBadge">
+      <i class="fas fa-star"></i>
+      <span id="gradeText">—</span>
     </div>
 
-    <h2 id="heroTitle">Test Complete!</h2>
-    <p id="heroSubtitle">Here's how you performed on the assessment.</p>
+    <h2 id="resultHeading">Test Complete!</h2>
+    <p  id="resultMsg">Here's how you did on the practice test.</p>
 
-  </div>
-
-  <!-- STAT ROW -->
-  <div class="stat-row">
-    <div class="stat-card">
-      <div class="stat-card-icon correct"><i class="fas fa-circle-check"></i></div>
-      <strong id="correctStat">0</strong>
-      <span>Correct</span>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-icon wrong"><i class="fas fa-circle-xmark"></i></div>
-      <strong id="wrongStat">0</strong>
-      <span>Wrong</span>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-icon percent"><i class="fas fa-percent"></i></div>
-      <strong id="pctStat">0%</strong>
-      <span>Score</span>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-box-val" id="statCorrect" style="color:var(--green);">0</div>
+        <div class="stat-box-key">Correct</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-val" id="statWrong" style="color:var(--red);">0</div>
+        <div class="stat-box-key">Wrong</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-val" id="statPct" style="color:var(--teal);">0%</div>
+        <div class="stat-box-key">Score %</div>
+      </div>
     </div>
   </div>
 
-  <!-- ACTION BUTTONS -->
-  <div class="action-row">
-    <a href="{% url 'dashboard' %}" class="btn-primary">
-      <i class="fas fa-house"></i> Go to Dashboard
-    </a>
-    <a href="{% url 'test' %}" class="btn-secondary">
-      <i class="fas fa-rotate-right"></i> Retake Test
-    </a>
+  <!-- ── PROCTORING REPORT ── -->
+  <div class="proctor-report">
+    <div class="proctor-report-left">
+      <div class="proctor-report-icon" id="proctorIcon">
+        <i class="fas fa-shield-halved"></i>
+      </div>
+      <div class="proctor-report-info">
+        <h4 id="proctorTitle">AI Proctoring Report</h4>
+        <p id="proctorDesc">Analyzing session integrity...</p>
+      </div>
+    </div>
+    <div class="proctor-status-pill" id="proctorStatus">—</div>
+  </div>
+
+  <!-- ── ACTIONS ── -->
+  <div class="actions-card">
+    <h3>What would you like to do next?</h3>
+    <div class="actions-grid">
+      <a id="retryBtn" href="#" class="action-btn primary">
+        <i class="fas fa-rotate-right"></i> Retry This Topic
+      </a>
+      <a id="companiesBtn" href="#" class="action-btn secondary">
+        <i class="fas fa-building"></i> Back to Companies
+      </a>
+      <a id="allTestsBtn" href="#" class="action-btn outline">
+        <i class="fas fa-list"></i> All Practice Tests
+      </a>
+      <a id="dashboardBtn" href="#" class="action-btn outline">
+        <i class="fas fa-gauge-high"></i> Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- ── ANSWER REVIEW ── -->
+  <div class="review-card">
+    <h3>
+      <i class="fas fa-clipboard-list" style="color:var(--teal);font-size:0.9rem;"></i>
+      Answer Review
+    </h3>
+    <p class="review-subtitle">See every question — your answer, the correct answer, and an explanation.</p>
+
+    <div class="review-legend">
+      <div class="legend-item">
+        <div class="legend-dot correct"></div>
+        <span>Correct answer</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot wrong"></div>
+        <span>Your wrong answer</span>
+      </div>
+    </div>
+
+    <div id="answerReview"></div>
+  </div>
+
+  <!-- ── TIPS ── -->
+  <div class="tips-card">
+    <h3>📚 Tips to Improve</h3>
+    <div id="tipsContainer"></div>
   </div>
 
 </div>
 
 <script>
-  /* read values from data attributes — zero {{ }} inside script */
-  var el        = document.getElementById('resultData');
-  var userScore = parseInt(el.getAttribute('data-score'), 10) || 0;
-  var totalQs   = parseInt(el.getAttribute('data-total'),  10) || 0;
-  var pct       = totalQs > 0 ? Math.round((userScore / totalQs) * 100) : 0;
+const TEST_URL       = document.getElementById('testBaseUrl').dataset.url;
+const COMPANIES_URL  = document.getElementById('companiesBaseUrl').dataset.url;
+const DASHBOARD_URL  = document.getElementById('dashboardBaseUrl').dataset.url;
 
-  /* fill static stats */
-  document.getElementById('totalDisplay').textContent = '/ ' + totalQs;
-  document.getElementById('correctStat').textContent  = userScore;
-  document.getElementById('wrongStat').textContent    = totalQs - userScore;
-  document.getElementById('pctStat').textContent      = pct + '%';
+/* ── Full question bank (mirrors test.html) ── */
+const QUESTION_BANK = {
+  quantitative: [
+    { q:'A train travels 60 km in 1 hour. How far will it travel in 3.5 hours?', options:['180 km','200 km','210 km','220 km'], answer:2 },
+    { q:'Find 15% of 340.', options:['48','51','54','57'], answer:1 },
+    { q:'If a = 4 and b = 7, find 2a + 3b.', options:['26','27','28','29'], answer:3 },
+    { q:'What is the LCM of 12 and 18?', options:['24','36','48','54'], answer:1 },
+    { q:'Simple Interest on ₹2000 at 5% per annum for 3 years?', options:['₹250','₹300','₹350','₹400'], answer:1 },
+    { q:'A shopkeeper sells an item at 20% profit. If cost is ₹500, selling price is?', options:['₹580','₹590','₹600','₹620'], answer:2 },
+    { q:'What is 12² + 5²?', options:['144','164','169','174'], answer:2 },
+    { q:'If 3x = 27, what is x?', options:['7','8','9','10'], answer:2 },
+    { q:'Average of 10, 20, 30, 40, 50?', options:['25','30','35','40'], answer:1 },
+    { q:'A pipe fills a tank in 4 hours. What fraction is filled in 1.5 hours?', options:['1/4','3/8','1/2','5/8'], answer:1 },
+  ],
+  logical: [
+    { q:'If all Roses are Flowers and all Flowers are Plants, are all Roses Plants?', options:['Yes','No','Cannot determine','Partially'], answer:0 },
+    { q:'Complete the series: 2, 6, 12, 20, __', options:['28','30','32','36'], answer:1 },
+    { q:'Odd one out: Apple, Mango, Carrot, Banana', options:['Apple','Mango','Carrot','Banana'], answer:2 },
+    { q:'If BOOK = 2-15-15-11, what is CAT?', options:['3-1-20','3-2-20','4-1-20','3-1-19'], answer:0 },
+    { q:'A is taller than B. B is taller than C. Who is shortest?', options:['A','B','C','Cannot determine'], answer:2 },
+    { q:'Mirror image: p → ?', options:['q','d','b','p'], answer:1 },
+    { q:'Series: 1, 4, 9, 16, __', options:['20','24','25','30'], answer:2 },
+    { q:'If Monday is 2 days after Saturday, what day is 3 days before Friday?', options:['Monday','Tuesday','Wednesday','Thursday'], answer:1 },
+    { q:'Find the missing: 3:9 :: 5:?', options:['15','20','25','30'], answer:2 },
+    { q:'If South-West is 225°, what direction is 135°?', options:['North-East','South-East','North-West','South-West'], answer:1 },
+  ],
+  verbal: [
+    { q:'Choose the synonym of BENEVOLENT:', options:['Cruel','Kind','Lazy','Brave'], answer:1 },
+    { q:'Choose the antonym of TRANSPARENT:', options:['Clear','Opaque','Visible','Bright'], answer:1 },
+    { q:'Fill in: He __ to school every day.', options:['go','goes','going','gone'], answer:1 },
+    { q:'Identify the error: "She don\'t like apples."', options:['She','don\'t','like','apples'], answer:1 },
+    { q:'Choose the correct spelling:', options:['Accomodate','Accommodate','Acommodate','Accommadate'], answer:1 },
+    { q:'Passive voice of "She writes a letter":', options:['A letter is written by her.','A letter was written by her.','A letter has been written.','A letter written by her.'], answer:0 },
+    { q:'One word for "Fear of water":', options:['Claustrophobia','Hydrophobia','Acrophobia','Xenophobia'], answer:1 },
+    { q:'Choose the idiom meaning "to be in difficulty":', options:['In hot water','On thin ice','Under the weather','Bite the bullet'], answer:0 },
+    { q:'Indirect speech: He said, "I am happy." →', options:['He said he is happy.','He said he was happy.','He told he was happy.','He says he was happy.'], answer:1 },
+    { q:'Choose the correctly punctuated sentence:', options:['"Its a dog" he said.','Its a dog, he said.',"It's a dog, he said.",'Its a dog he said.'], answer:2 },
+  ],
+  arrays: [
+    { q:'What is the time complexity of accessing an element in an array by index?', options:['O(n)','O(log n)','O(1)','O(n²)'], answer:2 },
+    { q:'Which of the following finds the maximum element in an unsorted array?', options:['Binary search','Linear scan','Jump search','Interpolation search'], answer:1 },
+    { q:'Array: [3,1,4,1,5,9,2,6]. What is arr[4]?', options:['1','5','9','2'], answer:1 },
+    { q:'What happens when you access an out-of-bounds index in C?', options:['Returns 0','Returns null','Undefined behavior','Throws exception'], answer:2 },
+    { q:'Reverse of [1,2,3,4,5] is:', options:['[5,4,3,2,1]','[1,2,3,4,5]','[5,3,1,2,4]','[2,4,1,3,5]'], answer:0 },
+    { q:'Two-sum problem asks you to find:', options:['Two elements with max product','Two elements that sum to target','Max subarray','Min element pair'], answer:1 },
+    { q:"Kadane's algorithm solves:", options:['Sorting','Maximum subarray sum','Binary search','Two pointers'], answer:1 },
+    { q:'Which data structure uses contiguous memory?', options:['Linked list','Tree','Array','Graph'], answer:2 },
+    { q:'Time complexity of inserting at beginning of array (size n)?', options:['O(1)','O(log n)','O(n)','O(n²)'], answer:2 },
+    { q:'Merge of two sorted arrays of size m and n has complexity:', options:['O(m)','O(n)','O(m+n)','O(m*n)'], answer:2 },
+  ],
+  strings: [
+    { q:'Length of string "Hello World"?', options:['10','11','12','9'], answer:1 },
+    { q:'Which function reverses a string in Python?', options:['str.reverse()','reversed(str)','str[::-1]','str.flip()'], answer:2 },
+    { q:'Palindrome check time complexity (length n)?', options:['O(1)','O(log n)','O(n)','O(n²)'], answer:2 },
+    { q:'"abcabc" — how many unique characters?', options:['3','4','5','6'], answer:0 },
+    { q:'Anagram of "listen" is:', options:['silent','listen','enlist','tinsel'], answer:0 },
+    { q:'Which algorithm finds pattern in string efficiently?', options:['Bubble sort','KMP algorithm','Binary search','DFS'], answer:1 },
+    { q:'String concatenation of "Hello" + " " + "World" = ?', options:['HelloWorld','Hello World','Hello  World','helloworld'], answer:1 },
+    { q:"ASCII value of 'A' is:", options:['65','97','64','66'], answer:0 },
+    { q:'Count of vowels in "Placement"?', options:['2','3','4','5'], answer:1 },
+    { q:'In Java, strings are:', options:['Mutable','Immutable','Both','Neither'], answer:1 },
+  ],
+  sorting: [
+    { q:'Best case time complexity of Bubble Sort?', options:['O(n²)','O(n log n)','O(n)','O(1)'], answer:2 },
+    { q:'Which sorting algorithm uses divide and conquer?', options:['Bubble sort','Insertion sort','Merge sort','Selection sort'], answer:2 },
+    { q:'Worst case of Quick Sort?', options:['O(n)','O(n log n)','O(n²)','O(log n)'], answer:2 },
+    { q:'Which sort is stable?', options:['Quick sort','Heap sort','Merge sort','Selection sort'], answer:2 },
+    { q:'Space complexity of Merge Sort?', options:['O(1)','O(log n)','O(n)','O(n²)'], answer:2 },
+    { q:'Insertion sort is best suited for:', options:['Large random data','Nearly sorted data','Reverse sorted data','All equal elements'], answer:1 },
+    { q:'Selection sort always makes __ swaps for n elements:', options:['n','n-1','n/2','n²'], answer:1 },
+    { q:'Which sorting has best average time complexity?', options:['Bubble sort','Insertion sort','Selection sort','Merge sort'], answer:3 },
+    { q:'Counting sort works best when:', options:['Data is random','Data range is small','Data is large','Data is strings'], answer:1 },
+    { q:'Heap sort uses which data structure?', options:['Stack','Queue','Heap','Tree'], answer:2 },
+  ],
+  tcs_numerical: [
+    { q:'If x : y = 3 : 4 and y : z = 2 : 3, find x : z.', options:['1:2','3:8','1:4','2:3'], answer:0 },
+    { q:'Compound Interest on ₹1000 at 10% for 2 years?', options:['₹200','₹210','₹220','₹230'], answer:1 },
+    { q:'Speed of boat in still water is 10 km/h, stream speed 2 km/h. Upstream speed?', options:['6 km/h','8 km/h','10 km/h','12 km/h'], answer:1 },
+    { q:'Two numbers are in ratio 5:3. Their HCF is 4. Sum of numbers?', options:['28','32','36','40'], answer:1 },
+    { q:'A can do work in 10 days, B in 15 days. Together in?', options:['4 days','5 days','6 days','7 days'], answer:2 },
+    { q:'If 20% of x = 80, then x = ?', options:['300','350','400','450'], answer:2 },
+    { q:'Distance = 240 km, time = 4 hours. Speed = ?', options:['50 km/h','55 km/h','60 km/h','65 km/h'], answer:2 },
+    { q:'Find the odd number: 121, 144, 169, 196, 204', options:['121','196','204','169'], answer:2 },
+    { q:'Profit % if CP = ₹400 and SP = ₹500?', options:['20%','22%','25%','30%'], answer:2 },
+    { q:'Average of first 10 natural numbers?', options:['4.5','5','5.5','6'], answer:2 },
+  ],
+  tcs_verbal: [
+    { q:'Choose the word closest in meaning to DILIGENT:', options:['Lazy','Hardworking','Careless','Slow'], answer:1 },
+    { q:'Choose the antonym of ABUNDANT:', options:['Plenty','Scarce','Rich','Full'], answer:1 },
+    { q:'Correct form: "Neither of the boys __ present."', options:['are','were','was','been'], answer:2 },
+    { q:'One word for "Study of living organisms":', options:['Geology','Biology','Zoology','Botany'], answer:1 },
+    { q:'Choose correct sentence:', options:['I have saw him.','I seen him.','I have seen him.','I seed him.'], answer:2 },
+    { q:'Idiom "once in a blue moon" means:', options:['Very rarely','Very often','Never','Always'], answer:0 },
+    { q:'"Are you ready?" he asked. (Indirect speech) →', options:['He asked if I was ready.','He said am I ready.','He asked am I ready.','He said if I was ready.'], answer:0 },
+    { q:'Prefix meaning "against":', options:['Pro-','Anti-','Re-','Pre-'], answer:1 },
+    { q:'Correctly spelled word:', options:['Recieve','Achieve','Beleive','Freind'], answer:1 },
+    { q:'Conjunction in "I studied hard but failed":', options:['I','hard','but','failed'], answer:2 },
+  ],
+  tcs_programming: [
+    { q:'Which data structure uses LIFO?', options:['Queue','Stack','Array','Linked List'], answer:1 },
+    { q:'Output of: print(2**10) in Python?', options:['20','100','1024','2048'], answer:2 },
+    { q:'What does OOP stand for?', options:['Object Oriented Programming','Object Output Programming','Open Oriented Programming','None'], answer:0 },
+    { q:'Which loop always executes at least once?', options:['for','while','do-while','foreach'], answer:2 },
+    { q:'Function that calls itself is:', options:['Iteration','Recursion','Overloading','Polymorphism'], answer:1 },
+    { q:'Which is NOT a primitive data type in Java?', options:['int','float','String','boolean'], answer:2 },
+    { q:'Time complexity of binary search?', options:['O(n)','O(n²)','O(log n)','O(1)'], answer:2 },
+    { q:'Which operator checks equality in Python?', options:['=','==','===','!='], answer:1 },
+    { q:'What is the output of 10 % 3?', options:['3','1','0','2'], answer:1 },
+    { q:'Abstract class in OOP:', options:['Can be instantiated','Cannot be instantiated','Has no methods','Is same as interface'], answer:1 },
+  ],
+  tcs_coding: [
+    { q:'Fibonacci sequence: 0,1,1,2,3,5,__ ?', options:['7','8','9','10'], answer:1 },
+    { q:'How many iterations does "for i in range(1,6)" run?', options:['4','5','6','7'], answer:1 },
+    { q:'Swap a=3, b=5 without temp: a=a+b; b=a-b; a=a-b. Final values?', options:['a=3,b=5','a=5,b=3','a=5,b=5','a=3,b=3'], answer:1 },
+    { q:'Which is used to handle exceptions in Python?', options:['try-catch','try-except','if-else','switch-case'], answer:1 },
+    { q:'What does len([1,2,3,4,5]) return?', options:['4','5','6','3'], answer:1 },
+    { q:'Sum of digits of 245?', options:['9','10','11','12'], answer:2 },
+    { q:'Which keyword exits a loop in Python?', options:['exit','stop','break','return'], answer:2 },
+    { q:'Output of: print(type(3.14))?', options:["<class 'int'>","<class 'float'>","<class 'double'>","<class 'str'>"], answer:1 },
+    { q:'Index of last element in a list of size n?', options:['n','n+1','n-1','n-2'], answer:2 },
+    { q:'Which sorting algorithm has O(n log n) in ALL cases?', options:['Quick sort','Bubble sort','Merge sort','Insertion sort'], answer:2 },
+  ],
+  tcs_data: [
+    { q:'Pie chart: A=40%, B=30%, C=20%, D=10%. Total=500. How many in B?', options:['100','125','150','175'], answer:2 },
+    { q:'Bar chart: Sales Jan=200, Feb=250, Mar=300. Average monthly sales?', options:['230','250','270','280'], answer:1 },
+    { q:'Profit Q1=₹20000, increases 10% each quarter. Q2 profit?', options:['₹21000','₹22000','₹23000','₹24000'], answer:1 },
+    { q:'Students passed: 2021=80, 2022=90, 2023=100. % increase 2021→2023?', options:['20%','25%','30%','35%'], answer:1 },
+    { q:'Population: 2010=1M, 2020=1.5M. % growth?', options:['40%','45%','50%','55%'], answer:2 },
+    { q:'Boys:Girls = 3:2. Total = 500. How many girls?', options:['150','175','200','225'], answer:2 },
+    { q:'Average speed: 60 km/h for 2h, 90 km/h for 3h. Overall average?', options:['72 km/h','75 km/h','78 km/h','80 km/h'], answer:2 },
+    { q:'Venn diagram: Only A=10, Only B=15, A∩B=5. Total in A or B?', options:['25','28','30','32'], answer:2 },
+    { q:'Income=₹50000, savings=30% of income. Expenditure?', options:['₹30000','₹32000','₹35000','₹40000'], answer:2 },
+    { q:'Runs scored: 45, 67, 89, 23, 56. Median?', options:['45','56','67','89'], answer:1 },
+  ],
+};
 
-  /* animate score number */
-  var scoreEl = document.getElementById('scoreNum');
-  var current = 0;
-  var stepVal = Math.ceil(userScore / 40) || 1;
-  var ticker  = setInterval(function() {
-    current = Math.min(current + stepVal, userScore);
-    scoreEl.textContent = current;
-    if (current >= userScore) { clearInterval(ticker); }
-  }, 30);
+const TOPIC_META = {
+  quantitative:    { label:'Quantitative Aptitude' },
+  logical:         { label:'Logical Reasoning' },
+  verbal:          { label:'Verbal Ability' },
+  arrays:          { label:'Arrays' },
+  strings:         { label:'Strings' },
+  sorting:         { label:'Sorting Algorithms' },
+  tcs_numerical:   { label:'Numerical Ability' },
+  tcs_verbal:      { label:'Verbal Reasoning' },
+  tcs_programming: { label:'Programming Logic' },
+  tcs_coding:      { label:'Coding' },
+  tcs_data:        { label:'Data Interpretation' },
+};
 
-  /* animate ring */
-  var ringEl  = document.getElementById('ringFill');
-  var offset  = 345 - (pct / 100) * 345;
-  setTimeout(function() {
-    ringEl.style.strokeDashoffset = offset;
-    if      (pct >= 80) { ringEl.style.stroke = '#22c55e'; }
-    else if (pct >= 60) { ringEl.style.stroke = '#0aa3b5'; }
-    else if (pct >= 40) { ringEl.style.stroke = '#f59e0b'; }
-    else                { ringEl.style.stroke = '#ef4444'; }
-  }, 200);
+/* ── Read URL params ── */
+const params    = new URLSearchParams(window.location.search);
+const score     = parseInt(params.get('score'))  || 0;
+const total     = parseInt(params.get('total'))  || 10;
+const topic     = params.get('topic')            || 'Practice Test';
+const topicSlug = params.get('topicSlug')        || '';
+const violations = parseInt(params.get('violations')) || 0;
+const pct       = Math.round((score / total) * 100);
 
-  /* grade badge and message */
-  var badge    = document.getElementById('gradeBadge');
-  var icon     = document.getElementById('gradeIcon');
-  var lbl      = document.getElementById('gradeLabel');
-  var titleEl  = document.getElementById('heroTitle');
-  var subEl    = document.getElementById('heroSubtitle');
+/* ── Parse per-question answers from URL ── */
+const answersParam   = params.get('answers') || '';
+const studentAnswers = answersParam ? answersParam.split(',').map(Number) : [];
 
-  if (pct >= 80) {
-    badge.className   = 'grade-badge excellent';
-    icon.className    = 'fas fa-trophy';
-    lbl.textContent   = 'Excellent';
-    titleEl.textContent = 'Outstanding Performance! \uD83C\uDF89';
-    subEl.textContent   = 'You aced the assessment. Keep up the great work!';
-  } else if (pct >= 60) {
-    badge.className   = 'grade-badge good';
-    icon.className    = 'fas fa-thumbs-up';
-    lbl.textContent   = 'Good';
-    titleEl.textContent = 'Good Job!';
-    subEl.textContent   = 'Solid performance. A little more practice and you\'ll be at the top.';
-  } else if (pct >= 40) {
-    badge.className   = 'grade-badge average';
-    icon.className    = 'fas fa-circle-half-stroke';
-    lbl.textContent   = 'Average';
-    titleEl.textContent = 'Keep Practising';
-    subEl.textContent   = 'You\'re on the right track \u2014 review the topics and try again.';
-  } else {
-    badge.className   = 'grade-badge poor';
-    icon.className    = 'fas fa-book-open';
-    lbl.textContent   = 'Needs Work';
-    titleEl.textContent = 'Don\'t Give Up!';
-    subEl.textContent   = 'Check your learning path and revisit the fundamentals.';
-  }
+/* ── Animate score ring ── */
+const circumference = 2 * Math.PI * 55;
+const offset        = circumference - (pct / 100) * circumference;
+const ringFill      = document.getElementById('ringFill');
+
+let ringColor = '#ef4444';
+if (pct >= 80)      ringColor = '#22c55e';
+else if (pct >= 60) ringColor = '#0aa3b5';
+else if (pct >= 40) ringColor = '#f59e0b';
+
+setTimeout(() => {
+  ringFill.style.strokeDashoffset = offset;
+  ringFill.style.stroke = ringColor;
+}, 200);
+
+/* ── Score display ── */
+document.getElementById('scoreNum').textContent    = score;
+document.getElementById('scoreTotal').textContent  = '/' + total;
+document.getElementById('statCorrect').textContent = score;
+document.getElementById('statWrong').textContent   = total - score;
+document.getElementById('statPct').textContent     = pct + '%';
+
+/* ── Grade badge ── */
+const badge   = document.getElementById('gradeBadge');
+const heading = document.getElementById('resultHeading');
+const msg     = document.getElementById('resultMsg');
+
+if (pct >= 80) {
+  badge.className = 'grade-badge excellent';
+  document.getElementById('gradeText').textContent = '🏆 Excellent!';
+  heading.textContent = 'Outstanding Performance!';
+  msg.textContent = `You scored ${score}/${total} on ${topic}. You're well prepared for this section!`;
+} else if (pct >= 60) {
+  badge.className = 'grade-badge good';
+  document.getElementById('gradeText').textContent = '👍 Good';
+  heading.textContent = 'Good Job!';
+  msg.textContent = `You scored ${score}/${total} on ${topic}. A bit more practice and you'll nail it!`;
+} else if (pct >= 40) {
+  badge.className = 'grade-badge average';
+  document.getElementById('gradeText').textContent = '📈 Average';
+  heading.textContent = 'Keep Practising!';
+  msg.textContent = `You scored ${score}/${total} on ${topic}. Focus on the weak areas and try again.`;
+} else {
+  badge.className = 'grade-badge poor';
+  document.getElementById('gradeText').textContent = '💪 Needs Work';
+  heading.textContent = "Don't Give Up!";
+  msg.textContent = `You scored ${score}/${total} on ${topic}. Review the fundamentals and retry.`;
+}
+
+/* ── Action buttons ── */
+document.getElementById('retryBtn').href     = topicSlug ? `${TEST_URL}?topic=${topicSlug}` : TEST_URL;
+document.getElementById('companiesBtn').href = COMPANIES_URL;
+document.getElementById('allTestsBtn').href  = TEST_URL;
+document.getElementById('dashboardBtn').href = DASHBOARD_URL;
+
+/* ── ANSWER REVIEW ── */
+const questions    = QUESTION_BANK[topicSlug] || [];
+const optionLetters = ['A', 'B', 'C', 'D'];
+let reviewHTML = '';
+
+if (questions.length === 0) {
+  reviewHTML = `<p style="color:var(--muted);font-size:0.84rem;">No question data available for this topic.</p>`;
+} else {
+  questions.forEach((q, i) => {
+    const studentAns = studentAnswers.length > i ? studentAnswers[i] : -1;
+    const correctAns = q.answer;
+    const isSkipped  = studentAns === -1 || studentAns === null || isNaN(studentAns);
+    const isCorrect  = !isSkipped && studentAns === correctAns;
+
+    const cardClass = isCorrect ? 'correct-ans' : 'wrong-ans';
+    const numClass  = isCorrect ? 'correct'     : 'wrong';
+    const iconClass = isCorrect ? 'correct'     : 'wrong';
+    const iconName  = isCorrect ? 'fa-circle-check' : 'fa-circle-xmark';
+
+    let optionsHTML = q.options.map((opt, idx) => {
+      let cls   = '';
+      let badge = '';
+
+      if (idx === correctAns) {
+        cls   = 'correct-opt';
+        badge = `<span class="q-opt-badge">✓ Correct</span>`;
+      } else if (!isSkipped && idx === studentAns && !isCorrect) {
+        cls   = 'wrong-opt';
+        badge = `<span class="q-opt-badge">✗ Your answer</span>`;
+      }
+
+      return `<div class="q-opt ${cls}">
+        <div class="q-opt-label">${optionLetters[idx]}</div>
+        <span>${opt}</span>
+        ${badge}
+      </div>`;
+    }).join('');
+
+    let skippedHTML = '';
+    if (isSkipped) {
+      skippedHTML = `<div class="q-skipped-note">
+        <i class="fas fa-triangle-exclamation"></i>
+        <span>You did not answer this question. The correct answer is <strong>${optionLetters[correctAns]}: ${q.options[correctAns]}</strong>.</span>
+      </div>`;
+    }
+
+    reviewHTML += `
+      <div class="q-review ${cardClass}">
+        <div class="q-review-header">
+          <div class="q-num-badge ${numClass}">${i + 1}</div>
+          <div class="q-review-text">${q.q}</div>
+          <i class="fas ${iconName} q-status-icon ${iconClass}"></i>
+        </div>
+        <div class="q-options-grid">
+          ${optionsHTML}
+        </div>
+        ${skippedHTML}
+      </div>`;
+  });
+}
+
+document.getElementById('answerReview').innerHTML = reviewHTML;
+
+/* ── Tips ── */
+const TIPS = {
+  quantitative:    ['Revise HCF, LCM, percentages, and ratio & proportion.','Practice 10 arithmetic problems daily.','Use shortcut methods for multiplication and division.'],
+  logical:         ['Solve puzzles and series completion exercises daily.','Practice Venn diagrams and syllogisms.','Improve speed by timing yourself on 10 problems.'],
+  verbal:          ['Read newspapers to improve vocabulary and grammar.','Practice fill-in-the-blank and error detection questions.','Learn 10 new words with usage examples every day.'],
+  arrays:          ['Implement array problems from LeetCode Easy.','Master two-pointer and sliding window techniques.','Revise time complexity of array operations.'],
+  strings:         ['Practice anagram, palindrome, and substring problems.','Learn KMP algorithm for pattern matching.','Implement string manipulation without built-in functions.'],
+  sorting:         ['Implement Bubble, Merge, and Quick sort from scratch.','Understand when to use which sorting algorithm.','Focus on time and space complexity trade-offs.'],
+  tcs_numerical:   ['Revise profit & loss, time & work, and speed-distance.','Practice data sufficiency questions.','Use estimation to quickly eliminate wrong options.'],
+  tcs_verbal:      ['Focus on sentence correction and reading comprehension.','Practice spotting errors in complex sentences.','Learn common idioms and phrasal verbs.'],
+  tcs_programming: ['Practice pseudocode and algorithm tracing.','Revise OOP concepts with real code examples.','Understand recursion and iteration differences.'],
+  tcs_coding:      ['Solve 2 LeetCode problems daily.','Focus on array, string, and basic DP problems.','Review time complexity after each solution.'],
+  tcs_data:        ['Practice reading bar charts, pie charts, and line graphs.','Learn to calculate percentage change quickly.','Practice table-based data interpretation questions.'],
+};
+
+const tips = TIPS[topicSlug] || ['Review the topic fundamentals.','Practice more questions daily.','Time yourself to improve speed.'];
+
+document.getElementById('tipsContainer').innerHTML = tips.map(t =>
+  `<div class="tip-row"><i class="fas fa-circle-check"></i><span>${t}</span></div>`
+).join('');
+
+/* ── PROCTORING SUMMARY ── */
+const pIcon   = document.getElementById('proctorIcon');
+const pTitle  = document.getElementById('proctorTitle');
+const pDesc   = document.getElementById('proctorDesc');
+const pStatus = document.getElementById('proctorStatus');
+
+if (violations === 0) {
+  pIcon.style.background = 'var(--green-dim)'; pIcon.style.color = 'var(--green)';
+  pTitle.textContent = "Session Verified";
+  pDesc.textContent  = "AI Proctoring detected 0 violations. Session is trusted.";
+  pStatus.textContent = "Trusted"; pStatus.className = "proctor-status-pill status-trusted";
+} else if (violations < 3) {
+  pIcon.style.background = 'var(--yellow-dim)'; pIcon.style.color = 'var(--yellow)';
+  pTitle.textContent = "Session Flagged";
+  pDesc.textContent  = `AI Proctoring detected ${violations} minor violations. Accuracy may be affected.`;
+  pStatus.textContent = "Checked"; pStatus.className = "proctor-status-pill status-trusted";
+} else {
+  pIcon.style.background = 'var(--red-dim)'; pIcon.style.color = 'var(--red)';
+  pTitle.textContent = "Compromised Session";
+  pDesc.textContent  = `Multiple violations (${violations}) detected. This result is being reviewed for integrity.`;
+  pStatus.textContent = "Flagged"; pStatus.className = "proctor-status-pill status-flagged";
+}
+
+document.title = `Result: ${score}/${total} — ${topic} - Smart Placement Portal`;
 </script>
 
 </body>
