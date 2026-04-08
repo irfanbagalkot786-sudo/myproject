@@ -4,396 +4,384 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Assessment Test - Smart Placement Portal</title>
+<title>Practice Test - Smart Placement Portal</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-
 <style>
 :root {
-  --teal:       #0aa3b5;
-  --teal-dark:  #088a9a;
-  --teal-dim:   rgba(10,163,181,0.12);
-  --ink:        #0d1b2a;
-  --slate:      #3a4a5c;
-  --muted:      #7a8fa8;
-  --surface:    #ffffff;
-  --bg:         #eaf1f6;
-  --border:     #d6e4ed;
-  --gradient:   linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
-  --glow:       0 0 40px rgba(10,163,181,0.12);
+  --teal:      #0aa3b5;
+  --teal-dark: #088a9a;
+  --teal-dim:  rgba(10,163,181,0.12);
+  --ink:       #0d1b2a;
+  --slate:     #3a4a5c;
+  --muted:     #7a8fa8;
+  --surface:   #ffffff;
+  --bg:        #eaf1f6;
+  --border:    #d6e4ed;
+  --gradient:  linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
+  --glow:      0 0 40px rgba(10,163,181,0.12);
+  --green:     #22c55e;
+  --red:       #ef4444;
 }
-
 * { margin:0; padding:0; box-sizing:border-box; }
-
 body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-  overflow-x: hidden;
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg); color:var(--ink);
+  min-height:100vh; overflow-x:hidden;
 }
-
 body::before {
-  content:'';
-  position:fixed;
-  inset:0;
+  content:''; position:fixed; inset:0;
   background:
-    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(10,163,181,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(8,138,154,0.06) 0%, transparent 60%);
-  pointer-events:none;
-  z-index:0;
+    radial-gradient(ellipse 60% 50% at 10% 20%,rgba(10,163,181,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 80%,rgba(8,138,154,0.06) 0%,transparent 60%);
+  pointer-events:none; z-index:0;
 }
-
-/* ── NAVBAR ── */
 .navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 40px;
-  height: 64px;
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+  position:sticky; top:0; z-index:100;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0 40px; height:64px;
+  background:rgba(255,255,255,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 1px 8px rgba(10,163,181,0.07);
 }
-
 .navbar-brand {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 1.1rem;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  white-space: nowrap;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
+  background:var(--gradient); -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; background-clip:text; white-space:nowrap;
 }
-
-.navbar-links {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-}
-
+.navbar-links { display:flex; align-items:center; gap:4px; flex-wrap:nowrap; overflow-x:auto; }
 .navbar-links a {
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: 8px;
-  transition: all 0.2s;
-  white-space: nowrap;
+  color:var(--muted); text-decoration:none; font-size:0.8rem; font-weight:500;
+  padding:6px 12px; border-radius:8px; transition:all 0.2s; white-space:nowrap;
 }
+.navbar-links a:hover { color:var(--slate); background:var(--teal-dim); }
+.navbar-links a.active { color:var(--teal); background:var(--teal-dim); }
 
-.navbar-links a:hover  { color: var(--slate); background: var(--teal-dim); }
-.navbar-links a.active { color: var(--teal);  background: var(--teal-dim); }
-
-/* ── MAIN ── */
 .main {
-  position: relative;
-  z-index: 1;
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 40px 24px 60px;
+  position:relative; z-index:1;
+  max-width:760px; margin:0 auto;
+  padding:40px 24px 60px;
 }
 
-/* ── PAGE HEADER ── */
-.page-header {
-  margin-bottom: 32px;
-  animation: fadeUp 0.5s ease both;
+/* ── TOPIC SELECTOR PANEL ── */
+.topic-selector-panel {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:24px 28px;
+  box-shadow:var(--glow); margin-bottom:24px;
+  animation:fadeUp 0.35s ease both;
 }
-
-.page-header h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.9rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--ink);
+.panel-toggle-row {
+  display:flex; align-items:center; justify-content:space-between; cursor:pointer;
 }
-
-.page-header p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
-
-/* ── PROGRESS BAR ── */
-.test-progress {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 18px 22px;
-  margin-bottom: 24px;
-  box-shadow: var(--glow);
-  animation: fadeUp 0.5s ease 0.05s both;
-  display: flex;
-  align-items: center;
-  gap: 16px;
+.panel-header {
+  display:flex; align-items:center; gap:10px; margin-bottom:0;
 }
-
-.test-progress-label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--muted);
-  white-space: nowrap;
+.panel-company-logo {
+  width:38px; height:38px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:0.78rem;
+  color:white; flex-shrink:0;
 }
-
-.progress-bar-track {
-  flex: 1;
-  height: 8px;
-  background: var(--border);
-  border-radius: 99px;
-  overflow: hidden;
+.panel-header-text h3 {
+  font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:800; color:var(--ink);
 }
-
-.progress-bar-fill {
-  height: 100%;
-  background: var(--gradient);
-  border-radius: 99px;
-  width: 0%;
-  transition: width 0.4s ease;
+.panel-header-text p { font-size:0.75rem; color:var(--muted); margin-top:1px; }
+.panel-toggle-btn {
+  display:flex; align-items:center; gap:6px;
+  font-size:0.75rem; font-weight:700; color:var(--teal);
+  background:var(--teal-dim); border:1px solid rgba(10,163,181,0.2);
+  border-radius:20px; padding:4px 12px; cursor:pointer; transition:background 0.18s;
 }
-
-.progress-count {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--teal);
-  white-space: nowrap;
+.panel-toggle-btn:hover { background:rgba(10,163,181,0.2); }
+.panel-divider { height:1px; background:var(--border); margin:16px 0; }
+.topic-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.topic-select-btn {
+  display:flex; align-items:center; gap:10px;
+  padding:11px 14px; border-radius:13px;
+  border:1.5px solid var(--border); background:var(--bg);
+  text-decoration:none; cursor:pointer;
+  transition:all 0.18s; color:var(--slate);
 }
+.topic-select-btn:hover {
+  border-color:var(--teal); background:var(--teal-dim); color:var(--teal-dark);
+  transform:translateY(-2px); box-shadow:0 4px 12px rgba(10,163,181,0.15);
+}
+.topic-select-btn.active-topic {
+  border-color:var(--teal); background:var(--teal-dim); color:var(--teal-dark);
+}
+.tsb-icon-wrap {
+  width:32px; height:32px; border-radius:9px;
+  background:var(--surface); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.75rem; color:var(--teal); flex-shrink:0;
+  transition:background 0.18s, border-color 0.18s;
+}
+.topic-select-btn:hover .tsb-icon-wrap,
+.topic-select-btn.active-topic .tsb-icon-wrap {
+  background:var(--teal); border-color:var(--teal); color:white;
+}
+.tsb-text { flex:1; }
+.tsb-name { font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700; line-height:1.2; }
+.tsb-qs { font-size:0.68rem; color:var(--muted); margin-top:1px; }
+.topic-select-btn:hover .tsb-qs,
+.topic-select-btn.active-topic .tsb-qs { color:var(--teal); }
+.tsb-arrow { font-size:0.62rem; color:var(--muted); flex-shrink:0; }
+
+/* ── TEST HEADER ── */
+.test-header {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:28px 32px;
+  box-shadow:var(--glow); margin-bottom:24px;
+  animation:fadeUp 0.4s ease both;
+  display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+}
+.test-header-left h1 {
+  font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800;
+  color:var(--ink); margin-bottom:6px;
+}
+.test-header-left p { font-size:0.85rem; color:var(--muted); }
+.topic-badge {
+  display:none; align-items:center; gap:6px;
+  background:var(--teal-dim); color:var(--teal-dark);
+  border:1px solid rgba(10,163,181,0.25);
+  border-radius:20px; padding:6px 14px;
+  font-size:0.75rem; font-weight:700;
+  white-space:nowrap; flex-shrink:0;
+}
+.topic-badge i { font-size:0.68rem; }
 
 /* ── QUESTION CARDS ── */
-.question-list {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
 .question-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 26px 28px;
-  box-shadow: var(--glow);
-  animation: fadeUp 0.5s ease both;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; padding:24px 28px;
+  box-shadow:var(--glow); margin-bottom:16px;
+  animation:fadeUp 0.4s ease both;
 }
-
-.question-card.answered {
-  border-color: rgba(10,163,181,0.30);
-  box-shadow: 0 0 0 3px rgba(10,163,181,0.06), var(--glow);
-}
-
-.question-card:nth-child(1)  { animation-delay: 0.06s; }
-.question-card:nth-child(2)  { animation-delay: 0.10s; }
-.question-card:nth-child(3)  { animation-delay: 0.14s; }
-.question-card:nth-child(4)  { animation-delay: 0.18s; }
-.question-card:nth-child(5)  { animation-delay: 0.22s; }
-.question-card:nth-child(6)  { animation-delay: 0.26s; }
-.question-card:nth-child(7)  { animation-delay: 0.30s; }
-.question-card:nth-child(8)  { animation-delay: 0.34s; }
-.question-card:nth-child(9)  { animation-delay: 0.38s; }
-.question-card:nth-child(10) { animation-delay: 0.42s; }
-
-.question-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.question-number {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: var(--gradient);
-  color: white;
-  font-family: 'Syne', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 3px 10px rgba(10,163,181,0.25);
-}
-
 .question-text {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--ink);
-  line-height: 1.6;
-  padding-top: 5px;
+  font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700;
+  color:var(--ink); margin-bottom:18px; line-height:1.5;
 }
-
-/* ── OPTIONS ── */
-.options-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
+.options-list { display:flex; flex-direction:column; gap:10px; }
 .option-label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.18s;
-  font-size: 0.88rem;
-  color: var(--slate);
-  user-select: none;
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; border-radius:12px;
+  border:1.5px solid var(--border); background:var(--bg);
+  cursor:pointer; font-size:0.85rem; color:var(--slate);
+  transition:all 0.18s; font-weight:500;
 }
+.option-label:hover { border-color:var(--teal); background:var(--teal-dim); color:var(--teal-dark); }
+.option-label input[type="radio"] { accent-color:var(--teal); width:16px; height:16px; flex-shrink:0; }
+.option-label input[type="radio"]:checked + span { color:var(--teal-dark); font-weight:600; }
+.option-label:has(input:checked) { border-color:var(--teal); background:var(--teal-dim); }
 
-.option-label:hover {
-  border-color: var(--teal);
-  background: var(--teal-dim);
-  color: var(--teal);
-}
-
-.option-label input[type="radio"] { display: none; }
-
-.radio-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.18s;
-}
-
-.radio-dot::after {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--teal);
-  opacity: 0;
-  transition: opacity 0.18s;
-}
-
-.option-label input[type="radio"]:checked ~ .radio-dot {
-  border-color: var(--teal);
-  background: var(--teal-dim);
-}
-
-.option-label input[type="radio"]:checked ~ .radio-dot::after { opacity: 1; }
-
-.option-label:has(input[type="radio"]:checked) {
-  border-color: var(--teal);
-  background: var(--teal-dim);
-  color: var(--teal);
-  font-weight: 500;
-}
-
-/* ── UNANSWERED WARNING ── */
-.warning-toast {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  background: rgba(245,158,11,0.12);
-  border: 1.5px solid rgba(245,158,11,0.35);
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 0.85rem;
-  color: #b45309;
-  font-weight: 500;
-  margin-bottom: 14px;
-  animation: fadeUp 0.3s ease both;
-}
-
-.warning-toast.show { display: flex; }
-
-/* ── SUBMIT SECTION ── */
-.submit-section {
-  margin-top: 28px;
-  animation: fadeUp 0.5s ease 0.45s both;
-}
-
+/* ── SUBMIT ── */
+.submit-wrap { text-align:center; margin-top:32px; }
 .submit-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding: 15px 24px;
-  background: var(--gradient);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  font-family: 'Syne', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 18px rgba(10,163,181,0.30);
+  display:inline-flex; align-items:center; gap:10px;
+  padding:14px 40px; background:var(--gradient); color:white;
+  border:none; border-radius:14px; cursor:pointer;
+  font-family:'Syne',sans-serif; font-size:1rem; font-weight:700;
+  letter-spacing:0.3px; box-shadow:0 4px 20px rgba(10,163,181,0.3);
+  transition:transform 0.2s, box-shadow 0.2s;
 }
+.submit-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(10,163,181,0.4); }
 
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(10,163,181,0.42);
+/* ── NO TOPIC / LANDING ── */
+.no-topic-state {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; padding:52px 28px; text-align:center;
+  box-shadow:var(--glow);
 }
-
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+.no-topic-state i { font-size:2.4rem; color:var(--teal); margin-bottom:16px; display:block; }
+.no-topic-state h3 {
+  font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800;
+  color:var(--ink); margin-bottom:8px;
 }
+.no-topic-state p { font-size:0.85rem; color:var(--muted); line-height:1.65; }
 
-/* ── EMPTY STATE ── */
-.empty-state {
-  text-align: center;
-  padding: 64px 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  animation: fadeUp 0.5s ease 0.1s both;
-}
+    /* ── COMPANY CARDS ── */
+    .company-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px; margin-top: 24px;
+    }
+    .company-card {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 24px; text-align: center;
+      cursor: pointer; transition: all 0.2s; position: relative;
+      overflow: hidden; box-shadow: var(--glow);
+    }
+    .company-card:hover {
+      transform: translateY(-4px); border-color: var(--teal);
+      box-shadow: 0 12px 28px rgba(10,163,181,0.15);
+    }
+    .cc-logo {
+      width: 54px; height: 54px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+      color: white; margin: 0 auto 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .cc-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .cc-topics { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-.empty-state i {
-  font-size: 2.8rem;
-  color: var(--teal);
-  opacity: 0.4;
-  display: block;
-  margin-bottom: 14px;
-}
+    /* ── COMPANY CARDS ── */
+    .company-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px; margin-top: 24px;
+    }
+    .company-card {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 24px; text-align: center;
+      cursor: pointer; transition: all 0.2s; position: relative;
+      overflow: hidden; box-shadow: var(--glow);
+    }
+    .company-card:hover {
+      transform: translateY(-4px); border-color: var(--teal);
+      box-shadow: 0 12px 28px rgba(10,163,181,0.15);
+    }
+    .cc-logo {
+      width: 54px; height: 54px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+      color: white; margin: 0 auto 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .cc-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .cc-topics { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-.empty-state h3 {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 6px;
-}
+    /* ── COMPANY CARDS ── */
+    .company-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px; margin-top: 24px;
+    }
+    .company-card {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 24px; text-align: center;
+      cursor: pointer; transition: all 0.2s; position: relative;
+      overflow: hidden; box-shadow: var(--glow);
+    }
+    .company-card:hover {
+      transform: translateY(-4px); border-color: var(--teal);
+      box-shadow: 0 12px 28px rgba(10,163,181,0.15);
+    }
+    .cc-logo {
+      width: 54px; height: 54px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+      color: white; margin: 0 auto 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .cc-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .cc-topics { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-.empty-state p { font-size: 0.85rem; color: var(--muted); }
+    /* ── PROCTORING HUD ── */
+    .proctor-status {
+      font-size: 0.65rem; color: var(--muted); display: flex; align-items: center; gap: 6px;
+      margin-top: 4px; font-weight: 700; text-transform: uppercase;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
+    .status-dot.active { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+    .status-dot.error { background: #ff4444; }
+    
+    .ai-loading-overlay {
+      position: absolute; inset: 0; background: rgba(13,27,42,0.8);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: white; z-index: 10; font-size: 0.8rem; font-weight: 600;
+    }
+    .ai-spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: var(--teal); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+    .proctor-hud {
+      position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+      width: 200px; height: 150px; background: rgba(13,27,42,0.6);
+      backdrop-filter: blur(10px); border: 1.5px solid rgba(10,163,181,0.3);
+      border-radius: 16px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+      display: none;
+    }
+    .proctor-hud video { width:100%; height:100%; object-fit:cover; opacity:0.85; filter:grayscale(0.3); }
+    .proctor-label {
+      position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.5);
+      color:var(--teal); font-size:0.58rem; font-weight:800; padding:2px 6px;
+      border-radius:4px; text-transform:uppercase; letter-spacing:1px;
+    }
+    .detect-canvas { position:absolute; inset:0; z-index:2; pointer-events:none; }
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(18px); }
-  to   { opacity:1; transform:translateY(0); }
-}
+    /* ── VIOLATION OVERLAY ── */
+    .violation-overlay {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(13,27,42,0.85); backdrop-filter: blur(12px);
+      align-items: center; justify-content: center; padding: 24px;
+      animation: fadeIn 0.3s ease;
+    }
+    .violation-overlay.open { display: flex; }
+    .violation-box {
+      background: white; border-radius: 24px; width: 100%; max-width: 440px;
+      padding: 40px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+    }
+    .violation-icon {
+      width: 72px; height: 72px; background: rgba(239, 68, 68, 0.1);
+      color: var(--red); border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 1.8rem; margin: 0 auto 24px;
+    }
+    .violation-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
+    .violation-desc { font-size: 0.95rem; color: var(--slate); margin-bottom: 30px; line-height: 1.6; }
+    .violation-btn {
+      padding: 14px 28px; background: var(--ink); color: white;
+      border: none; border-radius: 12px; font-family: 'Syne', sans-serif;
+      font-weight: 700; cursor: pointer; width: 100%;
+    }
 
-/* ── RESPONSIVE ── */
-@media (max-width: 640px) {
-  .navbar { padding: 0 16px; }
-  .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
-  .main { padding: 20px 14px 40px; }
-  .question-card { padding: 18px 16px; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+@media (max-width:600px) {
+  .navbar { padding:0 16px; }
+  .navbar-links a { padding:5px 8px; font-size:0.72rem; }
+  .test-header { flex-direction:column; padding:20px; }
+  .question-card { padding:18px 20px; }
+  .topic-grid { grid-template-columns:1fr; }
 }
 </style>
 </head>
-
 <body>
+  <!-- UNIFIED DATA INJECTION -->
+  {{ questions_json|json_script:"questions-data" }}
+  <script id="companies-data" type="application/json">
+    [
+      {% for co in companies %}
+        { "id": {{ co.id }}, "name": "{{ co.name|escapejs }}", "logo_text": "{{ co.logo_text|escapejs }}" }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+  </script>
 
-<!-- NAVBAR -->
+  <!-- PROCTORING OVERLAYS -->
+  <div id="violationOverlay" class="violation-overlay">
+    <div class="violation-box">
+      <div class="violation-icon"><i class="fas fa-triangle-exclamation"></i></div>
+      <div class="violation-title">Security Alert</div>
+      <div class="violation-desc" id="violationMsg">Violation detected! Please clear the area to resume.</div>
+      <button class="violation-btn" onclick="resumeTest()">I am ready to resume</button>
+    </div>
+  </div>
+
+  <div id="proctorHud" class="proctor-hud" style="display:none;">
+    <div class="ai-loading-overlay" id="aiLoading">
+      <div class="ai-spinner"></div>
+      <span>Initializing AI...</span>
+    </div>
+    <div class="proctor-label">AI Proctor HUD</div>
+    <video id="webcamView" autoplay muted playsinline></video>
+    <canvas id="detectCanvas" class="detect-canvas"></canvas>
+    <div class="proctor-status">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusLabel">Camera Offline</span>
+    </div>
+  </div>
+
+  <!-- Django URL anchors -->
+  <span id="resultBaseUrl" data-url="{% url 'result' %}" style="display:none;"></span>
+  <span id="testBaseUrl"   data-url="{% url 'test' %}"   style="display:none;"></span>
+  <span id="saveAssessmentUrl" data-url="{% url 'save_assessment' %}" style="display:none;"></span>
+
 <nav class="navbar">
   <div class="navbar-brand">🎯 Smart Placement Portal</div>
   <div class="navbar-links">
@@ -404,153 +392,352 @@ body::before {
     <a href="{% url 'companies' %}">Companies</a>
     <a href="{% url 'upload_resume' %}">Resume</a>
     <a href="{% url 'recommendations' %}">Recs</a>
-    <a href="{% url 'learning_path' %}">Learning</a>
     <a href="{% url 'test' %}" class="active">Test</a>
     <a href="{% url 'jobs' %}">Jobs</a>
+    <a href="{% url 'logout' %}">Logout</a>
+
   </div>
 </nav>
 
-<!-- MAIN -->
 <div class="main">
 
-  <div class="page-header">
-    <h1>Assessment Test</h1>
-    <p>Answer all questions carefully — your score helps tailor your recommendations</p>
-  </div>
-
-  {% if questions %}
-
-  <!-- PROGRESS BAR -->
-  <div class="test-progress">
-    <span class="test-progress-label">Progress</span>
-    <div class="progress-bar-track">
-      <div class="progress-bar-fill" id="progressFill"></div>
-    </div>
-    <span class="progress-count" id="progressCount">0 / {{ questions|length }}</span>
-  </div>
-
-  <!-- UNANSWERED WARNING -->
-  <div class="warning-toast" id="warningToast">
-    <i class="fas fa-triangle-exclamation"></i>
-    Please answer all questions before submitting.
-  </div>
-
-  <!-- FORM — posts to result view -->
-  <form method="POST" action="{% url 'result' %}" id="testForm">
-    {% csrf_token %}
-
-    <div class="question-list">
-      {% for q in questions %}
-      <div class="question-card" id="card-{{ q.id }}">
-
-        <div class="question-header">
-          <div class="question-number">{{ forloop.counter }}</div>
-          <p class="question-text">{{ q.question_text }}</p>
-        </div>
-
-        <div class="options-list">
-          <label class="option-label">
-            <input type="radio" name="{{ q.id }}" value="{{ q.option1 }}" onchange="updateProgress()">
-            <span class="radio-dot"></span>
-            {{ q.option1 }}
-          </label>
-          <label class="option-label">
-            <input type="radio" name="{{ q.id }}" value="{{ q.option2 }}" onchange="updateProgress()">
-            <span class="radio-dot"></span>
-            {{ q.option2 }}
-          </label>
-          <label class="option-label">
-            <input type="radio" name="{{ q.id }}" value="{{ q.option3 }}" onchange="updateProgress()">
-            <span class="radio-dot"></span>
-            {{ q.option3 }}
-          </label>
-          <label class="option-label">
-            <input type="radio" name="{{ q.id }}" value="{{ q.option4 }}" onchange="updateProgress()">
-            <span class="radio-dot"></span>
-            {{ q.option4 }}
-          </label>
+  <!-- TOPIC SELECTOR PANEL -->
+  <div class="topic-selector-panel" id="topicSelectorPanel" style="display:none;">
+    <div class="panel-toggle-row">
+      <div class="panel-header">
+        <div class="panel-company-logo" id="panelLogo"></div>
+        <div class="panel-header-text">
+          <h3 id="panelCompanyName"></h3>
+          <p  id="panelCompanySubtitle"></p>
         </div>
       </div>
-      {% endfor %}
-    </div>
-
-    <div class="submit-section">
-      <button type="button" class="submit-btn" onclick="handleSubmit()">
-        <i class="fas fa-paper-plane"></i> Submit Test
+      <button class="panel-toggle-btn" onclick="togglePanel()">
+        <i class="fas fa-chevron-up" id="panelToggleIcon"></i>
+        <span id="panelToggleLabel">Hide</span>
       </button>
     </div>
-
-  </form>
-
-  {% else %}
-
-  <div class="empty-state">
-    <i class="fas fa-clipboard-question"></i>
-    <h3>No questions available</h3>
-    <p>The assessment test hasn't been set up yet. Please check back later.</p>
+    <div class="panel-divider"  id="panelDivider"></div>
+    <div class="topic-grid"     id="topicGrid"></div>
   </div>
 
-  {% endif %}
+  <!-- TEST HEADER -->
+  <div class="test-header">
+    <div class="test-header-left">
+      <h1 id="pageTitle">Practice Tests</h1>
+      <p  id="pageSubtitle">Select a topic to begin</p>
+    </div>
+    <div class="topic-badge" id="topicBadge">
+      <i class="fas fa-tag"></i>
+      <span id="topicBadgeLabel"></span>
+    </div>
+  </div>
+
+  <!-- DYNAMIC AREA -->
+  <div id="testArea"></div>
 
 </div>
 
 <script>
-  const total = document.querySelectorAll('.question-card').length;
+const RESULT_URL = document.getElementById('resultBaseUrl').dataset.url;
+const TEST_URL   = document.getElementById('testBaseUrl').dataset.url;
 
-  function updateProgress() {
-    const answered = new Set(
-      [...document.querySelectorAll('input[type="radio"]:checked')]
-        .map(el => el.name)
-    ).size;
+function testUrl(slug) {
+  return TEST_URL.replace(/\/$/, '') + '/?topic=' + slug;
+}
 
-    const pct = total ? (answered / total) * 100 : 0;
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('progressCount').textContent = answered + ' / ' + total;
+/* ── Full data for mapping UI ── */
+const COMPANY_TOPICS = {
+  infosys: {
+    name: 'Infosys',
+    subtitle: 'InfyTQ & Certification — 3 topics',
+    logo: 'IF',
+    bg: 'linear-gradient(135deg,#007CC3 0%,#005A8E 100%)',
+    topics: [
+      { label:'Quantitative Aptitude', slug:'quantitative', icon:'fa-calculator' },
+      { label:'Logical Reasoning',     slug:'logical',      icon:'fa-brain' },
+      { label:'Verbal Ability',        slug:'verbal',       icon:'fa-pen-clip' },
+    ],
+  },
+  tcs: {
+    name: 'TCS NQT',
+    subtitle: 'National Qualifier Test — 8 topics',
+    logo: 'TC',
+    bg: 'linear-gradient(135deg,#1b2024 0%,#0d1b2a 100%)',
+    topics: [
+      { label:'Numerical Ability',   slug:'tcs_numerical',   icon:'fa-calculator' },
+      { label:'Verbal Reasoning',    slug:'tcs_verbal',      icon:'fa-language' },
+      { label:'Programming Logic',   slug:'tcs_programming', icon:'fa-code' },
+      { label:'Coding',              slug:'tcs_coding',      icon:'fa-keyboard' },
+      { label:'Data Interpretation', slug:'tcs_data',        icon:'fa-chart-pie' },
+    ],
+  }
+};
 
-    document.querySelectorAll('input[type="radio"]:checked').forEach(el => {
-      const card = el.closest('.question-card');
-      if (card) card.classList.add('answered');
+const SLUG_TO_COMPANY = {};
+Object.entries(COMPANY_TOPICS).forEach(([co, data]) =>
+  data.topics.forEach(t => { SLUG_TO_COMPANY[t.slug] = co; })
+);
+
+const TOPIC_META = {
+  quantitative:    { label:'Quantitative Aptitude', company:'Infosys InfyTQ' },
+  logical:         { label:'Logical Reasoning',     company:'Infosys InfyTQ' },
+  verbal:          { label:'Verbal Ability',        company:'Infosys InfyTQ' },
+  tcs_numerical:   { label:'Numerical Ability',     company:'TCS NQT' },
+  tcs_verbal:      { label:'Verbal Reasoning',      company:'TCS NQT' },
+  tcs_programming: { label:'Programming Logic',     company:'TCS NQT' },
+  tcs_coding:      { label:'Coding',                company:'TCS NQT' },
+  tcs_data:        { label:'Data Interpretation',   company:'TCS NQT' }
+};
+
+/* ── READ URL PARAM ── */
+const params          = new URLSearchParams(window.location.search);
+const topicSlug       = (params.get('topic') || '').trim();
+/* ── Fallback Bank (Used if DB is empty) ── */
+const FALLBACK_BANK = {
+  quantitative: [
+    { q:'If a person sells an item for $120 making 20% profit, what was CP?', options:['$80','$90','$100','$110'], answer:2 },
+    { q:'Simple interest on $5000 at 10% for 2 years?', options:['$500','$800','$1000','$1200'], answer:2 }
+  ],
+  logical: [
+    { q:'Complete series: 2, 4, 8, 16, ?', options:['24','32','48','64'], answer:1 },
+    { q:'Find odd one: Apple, Orange, Banana, Potato', options:['Apple','Orange','Banana','Potato'], answer:3 }
+  ],
+  verbal: [
+    { q:'Synonym of "Vibrant"?', options:['Dull','Lively','Hidden','Heavy'], answer:1 }
+  ]
+};
+
+const serverQs = JSON.parse(document.getElementById('questions-data').textContent);
+const QUESTION_BANK = {
+  [topicSlug]: (serverQs && serverQs.length > 0) ? serverQs : (FALLBACK_BANK[topicSlug] || [])
+};
+
+/* ════════════════════════════════════════════════
+   submitTest — GLOBAL SCOPE
+════════════════════════════════════════════════ */
+function submitTest() {
+  const slug  = new URLSearchParams(window.location.search).get('topic') || '';
+  const qs    = QUESTION_BANK[slug] || [];
+  const meta  = TOPIC_META[slug];
+  
+  // ALLOW submission even if no questions (empty array) IF disqualification is happening
+  if (!meta) return;
+  if (!qs.length && violationCount < 3) return; 
+
+  let score = 0;
+  const studentAnswers = [];
+
+  qs.forEach((q, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    const ans = sel ? parseInt(sel.value) : -1;
+    studentAnswers.push(ans);
+    if (ans !== -1 && ans === q.answer) score++;
+  });
+
+  const totalQs = qs.length || 10; // Fallback total for URL
+
+  const saveUrl = document.getElementById('saveAssessmentUrl').dataset.url;
+  fetch(saveUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ score, total: qs.length })
+  }).then(() => {
+    window.location.href =
+      RESULT_URL +
+      '?score=' + score +
+      '&total=' + totalQs +
+      '&topic=' + encodeURIComponent(meta.label) +
+      '&topicSlug=' + encodeURIComponent(slug) +
+      '&answers=' + encodeURIComponent(studentAnswers.join(',')) +
+      '&violations=' + violationCount +
+      '&submitted=1';
+  });
+}
+
+/* ── togglePanel — GLOBAL SCOPE ── */
+let panelOpen = true;
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('panelDivider').style.display   = panelOpen ? '' : 'none';
+  document.getElementById('topicGrid').style.display      = panelOpen ? '' : 'none';
+  document.getElementById('panelToggleIcon').className    = panelOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+  document.getElementById('panelToggleLabel').textContent = panelOpen ? 'Hide' : 'Show Topics';
+}
+
+/* ── PROCTORING LOGIC (AI POWERED) ── */
+let model = null;
+let proctoringEnabled = false;
+let violationCount = 0;
+let isPaused = false;
+let webcamStream = null;
+
+async function startProctoring() {
+  const hud   = document.getElementById('proctorHud');
+  const video = document.getElementById('webcamView');
+  const dot   = document.getElementById('statusDot');
+  const lab   = document.getElementById('statusLabel');
+  
+  hud.style.display = 'block';
+  
+  try {
+    // 1. Start Video First (UX)
+    webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = webcamStream;
+    dot.classList.add('active');
+    lab.textContent = 'Camera Active';
+
+    // 2. Load Model
+    model = await cocoSsd.load();
+    document.getElementById('aiLoading').style.display = 'none';
+    
+    proctoringEnabled = true;
+    detectLoop();
+  } catch (err) {
+    console.error("Proctoring Initialization Failed:", err);
+    document.getElementById('aiLoading').innerHTML = `<i class="fas fa-exclamation-circle" style="color:#ff4444; font-size:1.5rem; margin-bottom:8px;"></i> Access Denied`;
+    dot.classList.add('error');
+    lab.textContent = 'Hardware Error';
+  }
+}
+
+async function detectLoop() {
+  if (!proctoringEnabled || isPaused) return;
+  const video = document.getElementById('webcamView');
+  if (video.readyState === 4) {
+    const predictions = await model.detect(video);
+    let persons = 0;
+    let phoneDetected = false;
+    predictions.forEach(p => {
+      if (p.class === 'person') persons++;
+      if (p.class === 'cell phone') phoneDetected = true;
     });
-
-    // hide warning once all answered
-    if (answered === total) {
-      document.getElementById('warningToast').classList.remove('show');
+    if (phoneDetected) {
+      triggerViolation("Electronic Device Detected! Use of cell phones is strictly prohibited during the test.");
+    } else if (persons > 1) {
+      triggerViolation("Multiple Persons Detected! Please ensure you are alone in the frame.");
+    } else if (persons === 0) {
+      triggerViolation("User Missing! Please stay visible in the webcam frame at all times.");
     }
   }
+  if (!isPaused) requestAnimationFrame(detectLoop);
+}
 
-  function handleSubmit() {
-    const answered = new Set(
-      [...document.querySelectorAll('input[type="radio"]:checked')]
-        .map(el => el.name)
-    ).size;
-
-    if (answered < total) {
-      // show warning and scroll to first unanswered card
-      document.getElementById('warningToast').classList.add('show');
-
-      const allNames = [...document.querySelectorAll('.question-card')]
-        .map(card => card.querySelector('input[type="radio"]').name);
-      const answeredNames = new Set(
-        [...document.querySelectorAll('input[type="radio"]:checked')].map(el => el.name)
-      );
-
-      for (const name of allNames) {
-        if (!answeredNames.has(name)) {
-          const firstUnanswered = document.querySelector(`input[name="${name}"]`).closest('.question-card');
-          firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          firstUnanswered.style.borderColor = 'rgba(245,158,11,0.6)';
-          setTimeout(() => firstUnanswered.style.borderColor = '', 2000);
-          break;
-        }
-      }
-      return;
-    }
-
-    document.getElementById('testForm').submit();
+function triggerViolation(msg) {
+  isPaused = true;
+  violationCount++;
+  document.getElementById('violationMsg').textContent = msg;
+  document.getElementById('violationOverlay').classList.add('open');
+  if (violationCount >= 3) {
+    document.getElementById('violationMsg').textContent = "Disqualified! Multiple security violations detected. Test session has been invalidated.";
+    document.querySelector('.violation-btn').textContent = "Submit & Quit";
+    document.querySelector('.violation-btn').setAttribute('onclick', 'submitTest()');
   }
+}
 
-  updateProgress();
+function resumeTest() {
+  if (violationCount >= 3) return;
+  isPaused = false;
+  document.getElementById('violationOverlay').classList.remove('open');
+  detectLoop();
+}
+
+/* ── INITIALIZATION ── */
+if (topicSlug) {
+  const meta      = TOPIC_META[topicSlug];
+  const questions = QUESTION_BANK[topicSlug];
+
+  if (!meta || !questions) {
+    document.getElementById('testArea').innerHTML = `<div class="no-topic-state"><h3>Topic Not Found</h3></div>`;
+  } else {
+    document.getElementById('pageTitle').textContent     = meta.label + ' Test';
+    document.getElementById('pageSubtitle').textContent  = '10 questions · Based on ' + meta.company;
+    document.getElementById('topicBadge').style.display  = 'inline-flex';
+    document.getElementById('topicBadgeLabel').textContent = meta.company + ' · ' + meta.label;
+    document.title = meta.label + ' Test — Smart Placement Portal';
+
+    startProctoring();
+
+    let html = '';
+    questions.forEach((q, i) => {
+      html += `
+        <div class="question-card" style="animation-delay:${0.04 * i}s;">
+          <div class="question-text">Q${i+1}. ${q.q}</div>
+          <div class="options-list">
+            ${q.options.map((opt, idx) => `
+              <label class="option-label">
+                <input type="radio" name="q${i}" value="${idx}">
+                <span>${opt}</span>
+              </label>`).join('')}
+          </div>
+        </div>`;
+    });
+    html += `<div class="submit-wrap"><button class="submit-btn" onclick="submitTest()"><i class="fas fa-paper-plane"></i> Submit &amp; See Results</button></div>`;
+    document.getElementById('testArea').innerHTML = html;
+  }
+} else {
+  /* ── NO TOPIC — show company selection ── */
+  const companiesList = JSON.parse(document.getElementById('companies-data').textContent);
+  
+  document.getElementById('pageTitle').textContent    = 'Explore Assessments';
+  document.getElementById('pageSubtitle').textContent = 'Select a company to view their specific practice modules';
+
+  let gridHtml = '<div class="company-grid">';
+  companiesList.forEach(co => {
+    const slug = co.name.toLowerCase().includes('infosys') ? 'infosys' : 'tcs';
+    
+    gridHtml += `
+      <div class="company-card" onclick="selectCompany('${slug}')">
+        <div class="cc-logo" style="background:${COMPANY_TOPICS[slug]?.bg || 'var(--gradient)'}">
+          ${co.logo_text || co.name.substring(0,2).toUpperCase()}
+        </div>
+        <div class="cc-name">${co.name}</div>
+        <div class="cc-topics">${COMPANY_TOPICS[slug]?.topics.length || 0} Modules Available</div>
+      </div>`;
+  });
+  gridHtml += '</div>';
+  document.getElementById('testArea').innerHTML = gridHtml;
+}
+
+function selectCompany(slug) {
+  if (COMPANY_TOPICS[slug]) {
+    const coData = COMPANY_TOPICS[slug];
+    const panel  = document.getElementById('topicSelectorPanel');
+    const logo   = document.getElementById('panelLogo');
+    
+    logo.textContent = coData.logo;
+    logo.style.background = coData.bg;
+    document.getElementById('panelCompanyName').textContent     = coData.name + ' Practice Tests';
+    document.getElementById('panelCompanySubtitle').textContent = coData.subtitle;
+
+    document.getElementById('topicGrid').innerHTML = coData.topics.map(t => `
+      <a href="${testUrl(t.slug)}"
+         class="topic-select-btn">
+        <div class="tsb-icon-wrap"><i class="fas ${t.icon}"></i></div>
+        <div class="tsb-text">
+          <div class="tsb-name">${t.label}</div>
+          <div class="tsb-qs">10 questions</div>
+        </div>
+        <i class="fas fa-chevron-right tsb-arrow"></i>
+      </a>`).join('');
+
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth' });
+    
+    // Update header
+    document.getElementById('pageTitle').textContent = coData.name + ' Discovery';
+    document.getElementById('pageSubtitle').textContent = "Select a module to begin your AI-proctored session";
+    
+    // Hide company grid if visible
+    document.querySelector('.company-grid').style.opacity = '0.4';
+    document.querySelector('.company-grid').style.pointerEvents = 'none';
+  }
+}
 </script>
+
+
+<!-- AI SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 
 </body>
 </html>
