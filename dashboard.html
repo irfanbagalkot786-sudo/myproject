@@ -392,9 +392,11 @@ html, body {
       <a href="{% url 'companies' %}">Companies</a>
       <a href="{% url 'upload_resume' %}">Resume</a>
       <a href="{% url 'recommendations' %}">Recs</a>
-      <a href="{% url 'learning_path' %}">Learning</a>
       <a href="{% url 'test' %}">Test</a>
       <a href="{% url 'jobs' %}">Jobs</a>
+      <a href="{% url 'interview_results' %}">Interviews</a>
+      <a href="{% url 'logout' %}">Logout</a>
+
     </div>
   </nav>
 
@@ -405,23 +407,23 @@ html, body {
 
     <div class="hero-left">
       <div class="hero-eyebrow">
+
         <span class="pulse"></span> AI-Powered Placement Preparation
       </div>
-      <h1>Welcome to Smart<br>Placement Portal</h1>
+      <h1>Welcome to<br>Smart Placement<br>Preparation Portal</h1>
       <p>Use AI tools, mock tests, resume analysis &amp; structured learning paths to get job-ready faster.</p>
       <div class="hero-btns">
-        <a href="{% url 'test' %}" class="btn btn-white">📝 Take a Test</a>
-        <a href="{% url 'learning_path' %}" class="btn btn-ghost">🗺️ Learning Path</a>
+  
       </div>
     </div>
 
     <div class="hero-right">
       <div class="hero-stat-box">
-        <div class="hsb-value">500+</div>
+        <div class="hsb-value">2</div>
         <div class="hsb-label">Companies Listed</div>
       </div>
       <div class="hero-stat-box">
-        <div class="hsb-value">120+</div>
+        <div class="hsb-value">0+</div>
         <div class="hsb-label">Practice Tests</div>
       </div>
       <div class="hero-stat-box">
@@ -445,18 +447,6 @@ html, body {
 
     <div class="feat-grid">
 
-      <a href="{% url 'test' %}" class="feat-card">
-        <div class="feat-icon">📝</div>
-        <div class="feat-body">
-          <div class="feat-title">Take a Basic Test</div>
-          <div class="feat-desc">Attempt topic-wise and company-specific tests to sharpen your aptitude and coding skills.</div>
-        </div>
-        <div class="feat-footer">
-          <span class="feat-cta">Start Test</span>
-          <span class="feat-arrow">↗</span>
-        </div>
-      </a>
-
       <a href="{% url 'upload_resume' %}" class="feat-card">
         <div class="feat-icon">📄</div>
         <div class="feat-body">
@@ -469,17 +459,56 @@ html, body {
         </div>
       </a>
 
-      <a href="{% url 'learning_path' %}" class="feat-card">
-        <div class="feat-icon">🗺️</div>
+
+      <a href="{% url 'companies' %}" class="feat-card">
+        <div class="feat-icon">🏢</div>
         <div class="feat-body">
-          <div class="feat-title">Personalised Learning Path</div>
-          <div class="feat-desc">Follow a curated roadmap built around your skills and target companies.</div>
+          <div class="feat-title">Explore Companies</div>
+          <div class="feat-desc">Browse hiring companies, their profiles, eligibility criteria, and placement details.</div>
         </div>
         <div class="feat-footer">
-          <span class="feat-cta">View Path</span>
+          <span class="feat-cta">Browse</span>
           <span class="feat-arrow">↗</span>
         </div>
       </a>
+
+      <a href="{% url 'companies' %}?open=infosys" class="feat-card">
+        <div class="feat-icon">🎥</div>
+
+        <div class="feat-body">
+          <div class="feat-title">AI Mock Interview</div>
+          <div class="feat-desc">Start a virtual interview session with AI feedback. Select a company to begin your practice.</div>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-cta">Select Company</span>
+          <span class="feat-arrow">↗</span>
+        </div>
+      </a>
+
+      <a href="{% url 'test' %}" class="feat-card">
+        <div class="feat-icon">📝</div>
+        <div class="feat-body">
+          <div class="feat-title">Take a Basic Test</div>
+          <div class="feat-desc">Attempt topic-wise and company-specific tests to sharpen your aptitude and coding skills.</div>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-cta">Start Test</span>
+          <span class="feat-arrow">↗</span>
+        </div>
+      </a>
+
+      <a href="{% url 'recommendations' %}" class="feat-card">
+        <div class="feat-icon">✨</div>
+        <div class="feat-body">
+          <div class="feat-title">AI Recommendations</div>
+          <div class="feat-desc">Get smart preparation course recommendations powered by your profile and industry trends.</div>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-cta">See Recs</span>
+          <span class="feat-arrow">↗</span>
+        </div>
+      </a>
+      
 
       <a href="{% url 'skills' %}" class="feat-card">
         <div class="feat-icon">⚡</div>
@@ -493,29 +522,7 @@ html, body {
         </div>
       </a>
 
-      <a href="{% url 'recommendations' %}" class="feat-card">
-        <div class="feat-icon">✨</div>
-        <div class="feat-body">
-          <div class="feat-title">AI Recommendations</div>
-          <div class="feat-desc">Get smart job and course recommendations powered by your profile and industry trends.</div>
-        </div>
-        <div class="feat-footer">
-          <span class="feat-cta">See Recs</span>
-          <span class="feat-arrow">↗</span>
-        </div>
-      </a>
-
-      <a href="{% url 'companies' %}" class="feat-card">
-        <div class="feat-icon">🏢</div>
-        <div class="feat-body">
-          <div class="feat-title">Explore Companies</div>
-          <div class="feat-desc">Browse hiring companies, their profiles, eligibility criteria, and placement details.</div>
-        </div>
-        <div class="feat-footer">
-          <span class="feat-cta">Browse</span>
-          <span class="feat-arrow">↗</span>
-        </div>
-      </a>
+      
 
     </div>
   </div>
