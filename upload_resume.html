@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upload Resume - Smart Placement Portal</title>
+<title>{% if analysis %}Resume Analysis{% else %}Upload Resume{% endif %} - Smart Placement Portal</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 
@@ -224,7 +224,6 @@ body::before {
   font-weight: 600;
 }
 
-/* selected file name */
 .file-chosen {
   margin-top: 12px;
   font-size: 0.82rem;
@@ -236,27 +235,6 @@ body::before {
   gap: 6px;
 }
 
-/* ── FORMAT HINTS ── */
-.format-hints {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 24px;
-}
-
-.hint-pill {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  font-size: 0.8rem;
-  color: var(--slate);
-}
-
-.hint-pill i { color: var(--teal); font-size: 0.9rem; }
 
 /* ── SUBMIT BUTTON ── */
 .submit-btn {
@@ -291,6 +269,114 @@ body::before {
   background:linear-gradient(rgba(255,255,255,0.1),transparent);
 }
 
+/* ── ANALYSIS STYLES ── */
+.score-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 36px;
+  margin-bottom: 20px;
+  box-shadow: var(--glow);
+  text-align: center;
+  animation: fadeUp 0.5s ease both;
+}
+
+.score-ring { position: relative; display: inline-block; margin-bottom: 16px; }
+.score-ring svg { transform: rotate(-90deg); }
+
+.score-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-num span:first-child {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.score-num span:last-child { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.score-label { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+.score-sublabel { font-size: 0.85rem; color: var(--muted); }
+
+.analysis-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--glow);
+  animation: fadeUp 0.5s ease both;
+}
+
+.analysis-card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.analysis-card-title i { color: var(--teal); font-size: 0.9rem; }
+
+.feedback-text {
+  font-size: 0.9rem;
+  color: var(--slate);
+  line-height: 1.7;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 16px;
+  border-left: 3px solid var(--teal);
+}
+
+.roles-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: var(--teal-dim);
+  color: var(--teal-dark);
+  border: 1px solid rgba(10,163,181,0.25);
+  font-size: 0.83rem;
+  font-weight: 600;
+}
+
+.actions { display: flex; gap: 12px; margin-top: 8px; }
+
+.btn {
+  flex: 1;
+  padding: 13px;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-primary { background: var(--gradient); color: white; box-shadow: 0 4px 16px rgba(10,163,181,0.28); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-outline { background: var(--surface); color: var(--teal); border: 1px solid rgba(10,163,181,0.35); }
+.btn-outline:hover { background: var(--teal-dim); }
+
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
   from { opacity:0; transform:translateY(18px); }
@@ -304,11 +390,13 @@ body::before {
   .main { padding: 20px 14px 40px; }
   .card { padding: 28px 18px; }
   .format-hints { flex-direction: column; }
+  .actions { flex-direction: column; }
 }
 </style>
 </head>
 
-<body>
+<!-- KEY FIX: Pass Django context into data attributes on <body> so JS stays pure -->
+<body data-has-analysis="{% if analysis %}true{% else %}false{% endif %}" data-score="{% if analysis %}{{ analysis.analysis_score }}{% else %}0{% endif %}">
 
 <!-- NAVBAR -->
 <nav class="navbar">
@@ -321,24 +409,88 @@ body::before {
     <a href="{% url 'companies' %}">Companies</a>
     <a href="{% url 'upload_resume' %}" class="active">Resume</a>
     <a href="{% url 'recommendations' %}">Recs</a>
-    <a href="{% url 'learning_path' %}">Learning</a>
     <a href="{% url 'test' %}">Test</a>
     <a href="{% url 'jobs' %}">Jobs</a>
+    <a href="{% url 'logout' %}">Logout</a>
+
   </div>
 </nav>
 
 <!-- MAIN -->
 <div class="main">
 
-  <!-- PAGE HEADER -->
+  {% if analysis %}
+
+  <!-- ── ANALYSIS RESULT VIEW ── -->
+  <div class="page-header">
+    <h1>Resume Analysis</h1>
+    <p>AI-powered feedback based on your uploaded resume</p>
+  </div>
+
+  <!-- SCORE CARD -->
+  <div class="score-card">
+    <div class="score-ring">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="58" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+        <circle cx="70" cy="70" r="58" fill="none"
+          stroke="{% if analysis.analysis_score >= 75 %}#10b981{% elif analysis.analysis_score >= 50 %}#f59e0b{% else %}#ef4444{% endif %}"
+          stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="364"
+          stroke-dashoffset="364"
+          id="scoreRing"/>
+      </svg>
+      <div class="score-num">
+        <span>{{ analysis.analysis_score }}</span>
+        <span>/ 100</span>
+      </div>
+    </div>
+    <div class="score-label" id="scoreLabel">
+      {% if analysis.analysis_score >= 75 %}Excellent Resume!
+      {% elif analysis.analysis_score >= 50 %}Good Resume
+      {% else %}Needs Improvement{% endif %}
+    </div>
+    <div class="score-sublabel">Based on AI analysis of your resume content</div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="analysis-card">
+    <div class="analysis-card-title"><i class="fas fa-comment-dots"></i> AI Feedback</div>
+    <div class="feedback-text">{{ analysis.feedback }}</div>
+  </div>
+
+  <!-- RECOMMENDED ROLES -->
+  {% if recommended_roles %}
+  <div class="analysis-card">
+    <div class="analysis-card-title"><i class="fas fa-briefcase"></i> Recommended Job Roles</div>
+    <div class="roles-wrap">
+      {% for role in recommended_roles %}
+        <span class="role-tag">
+          <i class="fas fa-circle" style="font-size:6px;"></i>{{ role }}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <a href="{% url 'upload_resume' %}" class="btn btn-outline">
+      <i class="fas fa-redo"></i> Re-upload
+    </a>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">
+      <i class="fas fa-home"></i> Dashboard
+    </a>
+  </div>
+
+  {% else %}
+
+  <!-- ── UPLOAD FORM VIEW ── -->
   <div class="page-header">
     <h1>Upload Resume</h1>
     <p>Upload your latest resume to improve placement recommendations</p>
   </div>
 
-  <!-- CARD -->
   <div class="card">
-
     <div class="card-header">
       <div class="card-icon"><i class="fas fa-file-arrow-up"></i></div>
       <div>
@@ -362,46 +514,75 @@ body::before {
         </div>
       </div>
 
-      <!-- FORMAT HINTS -->
-      <div class="format-hints">
-        <div class="hint-pill"><i class="fas fa-file-pdf"></i> PDF recommended</div>
-        <div class="hint-pill"><i class="fas fa-weight-hanging"></i> Max size 5 MB</div>
-        <div class="hint-pill"><i class="fas fa-shield-check"></i> Secure upload</div>
-      </div>
-
       <button type="submit" class="submit-btn">
         <i class="fas fa-upload" style="margin-right:8px;"></i>Upload Resume
       </button>
-
     </form>
   </div>
 
+  {% endif %}
+
 </div>
 
+<!-- KEY FIX: All Django template tags removed from JS — data comes from body data attributes instead -->
 <script>
-  const input = document.getElementById('resumeInput');
-  const fileChosen = document.getElementById('fileChosen');
-  const fileName = document.getElementById('fileName');
-  const dropZone = document.getElementById('dropZone');
+  var hasAnalysis = document.body.dataset.hasAnalysis === 'true';
+  var score = parseInt(document.body.dataset.score) || 0;
 
-  input.addEventListener('change', () => {
-    if (input.files.length > 0) {
-      fileName.textContent = input.files[0].name;
-      fileChosen.style.display = 'flex';
-    }
-  });
+  if (!hasAnalysis) {
+    var input = document.getElementById('resumeInput');
+    var fileChosen = document.getElementById('fileChosen');
+    var fileName = document.getElementById('fileName');
+    var dropZone = document.getElementById('dropZone');
 
-  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-  dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropZone.classList.remove('dragover');
-    if (e.dataTransfer.files.length > 0) {
-      input.files = e.dataTransfer.files;
-      fileName.textContent = e.dataTransfer.files[0].name;
-      fileChosen.style.display = 'flex';
+    if (input) {
+      input.addEventListener('change', function() {
+        if (input.files.length > 0) {
+          fileName.textContent = input.files[0].name;
+          fileChosen.style.display = 'flex';
+        }
+      });
     }
-  });
+
+    if (dropZone) {
+      dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+      });
+
+      dropZone.addEventListener('dragleave', function() {
+        dropZone.classList.remove('dragover');
+      });
+
+      dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+          input.files = e.dataTransfer.files;
+          fileName.textContent = e.dataTransfer.files[0].name;
+          fileChosen.style.display = 'flex';
+        }
+      });
+    }
+  }
+
+  if (hasAnalysis) {
+    document.addEventListener('DOMContentLoaded', function() {
+      var ring = document.getElementById('scoreRing');
+      var label = document.getElementById('scoreLabel');
+      var circumference = 364;
+
+      if (ring) {
+        ring.style.strokeDashoffset = circumference - (circumference * score / 100);
+      }
+
+      if (label) {
+        if (score >= 75) label.style.color = '#10b981';
+        else if (score >= 50) label.style.color = '#f59e0b';
+        else label.style.color = '#ef4444';
+      }
+    });
+  }
 </script>
 
 </body>
