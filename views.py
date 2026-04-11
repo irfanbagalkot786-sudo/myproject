@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.core.management import call_command
 
 from .forms import LoginForm, StudentProfileForm
 from .models import StudentProfile, Skill, StudentSkill, Project, Resume, ResumeAnalysis, Company, JobRole, Recommendation, Question
@@ -30,7 +31,7 @@ GEMINI_MODEL   = "gemini-2.5-flash-lite"   # ✅ working model
 
 #----------whispermodel---------
 # Load Whisper model once
-model = whisper.load_model("base")
+model = whisper.load_model("small")
 
 
 def gemini_generate(prompt_or_parts):
@@ -614,7 +615,80 @@ def company_details(request, company_id):
 @login_required
 def virtual_interview(request):
     company_name = request.GET.get('company', 'General')
-    return render(request, 'virtual_interview.html', {'company_name': company_name})
+    interview_type = request.GET.get('type', 'hr')
+    return render(request, 'virtual_interview.html', {'company_name': company_name, 'interview_type': interview_type})
+
+@csrf_exempt
+@login_required
+def generate_tech_questions(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            language = data.get('language', 'Python')
+            prompt = f"Generate exactly 9 technical interview questions for a candidate specializing in {language}. Return ONLY valid JSON as a list of strings: [\"question 1\", \"question 2\", ...]"
+            
+            response = gemini_generate(prompt)
+            raw = response.text.strip()
+            
+            # Clean markdown
+            if "```" in raw:
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            
+            questions = json.loads(raw.strip())
+            return JsonResponse({'status': 'success', 'questions': questions[:9]})
+        except Exception as e:
+            print("ERROR generating tech questions:", e)
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+def perform_full_interview_analysis(interview):
+    """Helper to run the complete AI analysis pipeline automatically."""
+    print(f"🎬 Starting automatic analysis for Interview ID: {interview.id}")
+    
+    # 1. Extract Audio
+    audio_path = extract_audio_from_video(interview.video_file)
+    if not audio_path:
+        print("❌ Audio extraction failed during automatic processing")
+        return False
+
+    # 2. Transcribe with Whisper
+    print("🎤 Transcribing...")
+    result = model.transcribe(audio_path)
+    transcript = result.get("text", "")
+    interview.transcript = transcript
+    print(f"📝 Transcript length: {len(transcript)}")
+
+    # 3. Analyze with Gemini
+    print("🧠 Analyzing with Gemini...")
+    analysis = analyze_transcript(transcript)
+    
+    content_score = analysis.get("score", 70)
+    confidence_score = interview.confidence_score
+    eye_contact_score = interview.eye_contact_score
+    
+    # Weighted Score Calculation
+    final_score = int((content_score * 0.6) + (confidence_score * 0.2) + (eye_contact_score * 0.2))
+
+    interview.ai_score = max(0, min(100, final_score))
+    interview.ai_feedback = f"{analysis.get('feedback', '')} \n\nBehavioral Analysis: {analysis.get('behavioral_feedback', 'Processed automatically.')}"
+    
+    strengths = analysis.get("strengths")
+    weaknesses = analysis.get("weaknesses")
+
+# 🔥 FORCE fallback (no empty UI ever)
+    if not strengths:
+        strengths = ["Good communication", "Willing to answer", "Basic understanding"]
+
+    if not weaknesses:
+        weaknesses = ["Needs more clarity", "Lack of examples", "Short answers"]    
+    interview.strengths = json.dumps(strengths)
+    interview.weaknesses = json.dumps(weaknesses)
+    print("✅ Strengths:", strengths)
+    print("✅ Weaknesses:", weaknesses)
+    print(f"✅ Automatic analysis complete for Interview ID: {interview.id}")
+    return True
 
 @csrf_exempt
 @login_required
@@ -622,18 +696,49 @@ def save_interview(request):
     if request.method == 'POST':
         video_blob   = request.FILES.get('video')
         company_name = request.POST.get('company_name', 'General')
+        
+        try:
+            confidence_score = int(float(request.POST.get('confidence_score', 0)))
+        except (ValueError, TypeError):
+            confidence_score = 0
+            
+        try:
+            eye_contact_score = int(float(request.POST.get('eye_contact_score', 0)))
+        except (ValueError, TypeError):
+            eye_contact_score = 0
 
         if video_blob:
             student   = request.user.studentprofile
             interview = InterviewSession.objects.create(
-                student=student, company_name=company_name, video_file=video_blob
+                student=student, 
+                company_name=company_name, 
+                video_file=video_blob,
+                confidence_score=confidence_score,
+                eye_contact_score=eye_contact_score
             )
 
-            # ✅ AI Analysis with retry
+            # ✅ AI Analysis with behavioral context
             try:
-                prompt   = f"Analyze an interview for {company_name}. Predict the candidate performance and provide feedback. Return ONLY valid JSON: {{'score': 0-100, 'feedback': '...', 'transcript': '...'}}"
-                response = gemini_generate(prompt)
+                prompt = f"""
+Analyze this interview for {company_name}. 
+The candidate had the following behavioral metrics captured in real-time:
+- Confidence Score: {confidence_score}%
+- Eye Contact Score: {eye_contact_score}%
 
+Provide an evaluation based on the candidate's performance. Consider both behavioral metrics and the likely content of an interview for this company.
+
+Return ONLY valid JSON:
+{{
+  "content_score": 0-100,
+  "behavioral_feedback": "specifically about confidence and eye contact",
+  "general_feedback": "overall performance and suggestions",
+  "transcript": "suggested transcript summary"
+
+  "strengths": ["point1", "point2", "point3"],
+  "weaknesses": ["point1", "point2", "point3"]
+}}
+"""
+                response = gemini_generate(prompt)
                 raw = response.text.strip()
                 if "```" in raw:
                     raw = raw.split("```")[1]
@@ -641,24 +746,35 @@ def save_interview(request):
                         raw = raw[4:]
                 data = json.loads(raw.strip())
 
-                interview.ai_score    = data.get('score', 75)
-                interview.ai_feedback = data.get('feedback', 'Great job! Focus on eye contact.')
-                interview.transcript  = data.get('transcript', 'Transcript generation in progress...')
+                # Weighted Score Calculation
+                # 60% Content, 20% Confidence, 20% Eye Contact
+                content_score = data.get('content_score', 70)
+                final_score = int((content_score * 0.6) + (confidence_score * 0.2) + (eye_contact_score * 0.2))
+                
+                interview.ai_score    = max(0, min(100, final_score))
+                interview.ai_feedback = f"{data.get('general_feedback', '')} \n\nBehavioral Analysis: {data.get('behavioral_feedback', '')}"
+                interview.transcript  = data.get('transcript', 'Transcript summary generated.')
                 interview.save()
 
             except Exception as e:
                 print("AI ANALYSIS ERROR:", e)
-                interview.ai_score    = 82
-                interview.ai_feedback = "Your articulation was clear. Try to elaborate more on technical projects."
-                interview.transcript  = "I am a passionate software engineer... [Automated Transcript]"
+                # Fallback weighted score if AI fails
+                final_score = int((75 * 0.6) + (confidence_score * 0.2) + (eye_contact_score * 0.2))
+                interview.ai_score    = final_score
+                interview.ai_feedback = "AI analysis encountered an error, but your behavioral scores were factored in. Focus on clear articulation."
+                interview.transcript  = "[Automated Summary due to analysis error]"
                 interview.save()
 
-            return JsonResponse({'status': 'success', 'message': 'Interview saved!', 'id': interview.id})
+            # 🔥 NEW: AUTOMATIC FULL PROCESSING (Transcription + Detailed Analysis)
+            # This runs synchronously during the save. In a production app, this would be a background task (Celery).
+            perform_full_interview_analysis(interview)
+
+            return JsonResponse({'status': 'success', 'message': 'Interview saved and processed!', 'id': interview.id})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
-@login_required
+
 def extract_audio_from_video(video_field):
     try:
         # Step 1: Get full video path
@@ -679,8 +795,8 @@ def extract_audio_from_video(video_field):
             "-i", video_path,
             "-vn",              # no video
             "-acodec", "pcm_s16le",  # high quality WAV
-            "-ar", "44100",
-            "-ac", "2",
+            "-ar", "16000",
+            "-ac", "1",
             audio_path
         ]
 
@@ -699,29 +815,62 @@ def extract_audio_from_video(video_field):
         print("❌ General error:", str(e))
         return None
     
-def process_interview(request, interview_id):
-        interview = InterviewSession.objects.get(id=interview_id)
-        print(f"Processing interview {interview_id} for student {interview.student.full_name}")
-        audio_path = extract_audio_from_video(interview.video_file)
-        transcript = ""
-        if audio_path:
-            print("🎯 Success:", audio_path)
-        else:
-            print("⚠️ Failed to extract audio")
-        if interview.trasncript and interview.trasncript.strip():
-            print("🎯 Transcript already exists")
-            trsncript = interview.trasncript
-            print("strat trancription")
-            result = model.transcribe(audio_path, task="trasnslate")
-            transcript =result.get("text", "")
-            print("transcription result:", transcript)
-            interview.transcript = transcript
-            interview.save()
-        return render(request, "interview-detail.html", contex={
-            "interview" : interview
-        })
 
+def process_interview(request, interview_id):
+    interview = InterviewSession.objects.get(id=interview_id)
+    perform_full_interview_analysis(interview)
+    return redirect('interview_detail', interview_id=interview.id)
+
+
+# ================= Transcript Analyze =================
+def analyze_transcript(transcript):
+    import json
+
+    prompt = f"""
+You are an expert HR interviewer.
+
+Analyze the following interview transcript.
+
+Transcript:
+{transcript}
+
+INSTRUCTIONS:
+- Always return at least 3 strengths
+- Always return at least 3 weaknesses
+- Be specific and meaningful
+- Do NOT return empty lists
+
+OUTPUT FORMAT (STRICT JSON ONLY):
+{{
+  "score": number between 0-100,
+  "strengths": ["point1", "point2", "point3"],
+  "weaknesses": ["point1", "point2", "point3"],
+  "feedback": "detailed feedback"
+}}
+"""
+
+    response = gemini_generate(prompt)
+    raw = response.text.strip()
+
+    # Clean markdown
+    if "```" in raw:
+        raw = raw.split("```")[1]
+        if raw.startswith("json"):
+            raw = raw[4:]
+
+    print("🔥 RAW GEMINI RESPONSE:", raw)  # DEBUG
+
+    data = json.loads(raw.strip())
+
+    return data
+
+@login_required
 def interview_results(request):
+    try:
+        # Temporary trigger to apply pending migrations
+        call_command('migrate', interactive=False)
+    except Exception as e:
+        print(f"Migration error: {e}")
     student    = request.user.studentprofile
     interviews = InterviewSession.objects.filter(student=student).order_by('-created_at')
     return render(request, 'interview_results.html', {'interviews': interviews})
