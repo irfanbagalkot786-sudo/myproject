@@ -215,6 +215,14 @@
             <span>AI Score</span>
             <span>{{ item.ai_score }}%</span>
           </div>
+          <div class="score-text" style="font-size:0.75rem; margin-top:8px;">
+            <span><i class="fas fa-eye text-teal" style="color:var(--teal);"></i> Eye Contact</span>
+            <span>{{ item.eye_contact_score }}%</span>
+          </div>
+          <div class="score-text" style="font-size:0.75rem; margin-top:4px;">
+            <span><i class="fas fa-smile-beam text-teal" style="color:var(--teal);"></i> Confidence</span>
+            <span>{{ item.confidence_score }}%</span>
+          </div>
 
           <div class="card-actions">
             <a href="{% url 'interview_detail' item.id %}" class="action-btn btn-view">
