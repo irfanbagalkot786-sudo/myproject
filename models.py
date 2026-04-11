@@ -306,6 +306,11 @@ class InterviewSession(models.Model):
     transcript   = models.TextField(blank=True, default='')
     ai_score     = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
     ai_feedback  = models.TextField(blank=True, default='')
+    strengths = models.TextField(blank=True, default="[]")
+    weaknesses = models.TextField(blank=True, default="[]")
+
+    confidence_score = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    eye_contact_score = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
 
     created_at = models.DateTimeField(auto_now_add=True)
 
