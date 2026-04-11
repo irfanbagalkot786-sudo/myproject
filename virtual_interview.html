@@ -7,6 +7,10 @@
   <title>Virtual Interview - {{ company_name }}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- AI LIBRARIES -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
   <style>
     :root {
       --teal:      #0aa3b5;
@@ -298,6 +302,10 @@
     <div class="status-dot" id="statusDot"></div>
     <span id="statusLabel">Camera Offline</span>
   </div>
+  <div id="liveMetrics" style="display: none; font-size: 0.65rem; color: var(--teal); font-weight: 700; margin-top: 6px; justify-content: space-between;">
+    <span title="Eye Contact"><i class="fas fa-eye"></i> <span id="liveEye">0%</span></span>
+    <span title="Confidence"><i class="fas fa-smile-beam"></i> <span id="liveConf">0%</span></span>
+  </div>
 </div>
 
 <div class="interview-container">
@@ -311,9 +319,28 @@
       <i class="fas fa-video" style="font-size: 3rem; margin-bottom: 20px; color: var(--teal);"></i>
       <h2>Ready to begin?</h2>
       <p>Ensure you are in a quiet, well-lit room. The session will begin recording as soon as you start.</p>
+      
+      {% if interview_type == 'technical' %}
+      <div style="margin-bottom: 20px; width: 100%; max-width: 250px; text-align: left;">
+        <label for="languageSelect" style="display:block; font-size: 0.8rem; margin-bottom: 5px; font-weight: 700;">Select your preferred language:</label>
+        <select id="languageSelect" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-family: 'DM Sans', sans-serif;">
+            <option value="Python">Python</option>
+            <option value="Java">Java</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="C++">C++</option>
+            <option value="C#">C#</option>
+            <option value="SQL">SQL</option>
+            <option value="Go">Go</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="startBtn" style="max-width: 250px;">
+        <i class="fas fa-play"></i> Generate & Start Tech Round
+      </button>
+      {% else %}
       <button class="btn btn-primary" id="startBtn" style="max-width: 250px;">
         <i class="fas fa-play"></i> Start Interview
       </button>
+      {% endif %}
     </div>
   </div>
 
@@ -360,9 +387,13 @@
   <p>Your recording has been uploaded and stored for review.</p>
   <a id="resultLink" href="#" class="btn btn-primary" style="margin-top: 20px; max-width: 250px;">Check AI Analysis <i class="fas fa-magic"></i></a>
 </div>
+<!-- 1. TensorFlow.js (IMPORTANT FIRST) -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
 
+<!-- 2. COCO-SSD model -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 <script>
-  const QUESTIONS = [
+  let QUESTIONS = [
     "Tell me about yourself.",
     "What are your strengths and weaknesses?",
     "Why do you want to work for this company?",
@@ -383,16 +414,22 @@
   function initVoice() {
     const voices = synth.getVoices();
     console.log("Available voices:", voices.length);
+    if (!voices || voices.length === 0) return;
     
-    // Try to find a premium female voice (Mac: Samantha/Victoria, Win: Zira/Libby)
+    // Try to find an Indian female voice safely
     selectedVoice = voices.find(v => 
-      v.name.includes('Female') || 
-      v.name.includes('Samantha') || 
-      v.name.includes('Zira') || 
-      v.name.includes('Libby') || 
-      v.name.includes('Google UK English Female') ||
-      v.name.includes('Victoria')
-    ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+      (v.lang && v.lang.includes('en-IN') && v.name && v.name.toLowerCase().includes('female')) ||
+      (v.name && (v.name.includes('Neerja') || v.name.includes('Heera') || v.name.includes('Google हिन्दी')))
+    ) || voices.find(v => 
+      v.name && (
+        v.name.includes('Female') || 
+        v.name.includes('Samantha') || 
+        v.name.includes('Zira') || 
+        v.name.includes('Libby') || 
+        v.name.includes('Google UK English Female') ||
+        v.name.includes('Victoria')
+      )
+    ) || voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
     
     if (selectedVoice) {
         console.log("Selected voice:", selectedVoice.name);
@@ -486,15 +523,34 @@
   let proctoringEnabled = false;
   let violationCount = 0;
   let isPaused = false;
+  
+  // Tracking
+  let totalDetectedFrames = 0;
+  let eyeContactFrames = 0;
+  let confidentFrames = 0;
 
   async function loadProctorModel() {
+    const aiStatus = document.querySelector('#aiLoading span');
     try {
+      aiStatus.textContent = "Loading Object Detection...";
       proctorModel = await cocoSsd.load();
+      
+      aiStatus.textContent = "Loading Face Detector...";
+      const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+      await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+      
+      aiStatus.textContent = "Loading Landmarks...";
+      await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+      
+      aiStatus.textContent = "Loading Expressions...";
+      await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+      
       document.getElementById('aiLoading').style.display = 'none';
-      console.log("Proctoring AI Loaded");
+      console.log("✅ AI Proctoring & Face Tracking Ready");
     } catch (err) {
-      console.error("Failed to load proctoring model:", err);
-      document.getElementById('aiLoading').innerHTML = "AI Error";
+      console.error("❌ AI Initialization Error:", err);
+      aiStatus.textContent = "AI Initialization Failed";
+      document.getElementById('statusDot').classList.add('error');
     }
   }
 
@@ -519,6 +575,32 @@
       } else if (persons === 0) {
         // "Attention Shift" or "User Missing"
         triggerViolation("Attention Breach! Please stay focused and visible in the frame.");
+      } else {
+        // Person detected, perform face tracking
+        const faceDetection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 160, scoreThreshold: 0.4 }))
+                                    .withFaceLandmarks()
+                                    .withFaceExpressions();
+                                    
+        if (faceDetection) {
+            totalDetectedFrames++;
+            if (totalDetectedFrames % 100 === 0) console.log(`[AI] Analyzed ${totalDetectedFrames} frames...`);
+            
+            // --- GAZE DETECTION (EYE CONTACT) ---
+            const landmarks = faceDetection.landmarks;
+            
+            if (totalDetectedFrames % 5 === 0) {
+                const eyeContactPct = Math.round((eyeContactFrames / totalDetectedFrames) * 100);
+                const confidencePct = Math.round((confidentFrames / totalDetectedFrames) * 100);
+                document.getElementById('liveEye').textContent = eyeContactPct + '%';
+                document.getElementById('liveConf').textContent = confidencePct + '%';
+                
+                // Visual warning if gaze is low
+                const eyeLabel = document.getElementById('liveEye').parentElement;
+                eyeLabel.style.color = eyeContactPct < 40 ? '#ff4444' : 'var(--teal)';
+            }
+        } else {
+            if (totalDetectedFrames % 50 === 0) console.warn("[AI] No face detected in frame");
+        }
       }
     }
     if (!isPaused) requestAnimationFrame(detectLoop);
@@ -560,13 +642,42 @@
   startBtn.addEventListener('click', startInterview);
   nextBtn.addEventListener('click', nextQuestion);
 
-  function startInterview() {
+  async function startInterview() {
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing...';
+
+    if ("{{ interview_type }}" === "technical") {
+        const lang = document.getElementById('languageSelect').value;
+        startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Tech Questions...';
+        try {
+            const resp = await fetch('/generate-tech-questions/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ language: lang })
+            });
+            const data = await resp.json();
+            if (data.status === 'success' && data.questions) {
+                QUESTIONS = [
+                    `You selected ${lang}. Could you briefly describe your experience and projects with this language?`,
+                    ...data.questions
+                ];
+            } else {
+                console.error("AI Gen Failed:", data.message);
+                alert("Failed to generate technical questions. Using fallback.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error fetching technical questions.");
+        }
+    }
+
     startOverlay.style.display = 'none';
     recordingIndicator.style.display = 'flex';
     nextBtn.disabled = false;
     
     // Enable Proctoring
     proctoringEnabled = true;
+    document.getElementById('liveMetrics').style.display = 'flex';
     detectLoop();
     
     // Start Recorder
@@ -654,6 +765,12 @@
     const formData = new FormData();
     formData.append('video', blob, 'interview.webm');
     formData.append('company_name', '{{ company_name }}');
+    
+    const confidenceScore = totalDetectedFrames > 0 ? Math.round((confidentFrames / totalDetectedFrames) * 100) : 0;
+    const eyeContactScore = totalDetectedFrames > 0 ? Math.round((eyeContactFrames / totalDetectedFrames) * 100) : 0;
+    
+    formData.append('confidence_score', confidenceScore);
+    formData.append('eye_contact_score', eyeContactScore);
 
     try {
       const response = await fetch('/save-interview/', {
@@ -675,9 +792,6 @@
   }
 </script>
 
-<!-- AI SCRIPTS -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 
 </body>
 </html>
