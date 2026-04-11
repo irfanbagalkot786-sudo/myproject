@@ -303,9 +303,14 @@
         <button class="detail-btn" onclick="openModal('{{ company.id }}')">
           <i class="fas fa-circle-info" style="font-size:0.68rem;"></i> Details
         </button>
-        <a href="{% url 'virtual_interview' %}?company={{ company.name|urlencode }}" class="visit-btn" style="background:var(--teal); color:white;">
-          <i class="fas fa-video"></i> Interview
-        </a>
+        <div style="display:flex; gap:6px;">
+          <a href="{% url 'virtual_interview' %}?company={{ company.name|urlencode }}&type=hr" class="visit-btn" style="background:var(--teal); color:white; padding: 8px 12px;">
+            <i class="fas fa-video"></i> HR
+          </a>
+          <a href="{% url 'virtual_interview' %}?company={{ company.name|urlencode }}&type=technical" class="visit-btn" style="background:var(--slate); color:white; padding: 8px 12px;">
+            <i class="fas fa-code"></i> Tech
+          </a>
+        </div>
       </div>
     </div>
     {% endfor %}
@@ -383,9 +388,12 @@ function openModal(key) {
       : '';
     
     const virtualInterviewHTML = s.is_virtual_interview
-      ? `<div style="margin-top:12px;">
-          <a href="/virtual-interview/?company=${encodeURIComponent(c.banner)}" class="visit-btn" style="text-decoration:none; background:var(--teal); color:white;">
-            <i class="fas fa-video"></i> Start Virtual Interview
+      ? `<div style="margin-top:12px; display:flex; gap:10px;">
+          <a href="/virtual-interview/?company=${encodeURIComponent(c.banner)}&type=hr" class="visit-btn" style="text-decoration:none; background:var(--teal); color:white;">
+            <i class="fas fa-video"></i> Start HR Round
+          </a>
+          <a href="/virtual-interview/?company=${encodeURIComponent(c.banner)}&type=technical" class="visit-btn" style="text-decoration:none; background:var(--slate); color:white;">
+            <i class="fas fa-code"></i> Start Tech Round
           </a>
         </div>`
       : '';
