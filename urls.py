@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
+from django.views.generic import RedirectView
 
 urlpatterns = [
 
@@ -12,8 +13,9 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
     path('dashboard/', views.dashboard, name='dashboard'),
-    path('profile/', student_profile, name='student_profile'),
+    path('profile/', RedirectView.as_view(pattern_name='dashboard'), name='student_profile'),
     path('skills/', views.skills_view, name='skills'),
+    path('add-skill/', views.add_skill_profile, name='add_skill_profile'),
     path('add-project/', views.add_project, name='add_project'),        # ← fixed name
     path('projects/', views.view_projects, name='projects'),             # ← fixed name
     path('delete-project/<int:project_id>/', views.delete_project, name='delete_project'),  # ← added
@@ -36,5 +38,7 @@ urlpatterns = [
     path('recommendations/', views.recommendations, name='recommendations'),
     path('generate-recommendations/', views.generate_recommendations, name='generate_recommendations'),
     path('logout/', views.logout_view, name='logout'),
-
+    path('remove-photo/', views.remove_photo, name='remove_photo'),
+    path('update-photo/', views.update_photo, name='update_photo'),
+    path('delete-skill/<int:skill_id>/', views.delete_skill, name='delete_skill'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
