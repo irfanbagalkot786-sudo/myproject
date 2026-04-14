@@ -30,39 +30,36 @@
         radial-gradient(ellipse 50% 60% at 90% 80%,rgba(8,138,154,0.06) 0%,transparent 60%);
       pointer-events:none; z-index:0;
     }
-
-    /* ── NAVBAR ── */
     .navbar {
-      position:sticky; top:0; z-index:100;
-      display:flex; justify-content:space-between; align-items:center;
-      padding:0 40px; height:64px;
-      background:rgba(255,255,255,0.88); backdrop-filter:blur(20px);
-      border-bottom:1px solid var(--border);
-      box-shadow:0 1px 8px rgba(10,163,181,0.07);
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 32px; height: 62px;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+      flex-shrink: 0;
     }
     .navbar-brand {
-      font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
-      background:var(--gradient); -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent; background-clip:text; white-space:nowrap;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
     }
-    .navbar-links { display:flex; align-items:center; gap:4px; flex-wrap:nowrap; overflow-x:auto; }
+    .navbar-links { display: flex; align-items: center; gap: 4px; }
     .navbar-links a {
-      color:var(--muted); text-decoration:none; font-size:0.8rem; font-weight:500;
-      padding:6px 12px; border-radius:8px; transition:all 0.2s; white-space:nowrap;
+      color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500;
+      padding: 6px 12px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
     }
-    .navbar-links a:hover { color:var(--slate); background:var(--teal-dim); }
-    .navbar-links a.active { color:var(--teal); background:var(--teal-dim); }
+    .navbar-links a:hover { color: var(--slate); background: var(--teal-dim); }
+    .navbar-links a.active { color: var(--teal); background: var(--teal-dim); }
+    .navbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
-    /* ── MAIN ── */
     .main { position:relative; z-index:1; max-width:1000px; margin:0 auto; padding:40px 24px 60px; }
-    .page-header { margin-bottom:28px; animation:fadeUp 0.5s ease both; }
+    .page-header { margin-bottom:28px; animation:fadeUp 0.5s ease both; text-align:center; }
     .page-header h1 { font-family:'Syne',sans-serif; font-size:1.9rem; font-weight:800; letter-spacing:-0.5px; color:var(--ink); }
     .page-header p  { color:var(--muted); font-size:0.9rem; margin-top:4px; }
 
-    /* ── GRID ── */
     .companies-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; margin:0 auto; max-width:960px; }
 
-    /* ── CARD ── */
     .company-card {
       background:var(--surface); border:1px solid var(--border);
       border-radius:20px; overflow:hidden; box-shadow:var(--glow);
@@ -125,7 +122,7 @@
     }
     .detail-btn:hover { background:rgba(10,163,181,0.2); }
 
-    /* ── MODAL ── */
+    /* MODAL */
     .modal-overlay {
       display:none; position:fixed; inset:0; z-index:300;
       background:rgba(13,27,42,0.6); backdrop-filter:blur(8px);
@@ -202,12 +199,12 @@
     .step-desc    { font-size:0.8rem; color:var(--slate); line-height:1.6; }
     .topics-row   { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 
-    /* ── PRACTICE BUTTONS (inside modal) ── */
     .practice-test-btn {
       display:inline-flex; align-items:center; gap:6px;
       font-size:0.73rem; font-weight:700; background:var(--teal); color:#fff;
       padding:7px 13px; border-radius:20px; text-decoration:none;
       transition:all 0.18s; box-shadow:0 2px 8px rgba(10,163,181,0.3);
+      cursor:pointer;
     }
     .practice-test-btn:hover { background:var(--teal-dark); transform:translateY(-2px); color:#fff; }
     .practice-test-btn i { font-size:0.65rem; }
@@ -229,95 +226,51 @@
       padding-top:8px; border-top:1px solid var(--border); margin-top:4px;
     }
 
-
     @keyframes fadeUp {
       from { opacity:0; transform:translateY(18px); }
       to   { opacity:1; transform:translateY(0); }
     }
     .company-card:nth-child(1) { animation-delay:0.05s; }
     .company-card:nth-child(2) { animation-delay:0.10s; }
-    .company-card:nth-child(3) { animation-delay:0.15s; }
-    .company-card:nth-child(4) { animation-delay:0.20s; }
-
-    @media (max-width:700px) {
-      .navbar { padding:0 16px; }
-      .navbar-links a { padding:5px 8px; font-size:0.72rem; }
-      .main { padding:20px 14px 40px; }
-      .companies-grid { grid-template-columns:1fr; }
-      .req-grid { grid-template-columns:1fr; }
-      .modal-body { padding:20px; }
-      .roles-row { flex-direction:column; }
-    }
   </style>
 </head>
 <body>
+
+<!-- ── Inject Django URL roots for JS ── -->
+<script>
+  const URL_TEST      = "{% url 'test' %}";
+  const URL_COMPANIES = "{% url 'companies' %}";
+  const URL_DASHBOARD = "{% url 'dashboard' %}";
+  const URL_INTERVIEW = "{% url 'virtual_interview' %}";
+</script>
 
 <nav class="navbar">
   <div class="navbar-brand">🎯 Smart Placement Portal</div>
   <div class="navbar-links">
     <a href="{% url 'dashboard' %}">Dashboard</a>
-    <a href="{% url 'student_profile' %}">Profile</a>
-    <a href="{% url 'skills' %}">Skills</a>
-    <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'companies' %}" class="active">Companies</a>
     <a href="{% url 'upload_resume' %}">Resume</a>
     <a href="{% url 'recommendations' %}">Recs</a>
     <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'interview_results' %}">Interviews</a>
+    <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'jobs' %}">Jobs</a>
-    <a href="{% url 'logout' %}">Logout</a>
-
+  </div>
+  <div class="navbar-right">
+    <div style="width: 40px;"></div>
   </div>
 </nav>
 
 <div class="main">
-  {% csrf_token %}
-  <div class="page-header" style="text-align: center;">
+  <div class="page-header">
     <h1>Companies</h1>
     <p>Explore companies and opportunities available for placements</p>
   </div>
 
-  <div class="companies-grid">
-    {% for company in companies %}
-    <div class="company-card">
-      <div class="card-banner">
-        {% if company.name == 'Tata Consultancy Services' %}TCS{% else %}{{ company.name }}{% endif %}
-      </div>
-      <div class="card-body">
-        <div class="company-top">
-          <div class="company-logo">
-            {{ company.logo_text|default:company.name|slice:":2"|upper }}
-          </div>
-          <div class="company-title">
-            <h3>{{ company.name }}</h3>
-            <span class="company-industry"><i class="fas fa-industry" style="font-size:0.62rem;"></i> {{ company.industry }}</span>
-          </div>
-        </div>
-        <div class="card-stats">
-          <span class="stat-pill"><i class="fas fa-users"></i> {{ company.employee_count }} Employees</span>
-          <span class="stat-pill"><i class="fas fa-globe"></i> {{ company.countries_count }} Countries</span>
-          <span class="stat-pill"><i class="fas fa-indian-rupee-sign"></i> {{ company.jobrole_set.first.salary_range }}</span>
-        </div>
-        <p class="company-desc">{{ company.description }}</p>
-      </div>
-      <div class="company-footer">
-        <button class="detail-btn" onclick="openModal('{{ company.id }}')">
-          <i class="fas fa-circle-info" style="font-size:0.68rem;"></i> Details
-        </button>
-        <div style="display:flex; gap:6px;">
-          <a href="{% url 'virtual_interview' %}?company={{ company.name|urlencode }}&type=hr" class="visit-btn" style="background:var(--teal); color:white; padding: 8px 12px;">
-            <i class="fas fa-video"></i> HR
-          </a>
-          <a href="{% url 'virtual_interview' %}?company={{ company.name|urlencode }}&type=technical" class="visit-btn" style="background:var(--slate); color:white; padding: 8px 12px;">
-            <i class="fas fa-code"></i> Tech
-          </a>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
+  <div class="companies-grid" id="companiesGrid"></div>
 </div>
 
-<!-- ── MODAL ── -->
+<!-- MODAL -->
 <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <div id="modalBanner" class="modal-banner">
@@ -337,30 +290,212 @@
   </div>
 </div>
 
-
-<script id="companies-meta-data" type="application/json">
-  {{ companies_meta_json|safe }}
-</script>
 <script>
-const DATA = JSON.parse(document.getElementById('companies-meta-data').textContent);
+/* ══════════════════════════════════════════
+   COMPANY DATA
+   — topic slugs MUST match QUESTION_BANK keys in test.html
+══════════════════════════════════════════ */
+const COMPANIES = [
+  {
+    id: 'infosys',
+    name: 'Infosys',
+    industry: 'IT Services & Consulting',
+    employees: '343,000+',
+    countries: '50+',
+    salary: '₹3.6 – 8 LPA',
+    description: 'Global leader in next-generation digital services and consulting, helping clients navigate digital transformation.',
+    bannerText: 'Infosys',
+    bannerBg: 'linear-gradient(135deg,#007CC3 0%,#005A8E 100%)',
+    logoBg: 'linear-gradient(135deg,#007CC3 0%,#005A8E 100%)',
+    logoText: 'IF',
+    accent: '#007CC3',
+    about: 'Infosys is a global leader in next-generation digital services and consulting. The company enables clients in more than 50 countries to navigate their digital transformation. With over four decades of experience in managing the systems and workings of global enterprises, Infosys expertly steers its clients through their digital journey.',
+    facts: [
+      { icon:'fa-calendar', label:'Founded', val:'1981' },
+      { icon:'fa-map-marker-alt', label:'HQ', val:'Bengaluru, India' },
+      { icon:'fa-chart-line', label:'Revenue', val:'$18.2B (FY24)' },
+      { icon:'fa-graduation-cap', label:'Campuses', val:'InfyTQ / HackWithInfy' },
+    ],
+    roles: [
+      { title:'Systems Engineer', pkg:'₹3.6 LPA', label:'CTC Package' },
+      { title:'Technology Analyst', pkg:'₹7–8 LPA', label:'CTC Package' },
+    ],
+    requirements: [
+      ['Degree', 'B.E / B.Tech / M.E / M.Tech / MCA / M.Sc'],
+      ['CGPA', 'Minimum 6.0 throughout'],
+      ['Backlogs', 'No active backlogs'],
+      ['Boards', 'Minimum 60% in both boards'],
+    ],
+    steps: [
+      {
+        title: 'InfyTQ / HackWithInfy — Online Assessment',
+        desc: 'Aptitude, Logical Reasoning, Verbal Ability, and 2 Coding problems (Easy–Medium). Duration: 3 hours.',
+        tests: [
+          { topic:'quantitative', icon:'fa-calculator',    label:'Quantitative Aptitude' },
+          { topic:'logical',      icon:'fa-brain',         label:'Logical Reasoning' },
+          { topic:'verbal',       icon:'fa-pen-clip',      label:'Verbal Ability' },
+          { topic:'arrays',       icon:'fa-layer-group',   label:'Arrays' },
+          { topic:'strings',      icon:'fa-font',          label:'Strings' },
+          { topic:'sorting',      icon:'fa-arrow-down-wide-short', label:'Sorting Algorithms' },
+        ]
+      },
+      {
+        title: 'Technical Interview',
+        desc: 'Core CS — DSA, OOP (all 4 pillars with code), DBMS & SQL, OS basics, 1–2 live coding problems. Deep-dive into your resume projects.',
+      },
+      {
+        title: 'HR Round',
+        desc: 'Communication, attitude, relocation to Mysuru for 3-month training, 1-year bond acceptance. Prepare 2–3 STAR stories.',
+      },
+      {
+        title: 'Mock Interview via Webcam',
+        desc: 'Practice your Technical and HR rounds with our AI-powered webcam interview simulator. Get real-time feedback.',
+        is_virtual_interview: true,
+        company: 'Infosys',
+      },
+    ],
+    tips: [
+      'Clear InfyTQ certification (Specialist/Expert) — it directly fast-tracks your interview.',
+      'Practice DSA on HackerRank and LeetCode — at least 50 Easy problems before the test.',
+      'Prepare 2–3 strong project stories using the STAR method for HR.',
+      'Infosys focuses heavily on OOP concepts — know all 4 pillars with real code examples.',
+    ],
+    website: 'https://www.infosys.com/careers/',
+  },
+  {
+    id: 'tcs',
+    name: 'Tata Consultancy Services',
+    industry: 'IT Services & Consulting',
+    employees: '614,000+',
+    countries: '55+',
+    salary: '₹3.36 – 7 LPA',
+    description: 'World\'s largest IT company by market cap, renowned for digital services, consulting, and business solutions.',
+    bannerText: 'TCS',
+    bannerBg: 'linear-gradient(135deg,#1b2024 0%,#0d1b2a 100%)',
+    logoBg: 'linear-gradient(135deg,#1b2024 0%,#0d1b2a 100%)',
+    logoText: 'TC',
+    accent: '#0aa3b5',
+    about: 'Tata Consultancy Services (TCS) is an Indian multinational information technology services and consulting company headquartered in Mumbai. It is a part of the Tata Group and operates in 150 locations across 46 countries. TCS is the world\'s largest IT services company by market capitalization and the most valuable IT services brand worldwide.',
+    facts: [
+      { icon:'fa-calendar', label:'Founded', val:'1968' },
+      { icon:'fa-map-marker-alt', label:'HQ', val:'Mumbai, India' },
+      { icon:'fa-chart-line', label:'Revenue', val:'$29B (FY24)' },
+      { icon:'fa-graduation-cap', label:'Test', val:'TCS NQT (National Qualifier)' },
+    ],
+    roles: [
+      { title:'Assistant System Engineer', pkg:'₹3.36 LPA', label:'CTC Package' },
+      { title:'System Engineer', pkg:'₹7 LPA', label:'CTC Package (NQT High Scorers)' },
+    ],
+    requirements: [
+      ['Degree', 'B.E / B.Tech / M.E / M.Tech / MCA / M.Sc / BCA / B.Sc'],
+      ['CGPA', 'Minimum 6.0 (aggregate)'],
+      ['Backlogs', 'No active backlogs at time of joining'],
+      ['Gap', 'Maximum 2 years gap in education'],
+    ],
+    steps: [
+      {
+        title: 'TCS NQT — National Qualifier Test',
+        desc: 'Numerical Ability, Verbal Reasoning, Programming Logic, Coding (2 problems), Data Interpretation. Duration: 3 hours.',
+        tests: [
+          { topic:'tcs_numerical',   icon:'fa-calculator',  label:'Numerical Ability' },
+          { topic:'tcs_verbal',      icon:'fa-language',    label:'Verbal Reasoning' },
+          { topic:'tcs_programming', icon:'fa-code',        label:'Programming Logic' },
+          { topic:'tcs_coding',      icon:'fa-keyboard',    label:'Coding' },
+          { topic:'tcs_data',        icon:'fa-chart-pie',   label:'Data Interpretation' },
+        ]
+      },
+      {
+        title: 'Technical Interview',
+        desc: 'DSA (Trees, Graphs, BFS/DFS), DBMS & SQL Joins, OS, OOP in Java/Python. 10–15 min deep-dive on your final year project.',
+      },
+      {
+        title: 'Managerial Round',
+        desc: 'Scenario-based: client handling, team conflicts, leadership under pressure, tech awareness. Use STAR method throughout.',
+      },
+      {
+        title: 'HR Round',
+        desc: 'Culture fit, relocation readiness, communication skills. TCS values teamwork, learning agility, and integrity.',
+      },
+      {
+        title: 'Mock Interview via Webcam',
+        desc: 'Practice your Technical and HR rounds with our AI-powered webcam interview simulator.',
+        is_virtual_interview: true,
+        company: 'TCS',
+      },
+    ],
+    tips: [
+      'Score high in NQT — top scorers get direct placement without further rounds.',
+      'The coding section uses C, C++, Java, or Python — prepare in your strongest language.',
+      'TCS values project knowledge deeply — be ready for 15 min of project Q&A.',
+      'Practice SQL joins and DBMS normalization — they appear frequently in tech interviews.',
+    ],
+    website: 'https://www.tcs.com/careers',
+  },
+];
 
-function openModal(key) {
+/* ══════════════════════════════════════════
+   RENDER CARDS
+══════════════════════════════════════════ */
+function renderCards() {
+  const grid = document.getElementById('companiesGrid');
+  grid.innerHTML = COMPANIES.map(c => `
+    <div class="company-card">
+      <div class="card-banner" style="background:${c.bannerBg}">
+        ${c.bannerText}
+      </div>
+      <div class="card-body">
+        <div class="company-top">
+          <div class="company-logo" style="background:${c.logoBg}">${c.logoText}</div>
+          <div class="company-title">
+            <h3>${c.name}</h3>
+            <span class="company-industry"><i class="fas fa-industry" style="font-size:0.62rem;"></i> ${c.industry}</span>
+          </div>
+        </div>
+        <div class="card-stats">
+          <span class="stat-pill"><i class="fas fa-users"></i> ${c.employees} Employees</span>
+          <span class="stat-pill"><i class="fas fa-globe"></i> ${c.countries} Countries</span>
+          <span class="stat-pill"><i class="fas fa-indian-rupee-sign"></i> ${c.salary}</span>
+        </div>
+        <p class="company-desc">${c.description}</p>
+      </div>
+      <div class="company-footer">
+        <button class="detail-btn" onclick="openModal('${c.id}')">
+          <i class="fas fa-circle-info" style="font-size:0.68rem;"></i> Details
+        </button>
+        <div style="display:flex; gap:6px;">
+          <a href="${URL_INTERVIEW}?company=${encodeURIComponent(c.name)}&type=hr"
+             class="visit-btn" style="background:var(--teal); padding:8px 12px;">
+            <i class="fas fa-video"></i> HR
+          </a>
+          <a href="${URL_INTERVIEW}?company=${encodeURIComponent(c.name)}&type=technical"
+             class="visit-btn" style="background:var(--slate); padding:8px 12px;">
+            <i class="fas fa-code"></i> Tech
+          </a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
 
-  const c = DATA[key];
+/* ══════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════ */
+function openModal(id) {
+  const c = COMPANIES.find(x => x.id === id);
   if (!c) return;
-  
+
   document.getElementById('modalBanner').style.background = c.bannerBg;
-  document.getElementById('modalBannerText').textContent  = c.banner;
+  document.getElementById('modalBannerText').textContent  = c.bannerText;
   document.getElementById('modalLogo').style.background   = c.logoBg;
-  document.getElementById('modalLogo').textContent        = c.logo;
+  document.getElementById('modalLogo').textContent        = c.logoText;
   document.getElementById('modalName').textContent        = c.name;
-  document.getElementById('modalSub').textContent         = c.sub;
+  document.getElementById('modalSub').textContent         = c.industry;
 
   const factsHTML = c.facts.map(f =>
     `<div class="fact-chip"><i class="fas ${f.icon}"></i>${f.label}: <strong>${f.val}</strong></div>`
   ).join('');
 
-  const rolesHTML = (c.roles || []).map(r =>
+  const rolesHTML = c.roles.map(r =>
     `<div class="role-card" style="background:${c.accent}12;border-color:${c.accent}30;">
       <div class="role-title">${r.title}</div>
       <div class="role-pkg" style="color:${c.accent};">${r.pkg}</div>
@@ -368,15 +503,18 @@ function openModal(key) {
     </div>`
   ).join('');
 
-  const reqHTML = (c.requirements || []).map(([k,v]) =>
+  const reqHTML = c.requirements.map(([k,v]) =>
     `<div class="req-item"><div class="req-key">${k}</div><div class="req-val">${v}</div></div>`
   ).join('');
 
-  const stepsHTML = (c.steps || []).map((s,i) => {
+  const stepsHTML = c.steps.map((s, i) => {
+    /* ── TOPIC BUTTONS — each is an <a> that goes to test page ── */
     const testsHTML = (s.tests || []).length
       ? `<div class="topics-row">
           ${s.tests.map(t =>
-            `<a href="/test/?topic=${t.topic}" class="practice-test-btn">
+            `<a href="${URL_TEST}?topic=${encodeURIComponent(t.topic)}"
+                class="practice-test-btn"
+                onclick="closeModal()">
               <i class="fas ${t.icon}"></i> ${t.label} <span class="q-badge">10 Qs</span>
             </a>`
           ).join('')}
@@ -386,13 +524,16 @@ function openModal(key) {
           Click any topic to take a 10-question practice test!
         </div>`
       : '';
-    
-    const virtualInterviewHTML = s.is_virtual_interview
-      ? `<div style="margin-top:12px; display:flex; gap:10px;">
-          <a href="/virtual-interview/?company=${encodeURIComponent(c.banner)}&type=hr" class="visit-btn" style="text-decoration:none; background:var(--teal); color:white;">
+
+    /* ── VIRTUAL INTERVIEW BUTTONS ── */
+    const virtualHTML = s.is_virtual_interview
+      ? `<div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+          <a href="${URL_INTERVIEW}?company=${encodeURIComponent(s.company)}&type=hr"
+             class="visit-btn" style="text-decoration:none; background:var(--teal); color:white;">
             <i class="fas fa-video"></i> Start HR Round
           </a>
-          <a href="/virtual-interview/?company=${encodeURIComponent(c.banner)}&type=technical" class="visit-btn" style="text-decoration:none; background:var(--slate); color:white;">
+          <a href="${URL_INTERVIEW}?company=${encodeURIComponent(s.company)}&type=technical"
+             class="visit-btn" style="text-decoration:none; background:var(--slate); color:white;">
             <i class="fas fa-code"></i> Start Tech Round
           </a>
         </div>`
@@ -405,12 +546,12 @@ function openModal(key) {
           <div class="step-title">${s.title}</div>
           <div class="step-desc">${s.desc}</div>
           ${testsHTML}
-          ${virtualInterviewHTML}
+          ${virtualHTML}
         </div>
       </div>`;
   }).join('');
 
-  const tipsHTML = (c.tips || []).map(t =>
+  const tipsHTML = c.tips.map(t =>
     `<div class="tip-item"><i class="fas fa-circle-check"></i><span>${t}</span></div>`
   ).join('');
 
@@ -451,18 +592,14 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
-// Auto-open modal if query param 'open' is present
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ── Auto-open from URL param ── */
 window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  const openKey = params.get('open');
-  // Check both key and company name lookup if needed, but ID is preferred
-  if (openKey && DATA[openKey]) {
-    openModal(openKey);
-  }
+  renderCards();
+  const open = new URLSearchParams(window.location.search).get('open');
+  if (open) openModal(open);
 });
-
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
-
 </body>
 </html>
