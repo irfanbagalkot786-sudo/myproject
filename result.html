@@ -1,3 +1,5 @@
+RESULT.HTML----FILE
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +9,6 @@
 <title>Result - Smart Placement Portal</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-
 <style>
 :root {
   --teal:       #0aa3b5;
@@ -28,355 +29,240 @@
   --red:        #ef4444;
   --red-dim:    rgba(239,68,68,0.10);
 }
-
 * { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg); color: var(--ink);
-  min-height: 100vh; overflow-x: hidden;
-}
-
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; overflow-x:hidden; }
 body::before {
   content:''; position:fixed; inset:0;
   background:
-    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(10,163,181,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(8,138,154,0.06) 0%, transparent 60%);
+    radial-gradient(ellipse 60% 50% at 10% 20%,rgba(10,163,181,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 80%,rgba(8,138,154,0.06) 0%,transparent 60%);
   pointer-events:none; z-index:0;
 }
-
 .navbar {
-  position: sticky; top: 0; z-index: 100;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0 40px; height: 64px;
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+  position:sticky; top:0; z-index:100;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0 32px; height:62px;
+  background:rgba(255,255,255,0.92); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 1px 8px rgba(10,163,181,0.07);
 }
-
 .navbar-brand {
-  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
-  background: var(--gradient); -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
+  background:var(--gradient); -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; background-clip:text; white-space:nowrap;
 }
-
-.navbar-links { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow-x: auto; }
-
+.navbar-links { display:flex; align-items:center; gap:4px; }
 .navbar-links a {
-  color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500;
-  padding: 6px 12px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
+  color:var(--muted); text-decoration:none; font-size:0.8rem; font-weight:500;
+  padding:6px 12px; border-radius:8px; transition:all 0.2s; white-space:nowrap;
 }
+.navbar-links a:hover { color:var(--slate); background:var(--teal-dim); }
+.navbar-links a.active { color:var(--teal); background:var(--teal-dim); }
 
-.navbar-links a:hover  { color: var(--slate); background: var(--teal-dim); }
-.navbar-links a.active { color: var(--teal);  background: var(--teal-dim); }
+.main { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:50px 24px 60px; }
 
-.main {
-  position: relative; z-index: 1;
-  max-width: 720px; margin: 0 auto;
-  padding: 50px 24px 60px;
-}
-
-/* ── SCORE HERO ── */
+/* SCORE HERO */
 .score-hero {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 24px; padding: 48px 36px 40px; text-align: center;
-  box-shadow: var(--glow); animation: fadeUp 0.5s ease both; margin-bottom: 24px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:24px; padding:48px 36px 40px; text-align:center;
+  box-shadow:var(--glow); animation:fadeUp 0.5s ease both; margin-bottom:24px;
 }
-
-.score-ring-wrap { position: relative; width: 150px; height: 150px; margin: 0 auto 24px; }
-
-.score-ring-wrap svg { transform: rotate(-90deg); width: 150px; height: 150px; }
-.score-ring-wrap .ring-track { fill: none; stroke: var(--border); stroke-width: 10; }
+.score-ring-wrap { position:relative; width:150px; height:150px; margin:0 auto 24px; }
+.score-ring-wrap svg { transform:rotate(-90deg); width:150px; height:150px; }
+.score-ring-wrap .ring-track { fill:none; stroke:var(--border); stroke-width:10; }
 .score-ring-wrap .ring-fill {
-  fill: none; stroke-width: 10; stroke-linecap: round;
-  stroke-dasharray: 345; stroke-dashoffset: 345;
-  transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1), stroke 0.3s ease;
+  fill:none; stroke-width:10; stroke-linecap:round;
+  stroke-dasharray:345; stroke-dashoffset:345;
+  transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1), stroke 0.3s ease;
 }
-
 .score-ring-center {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 2px;
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:2px;
 }
-
-.score-number { font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; line-height: 1; color: var(--ink); }
-.score-total  { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+.score-number { font-family:'Syne',sans-serif; font-size:2.4rem; font-weight:800; line-height:1; color:var(--ink); }
+.score-total  { font-size:0.78rem; color:var(--muted); font-weight:500; }
 
 .grade-badge {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 7px 20px; border-radius: 99px;
-  font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; margin-bottom: 16px;
+  display:inline-flex; align-items:center; gap:7px;
+  padding:7px 20px; border-radius:99px;
+  font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:700; margin-bottom:16px;
 }
+.grade-badge.excellent { background:var(--green-dim); color:var(--green); border:1px solid rgba(34,197,94,0.25); }
+.grade-badge.good      { background:var(--teal-dim);  color:var(--teal); border:1px solid rgba(10,163,181,0.25); }
+.grade-badge.average   { background:var(--yellow-dim);color:var(--yellow);border:1px solid rgba(245,158,11,0.25); }
+.grade-badge.poor      { background:var(--red-dim);   color:var(--red);  border:1px solid rgba(239,68,68,0.25); }
 
-.grade-badge.excellent { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(34,197,94,0.25); }
-.grade-badge.good      { background: var(--teal-dim);   color: var(--teal);   border: 1px solid rgba(10,163,181,0.25); }
-.grade-badge.average   { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,158,11,0.25); }
-.grade-badge.poor      { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(239,68,68,0.25); }
+.score-hero h2 { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; color:var(--ink); margin-bottom:8px; }
+.score-hero p  { font-size:0.88rem; color:var(--muted); line-height:1.6; }
 
-.score-hero h2 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
-.score-hero p  { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:28px; }
+.stat-box { background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px 10px; text-align:center; }
+.stat-box-val { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:4px; }
+.stat-box-key { font-size:0.72rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
 
-.stats-row {
-  display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
-  margin-top: 28px;
-}
-
-.stat-box {
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 14px; padding: 14px 10px; text-align: center;
-}
-
-.stat-box-val { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
-.stat-box-key { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-
-/* ── PROCTORING REPORT ── */
+/* PROCTOR REPORT */
 .proctor-report {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 20px; padding: 24px; box-shadow: var(--glow);
-  animation: fadeUp 0.5s 0.08s ease both; margin-bottom: 24px;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:24px; box-shadow:var(--glow);
+  animation:fadeUp 0.5s 0.08s ease both; margin-bottom:24px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
 }
-.proctor-report-left { display: flex; align-items: center; gap: 14px; }
+.proctor-report-left { display:flex; align-items:center; gap:14px; }
 .proctor-report-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+  width:44px; height:44px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center; font-size:1.2rem;
 }
-.proctor-report-info h4 { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
-.proctor-report-info p { font-size: 0.75rem; color: var(--muted); }
+.proctor-report-info h4 { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:800; color:var(--ink); margin-bottom:2px; }
+.proctor-report-info p { font-size:0.75rem; color:var(--muted); }
+.proctor-status-pill { padding:6px 14px; border-radius:99px; font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; }
+.status-trusted { background:var(--green-dim); color:var(--green); border:1px solid rgba(34,197,94,0.3); }
+.status-flagged { background:var(--red-dim);   color:var(--red);   border:1px solid rgba(239,68,68,0.3); }
 
-.proctor-status-pill {
-  padding: 6px 14px; border-radius: 99px; font-size: 0.72rem; font-weight: 800;
-  text-transform: uppercase; letter-spacing: 0.5px;
-}
-.status-trusted { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
-.status-flagged { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
-
-/* ── ACTIONS ── */
+/* ACTIONS */
 .actions-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 20px; padding: 28px; box-shadow: var(--glow);
-  animation: fadeUp 0.5s 0.1s ease both; margin-bottom: 20px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:28px; box-shadow:var(--glow);
+  animation:fadeUp 0.5s 0.1s ease both; margin-bottom:20px;
 }
-
-.actions-card h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 16px; }
-
-.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
+.actions-card h3 { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:var(--ink); margin-bottom:16px; }
+.actions-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .action-btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 12px; border-radius: 12px; font-family: 'Syne', sans-serif;
-  font-size: 0.82rem; font-weight: 700; text-decoration: none; cursor: pointer;
-  border: none; transition: all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px; border-radius:12px; font-family:'Syne',sans-serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none; cursor:pointer;
+  border:none; transition:all 0.2s;
 }
+.action-btn.primary   { background:var(--gradient); color:white; box-shadow:0 4px 16px rgba(10,163,181,0.3); }
+.action-btn.primary:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(10,163,181,0.4); }
+.action-btn.secondary { background:var(--teal-dim); color:var(--teal); border:1px solid rgba(10,163,181,0.25); }
+.action-btn.secondary:hover { background:rgba(10,163,181,0.2); }
+.action-btn.outline   { background:var(--bg); color:var(--slate); border:1px solid var(--border); }
+.action-btn.outline:hover { background:var(--border); }
 
-.action-btn.primary { background: var(--gradient); color: white; box-shadow: 0 4px 16px rgba(10,163,181,0.3); }
-.action-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10,163,181,0.4); }
-.action-btn.secondary { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(10,163,181,0.25); }
-.action-btn.secondary:hover { background: rgba(10,163,181,0.2); }
-.action-btn.outline { background: var(--bg); color: var(--slate); border: 1px solid var(--border); }
-.action-btn.outline:hover { background: var(--border); }
-
-/* ── ANSWER REVIEW SECTION ── */
+/* ANSWER REVIEW */
 .review-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 20px; padding: 28px; box-shadow: var(--glow);
-  animation: fadeUp 0.5s 0.15s ease both; margin-bottom: 20px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:28px; box-shadow:var(--glow);
+  animation:fadeUp 0.5s 0.15s ease both; margin-bottom:20px;
 }
-
 .review-card h3 {
-  font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
-  color: var(--ink); margin-bottom: 6px;
-  display: flex; align-items: center; gap: 8px;
+  font-family:'Syne',sans-serif; font-size:1rem; font-weight:700;
+  color:var(--ink); margin-bottom:6px;
+  display:flex; align-items:center; gap:8px;
 }
+.review-subtitle { font-size:0.8rem; color:var(--muted); margin-bottom:20px; }
+.review-legend { display:flex; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:600; color:var(--slate); }
+.legend-dot { width:12px; height:12px; border-radius:50%; }
+.legend-dot.correct { background:var(--green); }
+.legend-dot.wrong   { background:var(--red); }
 
-.review-subtitle {
-  font-size: 0.8rem; color: var(--muted); margin-bottom: 20px;
-}
-
-.review-legend {
-  display: flex; gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
-}
-
-.legend-item {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 0.75rem; font-weight: 600; color: var(--slate);
-}
-
-.legend-dot {
-  width: 12px; height: 12px; border-radius: 50%;
-}
-
-.legend-dot.correct { background: var(--green); }
-.legend-dot.wrong   { background: var(--red); }
-
-/* ── Individual question review card ── */
 .q-review {
-  border: 1px solid var(--border);
-  border-radius: 14px; padding: 16px 18px; margin-bottom: 12px;
-  transition: box-shadow 0.2s;
+  border:1px solid var(--border); border-radius:14px;
+  padding:16px 18px; margin-bottom:12px;
 }
+.q-review:last-child { margin-bottom:0; }
+.q-review.correct-ans { border-color:rgba(34,197,94,0.4); background:rgba(34,197,94,0.03); }
+.q-review.wrong-ans   { border-color:rgba(239,68,68,0.35); background:rgba(239,68,68,0.03); }
+.q-review.skipped-ans { border-color:rgba(245,158,11,0.35); background:rgba(245,158,11,0.03); }
 
-.q-review:last-child { margin-bottom: 0; }
-
-.q-review.correct-ans {
-  border-color: rgba(34,197,94,0.4);
-  background: rgba(34,197,94,0.03);
-}
-
-.q-review.wrong-ans {
-  border-color: rgba(239,68,68,0.35);
-  background: rgba(239,68,68,0.03);
-}
-
-.q-review-header {
-  display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px;
-}
-
+.q-review-header { display:flex; align-items:flex-start; gap:10px; margin-bottom:12px; }
 .q-num-badge {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.7rem; font-weight: 800;
-  width: 26px; height: 26px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-top: 1px;
+  font-family:'Syne',sans-serif; font-size:0.7rem; font-weight:800;
+  width:26px; height:26px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
 }
+.q-num-badge.correct { background:var(--green-dim); color:var(--green); }
+.q-num-badge.wrong   { background:var(--red-dim);   color:var(--red); }
+.q-num-badge.skipped { background:var(--yellow-dim);color:var(--yellow); }
+.q-review-text { font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700; color:var(--ink); line-height:1.45; flex:1; }
+.q-status-icon { font-size:0.9rem; flex-shrink:0; margin-top:2px; }
+.q-status-icon.correct { color:var(--green); }
+.q-status-icon.wrong   { color:var(--red); }
+.q-status-icon.skipped { color:var(--yellow); }
 
-.q-num-badge.correct { background: var(--green-dim); color: var(--green); }
-.q-num-badge.wrong   { background: var(--red-dim);   color: var(--red); }
-
-.q-review-text {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.85rem; font-weight: 700; color: var(--ink); line-height: 1.45;
-  flex: 1;
-}
-
-.q-status-icon {
-  font-size: 0.9rem; flex-shrink: 0; margin-top: 2px;
-}
-
-.q-status-icon.correct { color: var(--green); }
-.q-status-icon.wrong   { color: var(--red); }
-
-/* Options inside each review */
-.q-options-grid {
-  display: flex; flex-direction: column; gap: 6px;
-}
-
+.q-options-grid { display:flex; flex-direction:column; gap:6px; }
 .q-opt {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 12px; border-radius: 10px; font-size: 0.8rem;
-  border: 1.5px solid transparent;
+  display:flex; align-items:center; gap:10px;
+  padding:8px 12px; border-radius:10px; font-size:0.8rem;
+  border:1.5px solid transparent;
 }
-
 .q-opt-label {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.68rem; font-weight: 800;
-  width: 22px; height: 22px; border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; background: var(--bg); color: var(--muted);
+  font-family:'Syne',sans-serif; font-size:0.68rem; font-weight:800;
+  width:22px; height:22px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; background:var(--bg); color:var(--muted);
 }
+.q-opt.correct-opt { background:var(--green-dim); border-color:rgba(34,197,94,0.4); color:#15803d; font-weight:600; }
+.q-opt.correct-opt .q-opt-label { background:var(--green); color:white; }
+.q-opt.wrong-opt   { background:var(--red-dim);   border-color:rgba(239,68,68,0.3);  color:#b91c1c; font-weight:600; }
+.q-opt.wrong-opt   .q-opt-label { background:var(--red);   color:white; }
+.q-opt-badge { margin-left:auto; flex-shrink:0; font-size:0.62rem; font-weight:700; padding:2px 8px; border-radius:99px; }
+.q-opt.correct-opt .q-opt-badge { background:var(--green); color:white; }
+.q-opt.wrong-opt   .q-opt-badge { background:var(--red);   color:white; }
 
-.q-opt.correct-opt {
-  background: var(--green-dim);
-  border-color: rgba(34,197,94,0.4);
-  color: #15803d;
-  font-weight: 600;
-}
-
-.q-opt.correct-opt .q-opt-label {
-  background: var(--green); color: white;
-}
-
-.q-opt.wrong-opt {
-  background: var(--red-dim);
-  border-color: rgba(239,68,68,0.3);
-  color: #b91c1c;
-  font-weight: 600;
-}
-
-.q-opt.wrong-opt .q-opt-label {
-  background: var(--red); color: white;
-}
-
-.q-opt-badge {
-  margin-left: auto; flex-shrink: 0;
-  font-size: 0.62rem; font-weight: 700;
-  padding: 2px 8px; border-radius: 99px;
-}
-
-.q-opt.correct-opt .q-opt-badge { background: var(--green); color: white; }
-.q-opt.wrong-opt   .q-opt-badge { background: var(--red);   color: white; }
-
-/* skipped */
 .q-skipped-note {
-  margin-top: 10px; padding: 8px 12px;
-  background: var(--yellow-dim); border: 1px dashed rgba(245,158,11,0.4);
-  border-radius: 10px; font-size: 0.78rem; color: #92400e;
-  display: flex; align-items: center; gap: 7px;
+  margin-top:10px; padding:8px 12px;
+  background:var(--yellow-dim); border:1px dashed rgba(245,158,11,0.4);
+  border-radius:10px; font-size:0.78rem; color:#92400e;
+  display:flex; align-items:center; gap:7px;
 }
 
-/* ── TIPS ── */
+/* TIPS */
 .tips-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 20px; padding: 24px; box-shadow: var(--glow);
-  animation: fadeUp 0.5s 0.2s ease both;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:24px; box-shadow:var(--glow);
+  animation:fadeUp 0.5s 0.2s ease both;
 }
-
-.tips-card h3 { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 14px; }
-
+.tips-card h3 { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; color:var(--ink); margin-bottom:14px; }
 .tip-row {
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: 0.82rem; color: var(--slate); line-height: 1.6;
-  padding: 10px 0; border-bottom: 1px solid var(--border);
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:0.82rem; color:var(--slate); line-height:1.6;
+  padding:10px 0; border-bottom:1px solid var(--border);
 }
+.tip-row:last-child { border-bottom:none; }
+.tip-row i { color:var(--teal); font-size:0.75rem; margin-top:3px; flex-shrink:0; }
 
-.tip-row:last-child { border-bottom: none; }
-.tip-row i { color: var(--teal); font-size: 0.75rem; margin-top: 3px; flex-shrink: 0; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
 
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(16px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-@media (max-width: 600px) {
-  .navbar { padding: 0 16px; }
-  .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
-  .main { padding: 30px 16px 40px; }
-  .score-hero { padding: 32px 20px; }
-  .stats-row { grid-template-columns: repeat(3,1fr); }
-  .actions-grid { grid-template-columns: 1fr; }
+@media(max-width:600px) {
+  .actions-grid { grid-template-columns:1fr; }
+  .score-hero { padding:32px 20px; }
+  .proctor-report { flex-direction:column; align-items:flex-start; }
 }
 </style>
 </head>
-
 <body>
 
-<!-- ── Store URLs from Django ── -->
-<span id="testBaseUrl"      data-url="{% url 'test' %}"      style="display:none;"></span>
-<span id="companiesBaseUrl" data-url="{% url 'companies' %}" style="display:none;"></span>
-<span id="dashboardBaseUrl" data-url="{% url 'dashboard' %}" style="display:none;"></span>
+<!-- ── Inject Django URLs for JS ── -->
+<script>
+  const URL_TEST      = "{% url 'test' %}";
+  const URL_RESULT    = "{% url 'result' %}";
+  const URL_COMPANIES = "{% url 'companies' %}";
+  const URL_DASHBOARD = "{% url 'dashboard' %}";
+</script>
 
 <nav class="navbar">
   <div class="navbar-brand">🎯 Smart Placement Portal</div>
   <div class="navbar-links">
     <a href="{% url 'dashboard' %}">Dashboard</a>
-    <a href="{% url 'student_profile' %}">Profile</a>
-    <a href="{% url 'skills' %}">Skills</a>
-    <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'companies' %}">Companies</a>
     <a href="{% url 'upload_resume' %}">Resume</a>
     <a href="{% url 'recommendations' %}">Recs</a>
     <a href="{% url 'test' %}" class="active">Test</a>
+    <a href="{% url 'interview_results' %}">Interviews</a>
+    <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'jobs' %}">Jobs</a>
-    <a href="{% url 'logout' %}">Logout</a>
-
-
+  </div>
+  <div class="navbar-right">
+    <div style="width: 42px;"></div>
   </div>
 </nav>
 
 <div class="main">
 
-  <!-- ── SCORE HERO ── -->
+  <!-- SCORE HERO -->
   <div class="score-hero">
     <div class="score-ring-wrap">
       <svg viewBox="0 0 120 120">
@@ -388,15 +274,9 @@ body::before {
         <span class="score-total"  id="scoreTotal">/10</span>
       </div>
     </div>
-
-    <div class="grade-badge" id="gradeBadge">
-      <i class="fas fa-star"></i>
-      <span id="gradeText">—</span>
-    </div>
-
+    <div class="grade-badge" id="gradeBadge"><i class="fas fa-star"></i><span id="gradeText">—</span></div>
     <h2 id="resultHeading">Test Complete!</h2>
     <p  id="resultMsg">Here's how you did on the practice test.</p>
-
     <div class="stats-row">
       <div class="stat-box">
         <div class="stat-box-val" id="statCorrect" style="color:var(--green);">0</div>
@@ -413,62 +293,41 @@ body::before {
     </div>
   </div>
 
-  <!-- ── PROCTORING REPORT ── -->
+  <!-- PROCTOR REPORT -->
   <div class="proctor-report">
     <div class="proctor-report-left">
-      <div class="proctor-report-icon" id="proctorIcon">
-        <i class="fas fa-shield-halved"></i>
-      </div>
+      <div class="proctor-report-icon" id="proctorIcon"><i class="fas fa-shield-halved"></i></div>
       <div class="proctor-report-info">
         <h4 id="proctorTitle">AI Proctoring Report</h4>
-        <p id="proctorDesc">Analyzing session integrity...</p>
+        <p  id="proctorDesc">Analyzing session integrity...</p>
       </div>
     </div>
     <div class="proctor-status-pill" id="proctorStatus">—</div>
   </div>
 
-  <!-- ── ACTIONS ── -->
+  <!-- ACTIONS -->
   <div class="actions-card">
     <h3>What would you like to do next?</h3>
     <div class="actions-grid">
-      <a id="retryBtn" href="#" class="action-btn primary">
-        <i class="fas fa-rotate-right"></i> Retry This Topic
-      </a>
-      <a id="companiesBtn" href="#" class="action-btn secondary">
-        <i class="fas fa-building"></i> Back to Companies
-      </a>
-      <a id="allTestsBtn" href="#" class="action-btn outline">
-        <i class="fas fa-list"></i> All Practice Tests
-      </a>
-      <a id="dashboardBtn" href="#" class="action-btn outline">
-        <i class="fas fa-gauge-high"></i> Dashboard
-      </a>
+      <a id="retryBtn"     href="#" class="action-btn primary"><i class="fas fa-rotate-right"></i> Retry This Topic</a>
+      <a id="companiesBtn" href="#" class="action-btn secondary"><i class="fas fa-building"></i> Back to Companies</a>
+      <a id="allTestsBtn"  href="#" class="action-btn outline"><i class="fas fa-list"></i> All Practice Tests</a>
+      <a id="dashboardBtn" href="#" class="action-btn outline"><i class="fas fa-gauge-high"></i> Dashboard</a>
     </div>
   </div>
 
-  <!-- ── ANSWER REVIEW ── -->
+  <!-- ANSWER REVIEW -->
   <div class="review-card">
-    <h3>
-      <i class="fas fa-clipboard-list" style="color:var(--teal);font-size:0.9rem;"></i>
-      Answer Review
-    </h3>
-    <p class="review-subtitle">See every question — your answer, the correct answer, and an explanation.</p>
-
+    <h3><i class="fas fa-clipboard-list" style="color:var(--teal);font-size:0.9rem;"></i> Answer Review</h3>
+    <p class="review-subtitle">Every question — your answer, the correct answer, at a glance.</p>
     <div class="review-legend">
-      <div class="legend-item">
-        <div class="legend-dot correct"></div>
-        <span>Correct answer</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-dot wrong"></div>
-        <span>Your wrong answer</span>
-      </div>
+      <div class="legend-item"><div class="legend-dot correct"></div><span>Correct answer</span></div>
+      <div class="legend-item"><div class="legend-dot wrong"></div><span>Your wrong answer</span></div>
     </div>
-
     <div id="answerReview"></div>
   </div>
 
-  <!-- ── TIPS ── -->
+  <!-- TIPS -->
   <div class="tips-card">
     <h3>📚 Tips to Improve</h3>
     <div id="tipsContainer"></div>
@@ -477,11 +336,9 @@ body::before {
 </div>
 
 <script>
-const TEST_URL       = document.getElementById('testBaseUrl').dataset.url;
-const COMPANIES_URL  = document.getElementById('companiesBaseUrl').dataset.url;
-const DASHBOARD_URL  = document.getElementById('dashboardBaseUrl').dataset.url;
-
-/* ── Full question bank (mirrors test.html) ── */
+/* ══════════════════════════════════════════
+   QUESTION BANK (mirrors test.html)
+══════════════════════════════════════════ */
 const QUESTION_BANK = {
   quantitative: [
     { q:'A train travels 60 km in 1 hour. How far will it travel in 3.5 hours?', options:['180 km','200 km','210 km','220 km'], answer:2 },
@@ -501,7 +358,7 @@ const QUESTION_BANK = {
     { q:'Odd one out: Apple, Mango, Carrot, Banana', options:['Apple','Mango','Carrot','Banana'], answer:2 },
     { q:'If BOOK = 2-15-15-11, what is CAT?', options:['3-1-20','3-2-20','4-1-20','3-1-19'], answer:0 },
     { q:'A is taller than B. B is taller than C. Who is shortest?', options:['A','B','C','Cannot determine'], answer:2 },
-    { q:'Mirror image: p → ?', options:['q','d','b','p'], answer:1 },
+    { q:'Mirror image of "p" is?', options:['q','d','b','p'], answer:1 },
     { q:'Series: 1, 4, 9, 16, __', options:['20','24','25','30'], answer:2 },
     { q:'If Monday is 2 days after Saturday, what day is 3 days before Friday?', options:['Monday','Tuesday','Wednesday','Thursday'], answer:1 },
     { q:'Find the missing: 3:9 :: 5:?', options:['15','20','25','30'], answer:2 },
@@ -631,35 +488,53 @@ const TOPIC_META = {
   tcs_data:        { label:'Data Interpretation' },
 };
 
-/* ── Read URL params ── */
-const params    = new URLSearchParams(window.location.search);
-const score     = parseInt(params.get('score'))  || 0;
-const total     = parseInt(params.get('total'))  || 10;
-const topic     = params.get('topic')            || 'Practice Test';
-const topicSlug = params.get('topicSlug')        || '';
-const violations = parseInt(params.get('violations')) || 0;
-const pct       = Math.round((score / total) * 100);
+const TIPS = {
+  quantitative:    ['Revise HCF, LCM, percentages, and ratio & proportion.','Practice 10 arithmetic problems daily.','Use shortcut methods for multiplication and division.'],
+  logical:         ['Solve puzzles and series completion exercises daily.','Practice Venn diagrams and syllogisms.','Improve speed by timing yourself on 10 problems.'],
+  verbal:          ['Read newspapers to improve vocabulary and grammar.','Practice fill-in-the-blank and error detection questions.','Learn 10 new words with usage examples every day.'],
+  arrays:          ['Implement array problems from LeetCode Easy.','Master two-pointer and sliding window techniques.','Revise time complexity of array operations.'],
+  strings:         ['Practice anagram, palindrome, and substring problems.','Learn KMP algorithm for pattern matching.','Implement string manipulation without built-in functions.'],
+  sorting:         ['Implement Bubble, Merge, and Quick sort from scratch.','Understand when to use which sorting algorithm.','Focus on time and space complexity trade-offs.'],
+  tcs_numerical:   ['Revise profit & loss, time & work, and speed-distance.','Practice data sufficiency questions.','Use estimation to quickly eliminate wrong options.'],
+  tcs_verbal:      ['Focus on sentence correction and reading comprehension.','Practice spotting errors in complex sentences.','Learn common idioms and phrasal verbs.'],
+  tcs_programming: ['Practice pseudocode and algorithm tracing.','Revise OOP concepts with real code examples.','Understand recursion and iteration differences.'],
+  tcs_coding:      ['Solve 2 LeetCode problems daily.','Focus on array, string, and basic DP problems.','Review time complexity after each solution.'],
+  tcs_data:        ['Practice reading bar charts, pie charts, and line graphs.','Learn to calculate percentage change quickly.','Practice table-based data interpretation questions.'],
+};
 
-/* ── Parse per-question answers from URL ── */
-const answersParam   = params.get('answers') || '';
+/* ══════════════════════════════════════════
+   PARSE URL PARAMS
+══════════════════════════════════════════ */
+const params         = new URLSearchParams(window.location.search);
+const score          = parseInt(params.get('score'))      || 0;
+const total          = parseInt(params.get('total'))      || 10;
+const topic          = params.get('topic')                || 'Practice Test';
+const topicSlug      = params.get('topicSlug')            || '';
+const violations     = parseInt(params.get('violations')) || 0;
+const pct            = Math.round((score / total) * 100);
+const answersParam   = params.get('answers')              || '';
 const studentAnswers = answersParam ? answersParam.split(',').map(Number) : [];
 
-/* ── Animate score ring ── */
+/* ══════════════════════════════════════════
+   SET ACTION BUTTON HREFS  ← KEY FIX
+══════════════════════════════════════════ */
+document.getElementById('retryBtn').href     = topicSlug ? URL_TEST + '?topic=' + topicSlug : URL_TEST;
+document.getElementById('companiesBtn').href = URL_COMPANIES;
+document.getElementById('allTestsBtn').href  = URL_TEST;
+document.getElementById('dashboardBtn').href = URL_DASHBOARD;
+
+/* ══════════════════════════════════════════
+   SCORE RING
+══════════════════════════════════════════ */
 const circumference = 2 * Math.PI * 55;
 const offset        = circumference - (pct / 100) * circumference;
 const ringFill      = document.getElementById('ringFill');
-
 let ringColor = '#ef4444';
-if (pct >= 80)      ringColor = '#22c55e';
+if (pct >= 80) ringColor = '#22c55e';
 else if (pct >= 60) ringColor = '#0aa3b5';
 else if (pct >= 40) ringColor = '#f59e0b';
+setTimeout(() => { ringFill.style.strokeDashoffset = offset; ringFill.style.stroke = ringColor; }, 200);
 
-setTimeout(() => {
-  ringFill.style.strokeDashoffset = offset;
-  ringFill.style.stroke = ringColor;
-}, 200);
-
-/* ── Score display ── */
 document.getElementById('scoreNum').textContent    = score;
 document.getElementById('scoreTotal').textContent  = '/' + total;
 document.getElementById('statCorrect').textContent = score;
@@ -670,7 +545,6 @@ document.getElementById('statPct').textContent     = pct + '%';
 const badge   = document.getElementById('gradeBadge');
 const heading = document.getElementById('resultHeading');
 const msg     = document.getElementById('resultMsg');
-
 if (pct >= 80) {
   badge.className = 'grade-badge excellent';
   document.getElementById('gradeText').textContent = '🏆 Excellent!';
@@ -693,35 +567,31 @@ if (pct >= 80) {
   msg.textContent = `You scored ${score}/${total} on ${topic}. Review the fundamentals and retry.`;
 }
 
-/* ── Action buttons ── */
-document.getElementById('retryBtn').href     = topicSlug ? `${TEST_URL}?topic=${topicSlug}` : TEST_URL;
-document.getElementById('companiesBtn').href = COMPANIES_URL;
-document.getElementById('allTestsBtn').href  = TEST_URL;
-document.getElementById('dashboardBtn').href = DASHBOARD_URL;
+document.title = `Result: ${score}/${total} — ${topic}`;
 
-/* ── ANSWER REVIEW ── */
-const questions    = QUESTION_BANK[topicSlug] || [];
-const optionLetters = ['A', 'B', 'C', 'D'];
+/* ══════════════════════════════════════════
+   ANSWER REVIEW
+══════════════════════════════════════════ */
+const questions     = QUESTION_BANK[topicSlug] || [];
+const optionLetters = ['A','B','C','D'];
 let reviewHTML = '';
 
-if (questions.length === 0) {
+if (!questions.length) {
   reviewHTML = `<p style="color:var(--muted);font-size:0.84rem;">No question data available for this topic.</p>`;
 } else {
   questions.forEach((q, i) => {
     const studentAns = studentAnswers.length > i ? studentAnswers[i] : -1;
     const correctAns = q.answer;
-    const isSkipped  = studentAns === -1 || studentAns === null || isNaN(studentAns);
+    const isSkipped  = studentAns === -1 || isNaN(studentAns);
     const isCorrect  = !isSkipped && studentAns === correctAns;
 
-    const cardClass = isCorrect ? 'correct-ans' : 'wrong-ans';
-    const numClass  = isCorrect ? 'correct'     : 'wrong';
-    const iconClass = isCorrect ? 'correct'     : 'wrong';
-    const iconName  = isCorrect ? 'fa-circle-check' : 'fa-circle-xmark';
+    const cardClass = isCorrect ? 'correct-ans' : (isSkipped ? 'skipped-ans' : 'wrong-ans');
+    const numClass  = isCorrect ? 'correct' : (isSkipped ? 'skipped' : 'wrong');
+    const iconName  = isCorrect ? 'fa-circle-check' : (isSkipped ? 'fa-circle-minus' : 'fa-circle-xmark');
+    const iconClass = isCorrect ? 'correct' : (isSkipped ? 'skipped' : 'wrong');
 
-    let optionsHTML = q.options.map((opt, idx) => {
-      let cls   = '';
-      let badge = '';
-
+    const optionsHTML = q.options.map((opt, idx) => {
+      let cls = '', badge = '';
       if (idx === correctAns) {
         cls   = 'correct-opt';
         badge = `<span class="q-opt-badge">✓ Correct</span>`;
@@ -729,85 +599,63 @@ if (questions.length === 0) {
         cls   = 'wrong-opt';
         badge = `<span class="q-opt-badge">✗ Your answer</span>`;
       }
-
       return `<div class="q-opt ${cls}">
         <div class="q-opt-label">${optionLetters[idx]}</div>
-        <span>${opt}</span>
-        ${badge}
+        <span>${opt}</span>${badge}
       </div>`;
     }).join('');
 
-    let skippedHTML = '';
-    if (isSkipped) {
-      skippedHTML = `<div class="q-skipped-note">
-        <i class="fas fa-triangle-exclamation"></i>
-        <span>You did not answer this question. The correct answer is <strong>${optionLetters[correctAns]}: ${q.options[correctAns]}</strong>.</span>
-      </div>`;
-    }
+    const skippedHTML = isSkipped
+      ? `<div class="q-skipped-note"><i class="fas fa-triangle-exclamation"></i>
+          <span>Not answered. Correct: <strong>${optionLetters[correctAns]}: ${q.options[correctAns]}</strong></span>
+        </div>`
+      : '';
 
     reviewHTML += `
       <div class="q-review ${cardClass}">
         <div class="q-review-header">
-          <div class="q-num-badge ${numClass}">${i + 1}</div>
+          <div class="q-num-badge ${numClass}">${i+1}</div>
           <div class="q-review-text">${q.q}</div>
           <i class="fas ${iconName} q-status-icon ${iconClass}"></i>
         </div>
-        <div class="q-options-grid">
-          ${optionsHTML}
-        </div>
+        <div class="q-options-grid">${optionsHTML}</div>
         ${skippedHTML}
       </div>`;
   });
 }
-
 document.getElementById('answerReview').innerHTML = reviewHTML;
 
-/* ── Tips ── */
-const TIPS = {
-  quantitative:    ['Revise HCF, LCM, percentages, and ratio & proportion.','Practice 10 arithmetic problems daily.','Use shortcut methods for multiplication and division.'],
-  logical:         ['Solve puzzles and series completion exercises daily.','Practice Venn diagrams and syllogisms.','Improve speed by timing yourself on 10 problems.'],
-  verbal:          ['Read newspapers to improve vocabulary and grammar.','Practice fill-in-the-blank and error detection questions.','Learn 10 new words with usage examples every day.'],
-  arrays:          ['Implement array problems from LeetCode Easy.','Master two-pointer and sliding window techniques.','Revise time complexity of array operations.'],
-  strings:         ['Practice anagram, palindrome, and substring problems.','Learn KMP algorithm for pattern matching.','Implement string manipulation without built-in functions.'],
-  sorting:         ['Implement Bubble, Merge, and Quick sort from scratch.','Understand when to use which sorting algorithm.','Focus on time and space complexity trade-offs.'],
-  tcs_numerical:   ['Revise profit & loss, time & work, and speed-distance.','Practice data sufficiency questions.','Use estimation to quickly eliminate wrong options.'],
-  tcs_verbal:      ['Focus on sentence correction and reading comprehension.','Practice spotting errors in complex sentences.','Learn common idioms and phrasal verbs.'],
-  tcs_programming: ['Practice pseudocode and algorithm tracing.','Revise OOP concepts with real code examples.','Understand recursion and iteration differences.'],
-  tcs_coding:      ['Solve 2 LeetCode problems daily.','Focus on array, string, and basic DP problems.','Review time complexity after each solution.'],
-  tcs_data:        ['Practice reading bar charts, pie charts, and line graphs.','Learn to calculate percentage change quickly.','Practice table-based data interpretation questions.'],
-};
-
+/* ══════════════════════════════════════════
+   TIPS
+══════════════════════════════════════════ */
 const tips = TIPS[topicSlug] || ['Review the topic fundamentals.','Practice more questions daily.','Time yourself to improve speed.'];
-
 document.getElementById('tipsContainer').innerHTML = tips.map(t =>
   `<div class="tip-row"><i class="fas fa-circle-check"></i><span>${t}</span></div>`
 ).join('');
 
-/* ── PROCTORING SUMMARY ── */
+/* ══════════════════════════════════════════
+   PROCTORING SUMMARY
+══════════════════════════════════════════ */
 const pIcon   = document.getElementById('proctorIcon');
 const pTitle  = document.getElementById('proctorTitle');
 const pDesc   = document.getElementById('proctorDesc');
 const pStatus = document.getElementById('proctorStatus');
-
 if (violations === 0) {
   pIcon.style.background = 'var(--green-dim)'; pIcon.style.color = 'var(--green)';
-  pTitle.textContent = "Session Verified";
-  pDesc.textContent  = "AI Proctoring detected 0 violations. Session is trusted.";
-  pStatus.textContent = "Trusted"; pStatus.className = "proctor-status-pill status-trusted";
+  pTitle.textContent = 'Session Verified';
+  pDesc.textContent  = 'AI Proctoring detected 0 violations. Session is fully trusted.';
+  pStatus.textContent = 'Trusted'; pStatus.className = 'proctor-status-pill status-trusted';
 } else if (violations < 3) {
   pIcon.style.background = 'var(--yellow-dim)'; pIcon.style.color = 'var(--yellow)';
-  pTitle.textContent = "Session Flagged";
-  pDesc.textContent  = `AI Proctoring detected ${violations} minor violations. Accuracy may be affected.`;
-  pStatus.textContent = "Checked"; pStatus.className = "proctor-status-pill status-trusted";
+  pTitle.textContent = 'Session Flagged';
+  pDesc.textContent  = `AI detected ${violations} minor violation(s). Score may be reviewed.`;
+  pStatus.textContent = 'Checked'; pStatus.className = 'proctor-status-pill status-trusted';
 } else {
   pIcon.style.background = 'var(--red-dim)'; pIcon.style.color = 'var(--red)';
-  pTitle.textContent = "Compromised Session";
-  pDesc.textContent  = `Multiple violations (${violations}) detected. This result is being reviewed for integrity.`;
-  pStatus.textContent = "Flagged"; pStatus.className = "proctor-status-pill status-flagged";
+  pTitle.textContent = 'Compromised Session';
+  pDesc.textContent  = `Multiple violations (${violations}) detected. This result is under review.`;
+  pStatus.textContent = 'Flagged'; pStatus.className = 'proctor-status-pill status-flagged';
 }
-
-document.title = `Result: ${score}/${total} — ${topic} - Smart Placement Portal`;
 </script>
-
 </body>
-</html>
+</html> 
