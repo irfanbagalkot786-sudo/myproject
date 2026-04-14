@@ -54,6 +54,7 @@ class StudentProfile(models.Model):
     work_mode        = models.CharField(
                            max_length=10, choices=WORK_MODE_CHOICES,
                            blank=True, null=True)
+    job_role         = models.CharField(max_length=200, blank=True, default='')
     placement_ready  = models.BooleanField(default=False)
 
     created_at       = models.DateTimeField(auto_now_add=True)
