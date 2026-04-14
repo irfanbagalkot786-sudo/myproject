@@ -22,45 +22,59 @@
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
-    
+
+    /* ── NAVBAR ── */
     .navbar {
-      position:sticky; top:0; z-index:100;
-      display:flex; justify-content:space-between; align-items:center;
-      padding:0 40px; height:64px;
-      background:rgba(255,255,255,0.88); backdrop-filter:blur(20px);
-      border-bottom:1px solid var(--border);
-      box-shadow:0 1px 8px rgba(10,163,181,0.07);
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 32px; height: 62px;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+      flex-shrink: 0;
     }
     .navbar-brand {
-      font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
-      background:var(--gradient); -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent; background-clip:text; white-space:nowrap;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
     }
+    .navbar-links { display: flex; align-items: center; gap: 4px; }
+    .navbar-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500;
+      padding: 6px 12px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
+    }
+    .navbar-links a:hover { color: var(--slate); background: var(--teal-dim); }
+    .navbar-links a.active { color: var(--teal); background: var(--teal-dim); }
+    .navbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
+    /* ── CONTAINER ── */
     .container { max-width:1000px; margin:40px auto; padding:0 20px; }
     .header { margin-bottom:30px; }
     .header h1 { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--ink); }
     .header p { color:var(--muted); margin-top:5px; }
 
-    .interview-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px; }
-    
+    /* ── GRID ── */
+    .interview-grid {
+      display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px;
+    }
+
+    /* ── CARD ── */
     .interview-card {
-      background:var(--surface);
-      border-radius:20px;
-      padding:24px;
+      background:var(--surface); border-radius:20px; padding:24px;
       border:1px solid var(--border);
       transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
-      text-decoration:none;
-      color:inherit;
-      display:flex;
-      flex-direction:column;
-      position:relative;
-      overflow:hidden;
+      text-decoration:none; color:inherit;
+      display:flex; flex-direction:column;
+      position:relative; overflow:hidden;
     }
     .interview-card:hover {
       transform:translateY(-5px);
       box-shadow:0 15px 40px rgba(10,163,181,0.1);
       border-color:var(--teal);
+    }
+    .card-fading {
+      opacity: 0; transform: scale(0.95);
+      transition: all 0.4s ease;
     }
 
     .card-badge {
@@ -69,120 +83,144 @@
       background:var(--teal-dim); color:var(--teal);
     }
 
-    .card-company { font-family:'Syne',sans-serif; font-size:1.2rem; font-weight:800; margin-bottom:4px; color:var(--ink); }
+    .card-company {
+      font-family:'Syne',sans-serif; font-size:1.2rem;
+      font-weight:800; margin-bottom:4px; color:var(--ink);
+    }
     .card-date { font-size:0.8rem; color:var(--muted); margin-bottom:20px; }
 
     .score-rail {
-       width: 0;
-      height:8px; background:var(--bg);
-      border-radius:10px; 
-      overflow:hidden;
-      margin-bottom:8px;
+      width:100%; height:8px; background:var(--bg);
+      border-radius:10px; overflow:hidden; margin-bottom:8px;
     }
-    .score-bar { 
-      height:100%;
-      background:var(--gradient);
-      border-radius:10px; 
+    .score-bar { height:100%; background:var(--gradient); border-radius:10px; }
+    .score-text {
+      font-weight:700; font-size:0.85rem; color:var(--slate);
+      display:flex; justify-content:space-between;
     }
-    .score-text { font-weight:700; font-size:0.85rem; color:var(--slate); display:flex; justify-content:space-between; }
 
-    .btn-view {
-      margin-top:20px; padding:10px; border-radius:10px;
-      background:var(--bg); color:var(--teal); font-weight:700; font-size:0.85rem;
-      text-align:center; transition:0.2s;
-    }
-    .interview-card:hover .btn-view { background:var(--teal); color:white; }
-
-    .empty-state {
-      text-align:center; padding:80px 20px; background:var(--surface); border-radius:30px;
-      border:2px dashed var(--border); color:var(--muted);
-    }
     /* ── CARD ACTIONS ── */
     .card-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 24px;
-      padding-top: 20px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-top: 24px; padding-top: 20px;
       border-top: 1px solid var(--border);
     }
     .action-btn {
-      padding: 10px;
-      border-radius: 12px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.82rem;
-      text-align: center;
-      transition: all 0.2s;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: none;
-      text-decoration: none;
+      padding: 10px; border-radius: 12px;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.82rem;
+      text-align: center; transition: all 0.2s; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; border: none; text-decoration: none;
     }
-    .btn-view {
-      background: var(--teal-dim);
-      color: var(--teal);
+    .btn-view { background: var(--teal-dim); color: var(--teal); }
+    .btn-view:hover { background: var(--teal); color: white; transform: translateY(-2px); }
+    .btn-delete { background: rgba(255, 59, 48, 0.08); color: #ff3b30; }
+    .btn-delete:hover { background: #ff3b30; color: white; transform: translateY(-2px); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align:center; padding:80px 20px;
+      background:var(--surface); border-radius:30px;
+      border:2px dashed var(--border); color:var(--muted);
     }
-    .btn-view:hover {
-      background: var(--teal);
-      color: white;
-      transform: translateY(-2px);
-    }
-    .btn-delete {
-      background: rgba(255, 59, 48, 0.08);
-      color: #ff3b30;
-    }
-    .btn-delete:hover {
-      background: #ff3b30;
-      color: white;
-      transform: translateY(-2px);
-    }
+    .empty-state i { font-size: 3rem; margin-bottom: 16px; display: block; }
+    .empty-state h3 { font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:800; margin-bottom:8px; color:var(--ink); }
 
     /* ── DELETE MODAL ── */
     .confirm-overlay {
       display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(13, 27, 42, 0.6);
-      backdrop-filter: blur(8px);
+      position: fixed; inset: 0;
+      background: rgba(13, 27, 42, 0.65);
+      backdrop-filter: blur(10px);
       z-index: 1000;
-      align-items: center;
-      justify-content: center;
+      align-items: center; justify-content: center;
       padding: 20px;
     }
     .confirm-overlay.open { display: flex; }
+
     .confirm-box {
       background: var(--surface);
-      border-radius: 24px;
-      width: 100%;
-      max-width: 400px;
-      padding: 32px;
+      border-radius: 28px;
+      width: 100%; max-width: 420px;
+      padding: 40px 36px 36px;
       text-align: center;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+      box-shadow: 0 40px 80px rgba(10,163,181,0.18), 0 8px 32px rgba(0,0,0,0.15);
+      animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
     }
+
+    @keyframes popIn {
+      from { opacity:0; transform: scale(0.85) translateY(20px); }
+      to   { opacity:1; transform: scale(1) translateY(0); }
+    }
+
     .confirm-icon {
-      width: 64px;
-      height: 64px;
+      width: 72px; height: 72px;
       background: rgba(255, 59, 48, 0.1);
       color: #ff3b30;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 24px;
+      border: 2px solid rgba(255,59,48,0.15);
     }
-    .confirm-title { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
-    .confirm-desc { font-size: 0.9rem; color: var(--slate); margin-bottom: 24px; line-height: 1.5; }
-    .confirm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-    .card-fading {
-      opacity: 0;
-      transform: scale(0.95);
-      transition: all 0.4s ease;
+    .confirm-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem; font-weight: 800;
+      color: var(--ink); margin-bottom: 10px;
+    }
+
+    .confirm-desc {
+      font-size: 0.9rem; color: var(--slate);
+      margin-bottom: 32px; line-height: 1.6;
+    }
+
+    /* ── THE KEY FIX: buttons always visible ── */
+    .confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .confirm-cancel {
+      padding: 13px 20px;
+      border-radius: 14px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 0.9rem;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      color: var(--slate);
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .confirm-cancel:hover {
+      background: var(--border);
+      color: var(--ink);
+      transform: translateY(-1px);
+    }
+
+    .confirm-delete {
+      padding: 13px 20px;
+      border-radius: 14px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      background: linear-gradient(135deg, #ff3b30 0%, #c0392b 100%);
+      color: white;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(255,59,48,0.3);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .confirm-delete:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255,59,48,0.4);
+    }
+    .confirm-delete:disabled {
+      opacity: 0.6; cursor: not-allowed; transform: none;
     }
   </style>
 </head>
@@ -190,7 +228,19 @@
 
 <nav class="navbar">
   <div class="navbar-brand">🎯 Smart Placement Portal</div>
-  <a href="{% url 'dashboard' %}" style="text-decoration:none; color:var(--slate); font-weight:700; font-size:0.9rem;">Dashboard</a>
+  <div class="navbar-links">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'companies' %}">Companies</a>
+    <a href="{% url 'upload_resume' %}">Resume</a>
+    <a href="{% url 'recommendations' %}">Recs</a>
+    <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'interview_results' %}" class="active">Interviews</a>
+    <a href="{% url 'projects' %}">Projects</a>
+    <a href="{% url 'jobs' %}">Jobs</a>
+  </div>
+  <div class="navbar-right">
+    <div style="width: 42px;"></div>
+  </div>
 </nav>
 
 <div class="container">
@@ -206,8 +256,10 @@
         <div class="interview-card" id="interview-{{ item.id }}">
           <div class="card-badge">Analyzed</div>
           <div class="card-company">{{ item.company_name }}</div>
-          <div class="card-date"><i class="far fa-calendar"></i> {{ item.created_at|date:"M d, Y · H:i" }}</div>
-          
+          <div class="card-date">
+            <i class="far fa-calendar"></i> {{ item.created_at|date:"M d, Y · H:i" }}
+          </div>
+
           <div class="score-rail">
             <div class="score-bar" data-score="{{ item.ai_score }}"></div>
           </div>
@@ -216,11 +268,11 @@
             <span>{{ item.ai_score }}%</span>
           </div>
           <div class="score-text" style="font-size:0.75rem; margin-top:8px;">
-            <span><i class="fas fa-eye text-teal" style="color:var(--teal);"></i> Eye Contact</span>
+            <span><i class="fas fa-eye" style="color:var(--teal);"></i> Eye Contact</span>
             <span>{{ item.eye_contact_score }}%</span>
           </div>
           <div class="score-text" style="font-size:0.75rem; margin-top:4px;">
-            <span><i class="fas fa-smile-beam text-teal" style="color:var(--teal);"></i> Confidence</span>
+            <span><i class="fas fa-smile-beam" style="color:var(--teal);"></i> Confidence</span>
             <span>{{ item.confidence_score }}%</span>
           </div>
 
@@ -228,7 +280,9 @@
             <a href="{% url 'interview_detail' item.id %}" class="action-btn btn-view">
               <i class="fas fa-chart-line"></i> View
             </a>
-            <button class="action-btn btn-delete" onclick="confirmDelete('{{ item.id }}', '{{ item.company_name }}')">
+            <button
+              class="action-btn btn-delete"
+              onclick="confirmDelete('{{ item.id }}', '{{ item.company_name }}')">
               <i class="fas fa-trash-can"></i> Delete
             </button>
           </div>
@@ -240,80 +294,121 @@
       <i class="fas fa-video-slash"></i>
       <h3>No interviews recorded yet</h3>
       <p>Start a virtual interview from the company listings to get feedback.</p>
-      <a href="{% url 'companies' %}" class="btn-view" style="display:inline-block; margin-top:20px; padding:12px 30px;">Browse Companies</a>
+      <a href="{% url 'companies' %}"
+         style="display:inline-block; margin-top:20px; padding:12px 30px;
+                background:var(--gradient); color:white; border-radius:12px;
+                font-family:'Syne',sans-serif; font-weight:700; text-decoration:none;">
+        Browse Companies
+      </a>
     </div>
   {% endif %}
 </div>
 
+<!-- ── DELETE CONFIRMATION MODAL ── -->
 <div id="deleteModal" class="confirm-overlay">
   <div class="confirm-box">
-    <div class="confirm-icon"><i class="fas fa-trash-can"></i></div>
-    <div class="confirm-title">Delete Recording?</div>
-    <div class="confirm-desc">Are you sure you want to delete your <strong><span id="delCompanyName"></span></strong> interview? This action is permanent.</div>
-    <div class="confirm-actions">
-      <button class="btn-view action-btn" onclick="closeDeleteModal()">Cancel</button>
-      <button id="finalDeleteBtn" class="btn-delete action-btn">Delete Permanently</button>
+
+    <div class="confirm-icon">
+      <i class="fas fa-trash-can"></i>
     </div>
+
+    <div class="confirm-title">Delete Recording?</div>
+
+    <div class="confirm-desc">
+      Are you sure you want to delete your
+      <strong><span id="delCompanyName"></span></strong>
+      interview? This action is permanent and cannot be undone.
+    </div>
+
+    <!-- ✅ Always-visible Cancel + Delete buttons -->
+    <div class="confirm-actions">
+      <button class="confirm-cancel" onclick="closeDeleteModal()">
+        <i class="fas fa-xmark"></i> Cancel
+      </button>
+      <button id="finalDeleteBtn" class="confirm-delete">
+        <i class="fas fa-trash-can"></i> Delete
+      </button>
+    </div>
+
   </div>
 </div>
 
 <script>
-let interviewToDelete = null;
-
-function confirmDelete(id, name) {
-  interviewToDelete = id;
-  document.getElementById('delCompanyName').textContent = name;
-  document.getElementById('deleteModal').classList.add('open');
-}
-
-function closeDeleteModal() {
-  document.getElementById('deleteModal').classList.remove('open');
-}
-
-document.getElementById('finalDeleteBtn').addEventListener('click', () => {
-  if (!interviewToDelete) return;
-
-
-  
-  const id  = interviewToDelete;
-  const card = document.getElementById(`interview-${id}`);
-  const btn  = document.getElementById('finalDeleteBtn');
-  
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
-
-  fetch(`/delete-interview/${id}/`, {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
-    closeDeleteModal();
-    if (data.status === 'success') {
-      card.classList.add('card-fading');
-      setTimeout(() => {
-        card.remove();
-        if (document.querySelectorAll('.interview-card').length === 0) {
-          location.reload(); 
-        }
-      }, 500);
-    } else {
-      alert('Error: ' + data.message);
-      btn.disabled = false;
-      btn.textContent = 'Delete Permanently';
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert('System error. Please try again later.');
-    btn.disabled = false;
-    btn.textContent = 'Delete Permanently';
+  // ── Score bar widths ──
+  document.querySelectorAll('[data-score]').forEach(el => {
+    el.style.width = (el.getAttribute('data-score') || 0) + '%';
   });
-});
-</script>
 
+  // ── Delete modal logic ──
+  let interviewToDelete = null;
+
+  function confirmDelete(id, name) {
+    interviewToDelete = id;
+    document.getElementById('delCompanyName').textContent = name;
+    document.getElementById('deleteModal').classList.add('open');
+
+    // Reset button state in case it was used before
+    const btn = document.getElementById('finalDeleteBtn');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-trash-can"></i> Delete';
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('open');
+    interviewToDelete = null;
+  }
+
+  // Close on backdrop click
+  document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDeleteModal();
+  });
+
+  document.getElementById('finalDeleteBtn').addEventListener('click', () => {
+    if (!interviewToDelete) return;
+
+    const id   = interviewToDelete;
+    const card = document.getElementById(`interview-${id}`);
+    const btn  = document.getElementById('finalDeleteBtn');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+
+    fetch(`/delete-interview/${id}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      closeDeleteModal();
+      if (data.status === 'success') {
+        card.classList.add('card-fading');
+        setTimeout(() => {
+          card.remove();
+          if (document.querySelectorAll('.interview-card').length === 0) {
+            location.reload();
+          }
+        }, 400);
+      } else {
+        alert('Error: ' + data.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-trash-can"></i> Delete';
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('System error. Please try again later.');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-trash-can"></i> Delete';
+    });
+  });
+</script>
 </body>
 </html>
