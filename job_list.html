@@ -44,54 +44,33 @@ body::before {
   z-index:0;
 }
 
-/* ── NAVBAR ── */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 40px;
-  height: 64px;
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
-}
-
-.navbar-brand {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 1.1rem;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  white-space: nowrap;
-}
-
-.navbar-links {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-}
-
-.navbar-links a {
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: 8px;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.navbar-links a:hover  { color: var(--slate); background: var(--teal-dim); }
-.navbar-links a.active { color: var(--teal);  background: var(--teal-dim); }
+    /* ── NAVBAR ── */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 32px; height: 62px;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+    }
+    .navbar-brand {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
+    }
+    .navbar-spacer {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .navbar-links {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .navbar-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500;
+      padding: 6px 12px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
+    }
+    .navbar-links a:hover { color: var(--slate); background: var(--teal-dim); }
+    .navbar-links a.active { color: var(--teal); background: var(--teal-dim); }
 
 /* ── MAIN ── */
 .main {
@@ -355,16 +334,16 @@ body::before {
   <div class="navbar-brand">🎯 Smart Placement Portal</div>
   <div class="navbar-links">
     <a href="{% url 'dashboard' %}">Dashboard</a>
-    <a href="{% url 'student_profile' %}">Profile</a>
-    <a href="{% url 'skills' %}">Skills</a>
-    <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'companies' %}">Companies</a>
     <a href="{% url 'upload_resume' %}">Resume</a>
     <a href="{% url 'recommendations' %}">Recs</a>
     <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'interview_results' %}">Interviews</a>
+    <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'jobs' %}" class="active">Jobs</a>
-    <a href="{% url 'logout' %}">Logout</a>
-
+  </div>
+  <div class="navbar-spacer">
+    <div style="width: 42px;"></div>
   </div>
 </nav>
 
