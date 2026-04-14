@@ -30,8 +30,18 @@ GEMINI_MODEL   = "gemini-2.5-flash-lite"   # ✅ working model
 # ────────────────────────────────────────────────────────────────────────────
 
 #----------whispermodel---------
-# Load Whisper model once
-model = whisper.load_model("small")
+
+model = None
+
+def get_model():
+    global model
+    if model is None:
+        import whisper
+        model = whisper.load_model("small")
+    return model
+
+def your_view(request):
+    model = get_model()
 
 
 def gemini_generate(prompt_or_parts):
@@ -116,17 +126,14 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
-    try:
-        student_profile = StudentProfile.objects.get(user=request.user)
-    except StudentProfile.DoesNotExist:
-        student_profile = None
-
-    context = {
-        'student_profile': student_profile,
-        'total_jobs':      100,
-        'applied_jobs':    5,
-    }
-    return render(request, 'dashboard.html', context)
+    student = request.user.studentprofile  # or however you fetch it
+    student_skills = student.studentskill_set.all()
+    all_skills = Skill.objects.all()
+    return render(request, 'dashboard.html', {
+        'student': student,
+        'student_skills': student_skills,
+        'all_skills': all_skills,
+    })
 
 
 # ================= STUDENT PROFILE VIEW =================
@@ -157,6 +164,7 @@ def student_profile(request):
             student.graduation_year = None
 
         student.phone        = request.POST.get('phone', '').strip()
+        student.job_role     = request.POST.get('job_role', '').strip()
         student.languages    = ','.join(request.POST.getlist('languages'))
         work_mode_val        = request.POST.get('work_mode', '').strip()
         student.work_mode    = work_mode_val if work_mode_val else None
@@ -183,6 +191,56 @@ def student_profile(request):
     }
     return render(request, 'student_profile.html', context)
 
+# ================= REMOVE PHOTO  =================
+
+def remove_photo(request):
+        if request.method == "POST":
+            student = request.user.studentprofile  # adjust if needed
+            student.profile_photo.delete(save=True)
+        return redirect('student_profile')
+
+
+# ================= UPDATE PHOTO  =================
+
+def update_photo(request):
+    if request.method == "POST":
+        student = request.user.studentprofile  # adjust if needed
+
+        if 'profile_photo' in request.FILES:
+            student.profile_photo = request.FILES['profile_photo']
+            student.save()
+
+    return redirect('student_profile')
+
+# ================= DELETE SKILL  =================
+
+def delete_skill(request, skill_id):
+    student = request.user.studentprofile  # ✅ correct relation
+
+    skill = get_object_or_404(StudentSkill, id=skill_id, student=student)
+    skill.delete()
+
+    return redirect('student_profile')
+
+#================== ADD SKILL  =================
+
+def add_skill_profile(request):
+    if request.method == "POST":
+        student, _ = StudentProfile.objects.get_or_create(user=request.user)
+
+        skill_id = request.POST.get("skill_id")
+        proficiency = request.POST.get("proficiency", "beginner")
+
+        if skill_id:
+            skill = Skill.objects.get(id=skill_id)
+
+            StudentSkill.objects.create(
+                student=student,
+                skill=skill,
+                proficiency_level=proficiency
+            )
+
+    return redirect('student_profile')
 
 # ================= SKILLS VIEW =================
 
@@ -643,6 +701,8 @@ def generate_tech_questions(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
+#============perform_full_interview_analysis=======
+
 def perform_full_interview_analysis(interview):
     """Helper to run the complete AI analysis pipeline automatically."""
     print(f"🎬 Starting automatic analysis for Interview ID: {interview.id}")
@@ -655,7 +715,8 @@ def perform_full_interview_analysis(interview):
 
     # 2. Transcribe with Whisper
     print("🎤 Transcribing...")
-    result = model.transcribe(audio_path)
+    whisper_model = get_model()
+    result = whisper_model.transcribe(audio_path)
     transcript = result.get("text", "")
     interview.transcript = transcript
     print(f"📝 Transcript length: {len(transcript)}")
@@ -677,14 +738,17 @@ def perform_full_interview_analysis(interview):
     strengths = analysis.get("strengths")
     weaknesses = analysis.get("weaknesses")
 
-# 🔥 FORCE fallback (no empty UI ever)
     if not strengths:
         strengths = ["Good communication", "Willing to answer", "Basic understanding"]
-
     if not weaknesses:
-        weaknesses = ["Needs more clarity", "Lack of examples", "Short answers"]    
+        weaknesses = ["Needs more clarity", "Lack of examples", "Short answers"]
+
     interview.strengths = json.dumps(strengths)
     interview.weaknesses = json.dumps(weaknesses)
+
+    # ✅ THIS WAS MISSING — save everything to the database
+    interview.save()
+
     print("✅ Strengths:", strengths)
     print("✅ Weaknesses:", weaknesses)
     print(f"✅ Automatic analysis complete for Interview ID: {interview.id}")
@@ -875,14 +939,30 @@ def interview_results(request):
     interviews = InterviewSession.objects.filter(student=student).order_by('-created_at')
     return render(request, 'interview_results.html', {'interviews': interviews})
 
+#=====interview details====================
 
 @login_required
 def interview_detail(request, interview_id):
     interview = get_object_or_404(
         InterviewSession, id=interview_id, student=request.user.studentprofile
     )
-    return render(request, 'interview_detail.html', {'interview': interview})
+    
+    # Parse strengths and weaknesses from JSON strings
+    try:
+        strengths = json.loads(interview.strengths) if interview.strengths else []
+    except (json.JSONDecodeError, TypeError):
+        strengths = []
 
+    try:
+        weaknesses = json.loads(interview.weaknesses) if interview.weaknesses else []
+    except (json.JSONDecodeError, TypeError):
+        weaknesses = []
+
+    return render(request, 'interview_detail.html', {
+        'interview': interview,
+        'strengths': strengths,
+        'weaknesses': weaknesses,
+    })
 
 @login_required
 def delete_interview(request, interview_id):
