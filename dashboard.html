@@ -19,6 +19,8 @@
   --surface:   #ffffff;
   --bg:        #eaf1f6;
   --border:    #d6e4ed;
+  --surface2:  #ddeaf3;
+  --accent3:   #10b981;
   --gradient:  linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
   --glow:      0 0 40px rgba(10,163,181,0.10);
 }
@@ -33,7 +35,6 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ─── FULL SCREEN LAYOUT ─── */
 .page {
   display: flex;
   flex-direction: column;
@@ -87,7 +88,125 @@ html, body {
 .navbar-links a:hover  { color: var(--slate); background: var(--teal-dim); }
 .navbar-links a.active { color: var(--teal);  background: var(--teal-dim); }
 
-/* ── HERO — full width, generous height ── */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* ── AVATAR DROPDOWN ── */
+.avatar-dropdown-wrap { position: relative; }
+
+.nav-avatar-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nav-avatar-circle {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2.5px solid var(--teal);
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #fff;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+.nav-avatar-circle:hover { box-shadow: 0 0 0 4px rgba(10,163,181,0.22); transform: scale(1.06); }
+.nav-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+.avatar-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(13,27,42,0.15);
+  overflow: hidden;
+  z-index: 9999;
+  animation: dropIn 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+.avatar-dropdown-menu.open { display: block; }
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.dropdown-user-info {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dropdown-avatar-circle {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--teal);
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #fff;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.dropdown-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+.dropdown-user-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.dropdown-user-role { font-size: 0.73rem; color: var(--muted); margin-top: 2px; }
+
+.dropdown-items { padding: 8px; }
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--slate);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.dropdown-item:hover { background: var(--bg); color: var(--teal); }
+.dropdown-item.danger:hover { background: #fdf0ef; color: #e74c3c; }
+.dropdown-item i { width: 20px; text-align: center; font-size: 0.85rem; color: var(--teal); flex-shrink: 0; }
+.dropdown-item.danger i { color: #e74c3c; }
+
+.dropdown-divider { height: 1px; background: var(--border); margin: 4px 8px; }
+
+/* ── HERO ── */
 .hero {
   width: 100%;
   min-height: 340px;
@@ -100,7 +219,6 @@ html, body {
   flex-shrink: 0;
 }
 
-/* grid texture */
 .hero::before {
   content: '';
   position: absolute;
@@ -112,28 +230,10 @@ html, body {
   pointer-events: none;
 }
 
-.hero-blob1 {
-  position: absolute;
-  width: 500px; height: 500px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.07);
-  top: -220px; right: -100px;
-  pointer-events: none;
-}
-.hero-blob2 {
-  position: absolute;
-  width: 260px; height: 260px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.05);
-  bottom: -100px; right: 340px;
-  pointer-events: none;
-}
+.hero-blob1 { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: rgba(255,255,255,0.07); top: -220px; right: -100px; pointer-events: none; }
+.hero-blob2 { position: absolute; width: 260px; height: 260px; border-radius: 50%; background: rgba(255,255,255,0.05); bottom: -100px; right: 340px; pointer-events: none; }
 
-.hero-left {
-  position: relative;
-  z-index: 2;
-  flex: 1;
-}
+.hero-left { position: relative; z-index: 2; flex: 1; }
 
 .hero-eyebrow {
   display: inline-flex;
@@ -179,34 +279,6 @@ html, body {
   margin-bottom: 28px;
 }
 
-.hero-btns {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 11px 24px;
-  border-radius: 11px;
-  font-family: 'Syne', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition: transform 0.15s, box-shadow 0.15s;
-  cursor: pointer;
-  border: none;
-  white-space: nowrap;
-}
-.btn:hover { transform: translateY(-2px); }
-.btn-white { background: #fff; color: var(--teal-dark); box-shadow: 0 4px 18px rgba(0,0,0,0.13); }
-.btn-white:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.18); }
-.btn-ghost { background: rgba(255,255,255,0.14); color: #fff; border: 1.5px solid rgba(255,255,255,0.30); }
-.btn-ghost:hover { background: rgba(255,255,255,0.22); }
-
-/* right side stat boxes inside hero */
 .hero-right {
   position: relative;
   z-index: 2;
@@ -229,19 +301,8 @@ html, body {
 }
 .hero-stat-box:hover { background: rgba(255,255,255,0.20); }
 
-.hsb-value {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1;
-}
-.hsb-label {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.62);
-  margin-top: 5px;
-  font-weight: 500;
-}
+.hsb-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; }
+.hsb-label { font-size: 0.72rem; color: rgba(255,255,255,0.62); margin-top: 5px; font-weight: 500; }
 
 /* ── DASHBOARD BODY ── */
 .dash-body {
@@ -252,27 +313,11 @@ html, body {
   gap: 28px;
 }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 2px;
-}
+.section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 2px; }
+.section-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); }
+.section-line { flex: 1; height: 1px; background: var(--border); }
 
-.section-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--ink);
-}
-
-.section-line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-/* ── FEATURE GRID — fills full width ── */
+/* ── FEATURE GRID ── */
 .feat-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -293,11 +338,7 @@ html, body {
   transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
   animation: fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) both;
 }
-.feat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 36px rgba(10,163,181,0.15);
-  border-color: var(--teal);
-}
+.feat-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(10,163,181,0.15); border-color: var(--teal); }
 .feat-card:nth-child(1){ animation-delay:.04s }
 .feat-card:nth-child(2){ animation-delay:.08s }
 .feat-card:nth-child(3){ animation-delay:.12s }
@@ -305,68 +346,264 @@ html, body {
 .feat-card:nth-child(5){ animation-delay:.20s }
 .feat-card:nth-child(6){ animation-delay:.24s }
 
-.feat-icon {
-  width: 48px; height: 48px;
-  border-radius: 13px;
-  background: var(--teal-dim);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
+.feat-icon { width: 48px; height: 48px; border-radius: 13px; background: var(--teal-dim); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
 .feat-body { flex: 1; }
+.feat-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.feat-desc { font-size: 0.81rem; color: var(--muted); line-height: 1.62; }
+.feat-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--border); }
+.feat-cta { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--teal); text-decoration: none; }
+.feat-arrow { font-size: 1rem; color: var(--teal); transition: transform 0.15s; }
+.feat-card:hover .feat-arrow { transform: translate(3px, -2px); }
 
-.feat-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 6px;
+/* ── PROFILE MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(13,27,42,0.55);
+  z-index: 9998;
+  align-items: flex-start;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  overflow-y: auto;
+  padding: 40px 16px;
+}
+.modal-overlay.open { display: flex; }
+
+.profile-modal {
+  background: var(--surface);
+  border-radius: 28px;
+  width: 980px;
+  max-width: 100%;
+  box-shadow: 0 24px 80px rgba(13,27,42,0.22);
+  overflow: hidden;
+  animation: popIn 0.22s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
 }
 
-.feat-desc {
-  font-size: 0.81rem;
-  color: var(--muted);
-  line-height: 1.62;
-}
-
-.feat-footer {
+.profile-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
+  padding: 22px 32px 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.95);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
+.profile-modal-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--ink); display: flex; align-items: center; gap: 10px; }
+.profile-modal-title i { color: var(--teal); }
 
-.feat-cta {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--teal);
-  text-decoration: none;
-}
-
-.feat-arrow {
+.modal-close-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
   font-size: 1rem;
-  color: var(--teal);
-  transition: transform 0.15s;
+  transition: background 0.15s;
+  flex-shrink: 0;
 }
-.feat-card:hover .feat-arrow { transform: translate(3px, -2px); }
+.modal-close-btn:hover { background: #cddde9; }
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(18px); }
-  to   { opacity:1; transform:translateY(0); }
+.profile-modal-body {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 0;
 }
+
+/* ── MODAL LEFT PANEL ── */
+.modal-left-panel {
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.modal-avatar-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.modal-avatar-img {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 0 0 0 3px rgba(10,163,181,0.35), 0 8px 32px rgba(13,27,42,0.1);
+  display: block;
+}
+
+.modal-avatar-initials {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(10,163,181,0.35), 0 8px 32px rgba(13,27,42,0.1);
+}
+
+.modal-avatar-badge {
+  position: absolute;
+  bottom: 2px; right: 2px;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--teal);
+  border: 2.5px solid var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-avatar-badge i { font-size: 9px; color: #fff; }
+
+.modal-profile-name { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.modal-profile-role { font-size: 0.78rem; color: var(--teal); font-weight: 500; background: var(--teal-dim); display: inline-block; padding: 3px 12px; border-radius: 20px; border: 1px solid rgba(10,163,181,0.25); margin-bottom: 18px; }
+
+.modal-progress-block { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; text-align: left; }
+.modal-progress-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.modal-progress-title { font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.modal-progress-title i { color: var(--teal); font-size: 0.75rem; }
+.modal-progress-pct { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 800; color: var(--teal); }
+.modal-progress-bar-wrap { height: 7px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 10px; }
+.modal-progress-bar-fill { height: 100%; border-radius: 99px; background: var(--gradient); transition: width 1.2s cubic-bezier(0.4,0,0.2,1); width: 0%; }
+.modal-progress-steps { display: flex; flex-direction: column; gap: 6px; }
+.modal-progress-step { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--muted); }
+.modal-progress-step.done { color: var(--slate); }
+.modal-step-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 7px; color: var(--muted); background: var(--surface); }
+.modal-progress-step.done .modal-step-dot { background: var(--accent3); border-color: var(--accent3); color: #fff; }
+
+.modal-divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+.modal-info-list { display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.modal-info-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); font-size: 0.82rem; }
+.modal-info-item .icon { width: 28px; height: 28px; border-radius: 7px; background: var(--teal-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; color: var(--teal); }
+.modal-info-item .icon.green { background: rgba(16,185,129,0.1); color: var(--accent3); }
+.modal-info-item .icon.purple { background: rgba(8,138,154,0.12); color: var(--teal-dark); }
+.modal-info-item span { color: var(--slate); }
+.modal-info-item a { color: var(--teal); text-decoration: none; font-weight: 500; }
+
+/* Photo editor */
+.modal-photo-actions { display: none; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px; }
+.modal-photo-actions.visible { display: flex; }
+
+.photo-action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.18s; }
+.photo-action-primary { background: var(--gradient); color: #fff; box-shadow: 0 2px 10px rgba(10,163,181,0.25); }
+.photo-action-primary:hover { box-shadow: 0 4px 16px rgba(10,163,181,0.4); transform: translateY(-1px); }
+.photo-action-danger { background: var(--surface); color: #e74c3c; border: 1.5px solid rgba(231,76,60,0.35); }
+.photo-action-danger:hover { background: #fdf0ef; }
+
+.filter-strip-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; text-align: left; display: none; }
+.filter-strip-label.visible { display: block; }
+.filter-strip { display: none; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+.filter-strip.visible { display: flex; }
+
+.filter-thumb { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex-shrink: 0; }
+.filter-thumb .ft-ring { width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid transparent; overflow: hidden; transition: border-color 0.15s, transform 0.15s; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; color: #fff; font-size: 0.9rem; }
+.filter-thumb .ft-ring img { width: 100%; height: 100%; object-fit: cover; }
+.filter-thumb .ft-name { font-size: 0.6rem; color: var(--muted); text-align: center; }
+.filter-thumb.active .ft-ring, .filter-thumb:hover .ft-ring { border-color: var(--teal); transform: scale(1.08); }
+.filter-thumb.active .ft-name { color: var(--teal); font-weight: 700; }
+
+#profilePhotoFileInput { display: none; }
+
+/* ── MODAL RIGHT PANEL — NO SCROLLBAR ── */
+.modal-right-panel {
+  padding: 28px 32px;
+  overflow: visible; /* ← removed scrollbar */
+}
+
+.form-section-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; margin-top: 24px; display: flex; align-items: center; gap: 10px; }
+.form-section-label:first-child { margin-top: 0; }
+.form-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { margin-bottom: 16px; }
+.form-group.full { grid-column: 1 / -1; }
+
+label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.3px; }
+
+input, select {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.86rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input::placeholder { color: var(--muted); opacity: 0.7; }
+input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(10,163,181,0.13); }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a8fa8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+select option { background: var(--surface); color: var(--ink); }
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+/* Skills */
+.skills-form-section { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+.skills-form-title { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--ink); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+.skills-form-title i { color: var(--teal); }
+.skill-add-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; margin-bottom: 18px; }
+
+.add-skill-btn { padding: 11px 16px; background: var(--gradient); color: #fff; border: none; border-radius: 11px; font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: transform 0.18s, box-shadow 0.18s; box-shadow: 0 3px 12px rgba(10,163,181,0.25); display: flex; align-items: center; gap: 6px; }
+.add-skill-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10,163,181,0.38); }
+
+.skills-list-inner { display: flex; flex-direction: column; gap: 7px; }
+.skill-row-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: 10px; transition: transform 0.15s; }
+.skill-row-item:hover { transform: translateX(3px); }
+.skill-row-left { display: flex; align-items: center; gap: 9px; }
+.skill-row-icon { width: 28px; height: 28px; border-radius: 7px; background: var(--teal-dim); display: flex; align-items: center; justify-content: center; color: var(--teal); font-size: 11px; flex-shrink: 0; }
+.skill-row-name { font-size: 0.84rem; font-weight: 600; color: var(--ink); }
+.skill-row-right { display: flex; align-items: center; gap: 9px; }
+
+.skill-level-pill { font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; text-transform: capitalize; }
+.level-beginner     { background: rgba(251,191,36,0.12); color: #b45309; border: 1px solid rgba(251,191,36,0.35); }
+.level-intermediate { background: var(--teal-dim); color: var(--teal-dark); border: 1px solid rgba(10,163,181,0.28); }
+.level-advanced     { background: rgba(16,185,129,0.1); color: #065f46; border: 1px solid rgba(16,185,129,0.3); }
+.level-expert       { background: rgba(139,92,246,0.1); color: #5b21b6; border: 1px solid rgba(139,92,246,0.28); }
+
+.skill-delete-form { margin: 0; padding: 0; }
+.skill-row-delete { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid rgba(231,76,60,0.35); background: rgba(231,76,60,0.06); color: #e74c3c; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; transition: all 0.18s; flex-shrink: 0; }
+.skill-row-delete:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; transform: scale(1.1); }
+
+.skills-empty-inner { text-align: center; padding: 18px; color: var(--muted); font-size: 0.8rem; }
+.skills-empty-inner i { display: block; font-size: 1.6rem; margin-bottom: 7px; opacity: 0.3; color: var(--teal); }
+
+/* ── SUBMIT BUTTON ONLY (reset removed) ── */
+.submit-btn { width: 100%; padding: 13px; background: var(--gradient); color: white; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(10,163,181,0.28); margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(10,163,181,0.42); }
+
+/* Toast */
+.toast-msg { position: fixed; bottom: 30px; right: 30px; background: var(--teal-dark); color: #fff; padding: 12px 22px; border-radius: 12px; font-size: 0.88rem; font-weight: 600; box-shadow: 0 4px 20px rgba(10,163,181,0.3); display: none; z-index: 99999; animation: slideUp 0.22s ease; }
+
+@keyframes popIn { from { opacity: 0; transform: scale(0.95) translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 1100px) {
-  .hero-right { grid-template-columns: repeat(2,1fr); margin-left: 32px; }
-}
+@media (max-width: 1100px) { .hero-right { grid-template-columns: repeat(2,1fr); margin-left: 32px; } }
 @media (max-width: 900px) {
   .hero { flex-direction: column; align-items: flex-start; padding: 36px 28px; }
   .hero-right { margin-left: 0; margin-top: 28px; width: 100%; grid-template-columns: repeat(4,1fr); }
   .feat-grid { grid-template-columns: repeat(2,1fr); }
+  .profile-modal-body { grid-template-columns: 1fr; }
+  .modal-left-panel { border-right: none; border-bottom: 1px solid var(--border); }
 }
 @media (max-width: 640px) {
   .navbar { padding: 0 16px; }
@@ -375,48 +612,415 @@ html, body {
   .hero { padding: 28px 18px; }
   .hero-right { grid-template-columns: repeat(2,1fr); }
   .feat-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .skill-add-row { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
+
+<!-- Server data for JS -->
+<div id="server-data"
+     style="display:none"
+     data-photo-url="{% if student.profile_photo %}{{ student.profile_photo.url }}{% endif %}"
+     data-initials="{{ student.full_name|default:'S'|slice:':2'|upper }}"
+     data-initial1="{{ student.full_name|default:'S'|slice:':1'|upper }}"
+     data-fullname="{{ student.full_name|default:'' }}"
+     data-jobrole="{{ student.job_role|default:'' }}"
+     data-csrf="{{ csrf_token }}"
+     data-remove-url="{% url 'remove_photo' %}"
+     data-update-photo-url="{% url 'update_photo' %}">
+</div>
+
+<script type="application/json" id="django-messages-json">
+  [{% for message in messages %}"{{ message|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]
+</script>
+
 <div class="page">
 
-  <!-- NAVBAR -->
+  <!-- ══ NAVBAR ══ -->
   <nav class="navbar">
     <div class="navbar-brand">🎯 Smart Placement Portal</div>
     <div class="navbar-links">
       <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
-      <a href="{% url 'student_profile' %}">Profile</a>
-      <a href="{% url 'skills' %}">Skills</a>
-      <a href="{% url 'projects' %}">Projects</a>
       <a href="{% url 'companies' %}">Companies</a>
       <a href="{% url 'upload_resume' %}">Resume</a>
       <a href="{% url 'recommendations' %}">Recs</a>
       <a href="{% url 'test' %}">Test</a>
-      <a href="{% url 'jobs' %}">Jobs</a>
       <a href="{% url 'interview_results' %}">Interviews</a>
-      <a href="{% url 'logout' %}">Logout</a>
+      <a href="{% url 'projects' %}">Projects</a>
+      <a href="{% url 'jobs' %}">Jobs</a>
+    </div>
+    <div class="navbar-right">
+      <!-- Avatar with Dropdown -->
+      <div class="avatar-dropdown-wrap" id="avatarDropdownWrap">
+        <button class="nav-avatar-btn" onclick="SPP.toggleDropdown(event)" title="Account options">
+          <div class="nav-avatar-circle" id="navAvatarCircle">
+            {% if student.profile_photo %}
+              <img src="{{ student.profile_photo.url }}" alt="Profile" id="navAvatarImg">
+            {% else %}
+              <span id="navAvatarInitial">{{ student.full_name|default:"S"|slice:":1"|upper }}</span>
+            {% endif %}
+          </div>
+        </button>
 
+        <div class="avatar-dropdown-menu" id="avatarDropdownMenu">
+          <div class="dropdown-user-info">
+            <div class="dropdown-avatar-circle" id="dropdownAvatarCircle">
+              {% if student.profile_photo %}
+                <img src="{{ student.profile_photo.url }}" alt="Profile">
+              {% else %}
+                {{ student.full_name|default:"S"|slice:":2"|upper }}
+              {% endif %}
+            </div>
+            <div>
+              <div class="dropdown-user-name" id="dropdownUserName">{{ student.full_name|default:"Student" }}</div>
+              <div class="dropdown-user-role" id="dropdownUserRole">{{ student.job_role|default:"Student" }}</div>
+            </div>
+          </div>
+          <div class="dropdown-items">
+            <button class="dropdown-item" onclick="SPP.openProfileModal()">
+              <i class="fas fa-user-edit"></i> Manage My Profile
+            </button>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item danger" href="{% url 'logout' %}">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </nav>
 
-  <!-- HERO — full width -->
+  <!-- ══ PROFILE MODAL ══ -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="profile-modal">
+
+      <div class="profile-modal-header">
+        <div class="profile-modal-title">
+          <i class="fas fa-user-circle"></i> My Profile
+        </div>
+        <button class="modal-close-btn" onclick="SPP.closeProfileModal()" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="profile-modal-body">
+
+        <!-- LEFT: Avatar + Info + Progress -->
+        <div class="modal-left-panel">
+
+          <div class="modal-avatar-wrap" title="Click edit badge to change photo">
+            {% if student.profile_photo %}
+              <img class="modal-avatar-img" src="{{ student.profile_photo.url }}" alt="Profile" id="modalAvatarImg">
+            {% else %}
+              <div class="modal-avatar-initials" id="modalAvatarInitials">
+                {{ student.full_name|default:"S"|slice:":2"|upper }}
+              </div>
+            {% endif %}
+            <div class="modal-avatar-badge" onclick="SPP.togglePhotoEditor()" title="Edit photo" style="cursor:pointer;">
+              <i class="fas fa-pen"></i>
+            </div>
+          </div>
+
+          <div class="filter-strip-label" id="filterStripLabel">Photo Filters</div>
+          <div class="filter-strip" id="modalFilterStrip"></div>
+
+          <form id="photoUploadForm" method="POST" action="{% url 'update_photo' %}" enctype="multipart/form-data" style="display:none;">
+            {% csrf_token %}
+            <input type="file" id="profilePhotoFileInput" name="profile_photo" accept="image/*">
+            <input type="hidden" name="selected_filter" id="hiddenFilterInput" value="none">
+          </form>
+
+          <div class="modal-photo-actions" id="photoActionBtns">
+            <button class="photo-action-btn photo-action-primary" onclick="document.getElementById('profilePhotoFileInput').click()">
+              <i class="fas fa-upload"></i> Upload
+            </button>
+            <button class="photo-action-btn photo-action-primary" onclick="SPP.savePhoto()">
+              <i class="fas fa-save"></i> Save
+            </button>
+            <button class="photo-action-btn photo-action-danger" onclick="SPP.removePhoto()">
+              <i class="fas fa-trash"></i> Remove
+            </button>
+          </div>
+
+          <div id="modalProfileName" style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--ink);margin-top:14px;">
+            {{ student.full_name|default:"Student Name" }}
+          </div>
+          <div id="modalProfileRole" class="modal-profile-role">{{ student.job_role|default:"" }}</div>
+
+          <div class="modal-progress-block">
+            <div class="modal-progress-header">
+              <div class="modal-progress-title"><i class="fas fa-chart-line"></i> Profile Completion</div>
+              <div class="modal-progress-pct" id="modalProgressPct">0%</div>
+            </div>
+            <div class="modal-progress-bar-wrap"><div class="modal-progress-bar-fill" id="modalProgressBar"></div></div>
+            <div class="modal-progress-steps">
+              <div class="modal-progress-step {% if student.full_name %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>Full Name</span>
+              </div>
+              <div class="modal-progress-step {% if student.college %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>College</span>
+              </div>
+              <div class="modal-progress-step {% if student.branch %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>Branch</span>
+              </div>
+              <div class="modal-progress-step {% if student.cgpa %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>CGPA</span>
+              </div>
+              <div class="modal-progress-step {% if student.phone %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>Phone Number</span>
+              </div>
+              <div class="modal-progress-step {% if student.linkedin_url %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>LinkedIn URL</span>
+              </div>
+              <div class="modal-progress-step {% if student.github_url %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>GitHub URL</span>
+              </div>
+              <!-- Photo step — updated live by JS when photo selected -->
+              <div class="modal-progress-step {% if student.profile_photo %}done{% endif %}" id="progressStepPhoto">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>Profile Photo</span>
+              </div>
+              <div class="modal-progress-step {% if student.work_mode %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>Work Mode</span>
+              </div>
+              <div class="modal-progress-step {% if student.job_role %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>Job Role</span>
+              </div>
+              <div class="modal-progress-step {% if student_skills %}done{% endif %}">
+                <div class="modal-step-dot"><i class="fas fa-check"></i></div><span>Skills Added</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-divider"></div>
+          <div class="modal-info-list">
+            {% if student.college %}
+            <div class="modal-info-item">
+              <div class="icon"><i class="fas fa-university"></i></div>
+              <span>{{ student.college }}</span>
+            </div>
+            {% endif %}
+            {% if student.branch %}
+            <div class="modal-info-item">
+              <div class="icon purple"><i class="fas fa-code-branch"></i></div>
+              <span>{{ student.get_branch_display }}</span>
+            </div>
+            {% endif %}
+            {% if student.job_role %}
+            <div class="modal-info-item">
+              <div class="icon purple"><i class="fas fa-briefcase"></i></div>
+              <span>{{ student.job_role }}</span>
+            </div>
+            {% endif %}
+            {% if student.cgpa %}
+            <div class="modal-info-item">
+              <div class="icon green"><i class="fas fa-star"></i></div>
+              <span>CGPA: <strong>{{ student.cgpa }}</strong></span>
+            </div>
+            {% endif %}
+            {% if student.phone %}
+            <div class="modal-info-item">
+              <div class="icon"><i class="fas fa-phone"></i></div>
+              <span>{{ student.phone }}</span>
+            </div>
+            {% endif %}
+            {% if student.linkedin_url %}
+            <div class="modal-info-item">
+              <div class="icon purple"><i class="fab fa-linkedin"></i></div>
+              <a href="{{ student.linkedin_url }}" target="_blank">LinkedIn Profile</a>
+            </div>
+            {% endif %}
+            {% if student.github_url %}
+            <div class="modal-info-item">
+              <div class="icon"><i class="fab fa-github"></i></div>
+              <a href="{{ student.github_url }}" target="_blank">GitHub Profile</a>
+            </div>
+            {% endif %}
+            {% if student.work_mode %}
+            <div class="modal-info-item">
+              <div class="icon green"><i class="fas fa-laptop-house"></i></div>
+              <span>{% if student.work_mode == 'wfh' %}Work From Home{% elif student.work_mode == 'office' %}Office{% elif student.work_mode == 'hybrid' %}Hybrid{% else %}{{ student.work_mode }}{% endif %}</span>
+            </div>
+            {% endif %}
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Edit Form + Skills -->
+        <div class="modal-right-panel">
+
+          <form method="POST" enctype="multipart/form-data" id="profileForm">
+            {% csrf_token %}
+
+            <div class="form-section-label">Basic Information</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="full_name" id="fieldName"
+                       value="{{ student.full_name }}" data-original="{{ student.full_name }}"
+                       placeholder="Your full name"
+                       oninput="SPP.liveUpdateName(this.value)">
+              </div>
+              <div class="form-group">
+                <label>College</label>
+                <input type="text" name="college" id="fieldCollege"
+                       value="{{ student.college }}" data-original="{{ student.college }}"
+                       placeholder="College name">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Branch</label>
+                <select name="branch" id="fieldBranch" data-original="{{ student.branch }}">
+                  {% for value, label in student.BRANCH_CHOICES %}
+                    <option value="{{ value }}" {% if student.branch == value %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>CGPA</label>
+                <input type="number" step="0.01" name="cgpa" id="fieldCgpa"
+                       value="{{ student.cgpa }}" data-original="{{ student.cgpa }}"
+                       placeholder="e.g. 8.5">
+              </div>
+            </div>
+
+            <div class="form-section-label">Contact &amp; Career</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="phone" id="fieldPhone"
+                       value="{{ student.phone }}" data-original="{{ student.phone }}"
+                       placeholder="+91 00000 00000">
+              </div>
+              <div class="form-group">
+                <label>Job Role / Desired Position</label>
+                <input type="text" name="job_role" id="fieldJobRole"
+                       value="{{ student.job_role }}" data-original="{{ student.job_role }}"
+                       placeholder="e.g. Software Engineer"
+                       oninput="SPP.liveUpdateRole(this.value)">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Work Mode Preference</label>
+                <select name="work_mode" id="fieldWorkmode" data-original="{{ student.work_mode }}">
+                  <option value="" {% if not student.work_mode %}selected{% endif %}>-- Select Work Mode --</option>
+                  <option value="wfh"    {% if student.work_mode == 'wfh'    %}selected{% endif %}>Work From Home</option>
+                  <option value="office" {% if student.work_mode == 'office' %}selected{% endif %}>Office</option>
+                  <option value="hybrid" {% if student.work_mode == 'hybrid' %}selected{% endif %}>Hybrid</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-section-label">Online Presence</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>LinkedIn URL</label>
+                <input type="url" name="linkedin_url" id="fieldLinkedin"
+                       value="{{ student.linkedin_url }}" data-original="{{ student.linkedin_url }}"
+                       placeholder="https://linkedin.com/in/...">
+              </div>
+              <div class="form-group">
+                <label>GitHub URL</label>
+                <input type="url" name="github_url" id="fieldGithub"
+                       value="{{ student.github_url }}" data-original="{{ student.github_url }}"
+                       placeholder="https://github.com/...">
+              </div>
+            </div>
+
+            <!-- ONLY Update Profile button — Reset removed -->
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-save"></i> Update Profile
+            </button>
+          </form>
+
+          <!-- Skills Management -->
+          <div class="form-section-label" style="margin-top:32px;">Skills Management</div>
+
+          <div class="skills-form-section">
+            <div class="skills-form-title"><i class="fas fa-plus-circle"></i> Add a Skill</div>
+
+            <form method="POST" action="">
+              {% csrf_token %}
+              <input type="hidden" name="form_type" value="add_skill">
+              <div class="skill-add-row">
+                <div class="form-group" style="margin-bottom:0;">
+                  <label>Skill</label>
+                  <select name="skill_id" required>
+                    <option value="">-- Select Skill --</option>
+                    {% for skill in all_skills %}
+                      <option value="{{ skill.id }}">{{ skill.name }} ({{ skill.category }})</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label>Proficiency Level</label>
+                  <select name="proficiency_level" required>
+                    <option value="">-- Select Level --</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                    <option value="expert">Expert</option>
+                  </select>
+                </div>
+                <button type="submit" class="add-skill-btn">
+                  <i class="fas fa-plus"></i> Add
+                </button>
+              </div>
+            </form>
+
+            <div class="skills-form-title" style="margin-bottom:10px;">
+              <i class="fas fa-list"></i> Your Skills
+              {% if student_skills %}
+                <span style="font-size:0.73rem;font-weight:400;color:var(--muted);margin-left:4px;">({{ student_skills|length }} added)</span>
+              {% endif %}
+            </div>
+
+            <div class="skills-list-inner">
+              {% for ss in student_skills %}
+                <div class="skill-row-item">
+                  <div class="skill-row-left">
+                    <div class="skill-row-icon"><i class="fas fa-code"></i></div>
+                    <span class="skill-row-name">{{ ss.skill.name }}</span>
+                  </div>
+                  <div class="skill-row-right">
+                    <span class="skill-level-pill level-{{ ss.proficiency_level|lower }}">{{ ss.proficiency_level }}</span>
+                    <form method="POST" action="{% url 'delete_skill' ss.id %}" class="skill-delete-form">
+                      {% csrf_token %}
+                      <button type="submit" class="skill-row-delete" title="Remove skill"
+                              onclick="return confirm('Remove {{ ss.skill.name }}?')">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              {% empty %}
+                <div class="skills-empty-inner">
+                  <i class="fas fa-layer-group"></i>
+                  No skills added yet. Select a skill above and click Add!
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ HERO ══ -->
   <div class="hero">
     <div class="hero-blob1"></div>
     <div class="hero-blob2"></div>
-
     <div class="hero-left">
       <div class="hero-eyebrow">
-
         <span class="pulse"></span> AI-Powered Placement Preparation
       </div>
       <h1>Welcome to<br>Smart Placement<br>Preparation Portal</h1>
       <p>Use AI tools, mock tests, resume analysis &amp; structured learning paths to get job-ready faster.</p>
-      <div class="hero-btns">
-  
-      </div>
     </div>
-
     <div class="hero-right">
       <div class="hero-stat-box">
         <div class="hsb-value">2</div>
@@ -437,16 +1041,14 @@ html, body {
     </div>
   </div>
 
-  <!-- DASHBOARD BODY — full width -->
+  <!-- ══ DASHBOARD BODY ══ -->
   <div class="dash-body">
-
     <div class="section-header">
       <span class="section-title">Quick Access</span>
       <div class="section-line"></div>
     </div>
 
     <div class="feat-grid">
-
       <a href="{% url 'upload_resume' %}" class="feat-card">
         <div class="feat-icon">📄</div>
         <div class="feat-body">
@@ -458,7 +1060,6 @@ html, body {
           <span class="feat-arrow">↗</span>
         </div>
       </a>
-
 
       <a href="{% url 'companies' %}" class="feat-card">
         <div class="feat-icon">🏢</div>
@@ -474,7 +1075,6 @@ html, body {
 
       <a href="{% url 'companies' %}?open=infosys" class="feat-card">
         <div class="feat-icon">🎥</div>
-
         <div class="feat-body">
           <div class="feat-title">AI Mock Interview</div>
           <div class="feat-desc">Start a virtual interview session with AI feedback. Select a company to begin your practice.</div>
@@ -508,7 +1108,6 @@ html, body {
           <span class="feat-arrow">↗</span>
         </div>
       </a>
-      
 
       <a href="{% url 'skills' %}" class="feat-card">
         <div class="feat-icon">⚡</div>
@@ -521,12 +1120,262 @@ html, body {
           <span class="feat-arrow">↗</span>
         </div>
       </a>
-
-      
-
     </div>
   </div>
 
 </div>
+
+<div class="toast-msg" id="toastMsg"></div>
+
+<script>
+var SPP = (function () {
+  "use strict";
+
+  var sd         = document.getElementById("server-data");
+  var PHOTO_URL  = sd.dataset.photoUrl  || "";
+  var INITIALS   = sd.dataset.initials  || "S";
+  var INITIAL1   = sd.dataset.initial1  || "S";
+  var CSRF_TOKEN = sd.dataset.csrf      || "";
+  var REMOVE_URL = sd.dataset.removeUrl || "";
+
+  var MESSAGES = JSON.parse(
+    document.getElementById("django-messages-json").textContent || "[]"
+  );
+
+  var initials = INITIALS;
+  var initial1 = INITIAL1;
+
+  var FILTERS = [
+    { id: "none",      label: "Normal",    css: "" },
+    { id: "grayscale", label: "Grayscale", css: "grayscale(100%)" },
+    { id: "sepia",     label: "Sepia",     css: "sepia(80%)" },
+    { id: "warm",      label: "Warm",      css: "sepia(30%) saturate(140%) hue-rotate(-10deg)" },
+    { id: "cool",      label: "Cool",      css: "saturate(120%) hue-rotate(30deg)" },
+    { id: "vivid",     label: "Vivid",     css: "saturate(200%) contrast(110%)" },
+    { id: "fade",      label: "Fade",      css: "opacity(80%) brightness(110%) saturate(70%)" },
+    { id: "noir",      label: "Noir",      css: "grayscale(100%) contrast(130%) brightness(90%)" }
+  ];
+
+  var pendingPhoto  = PHOTO_URL || null;
+  var pendingFilter = "none";
+  var pendingFile   = null;
+
+  var photoEditorOpen = false;
+
+  function togglePhotoEditor() {
+    photoEditorOpen = !photoEditorOpen;
+    var label = document.getElementById("filterStripLabel");
+    var strip = document.getElementById("modalFilterStrip");
+    var btns  = document.getElementById("photoActionBtns");
+    var badge = document.querySelector(".modal-avatar-badge");
+    if (photoEditorOpen) {
+      label.classList.add("visible");
+      strip.classList.add("visible");
+      btns.classList.add("visible");
+      if (badge) badge.style.background = "var(--teal-dark)";
+      buildFilterStrip();
+    } else {
+      label.classList.remove("visible");
+      strip.classList.remove("visible");
+      btns.classList.remove("visible");
+      if (badge) badge.style.background = "var(--teal)";
+    }
+  }
+
+  function toggleDropdown(e) {
+    e.stopPropagation();
+    document.getElementById("avatarDropdownMenu").classList.toggle("open");
+  }
+
+  function closeDropdown() {
+    document.getElementById("avatarDropdownMenu").classList.remove("open");
+  }
+
+  function openProfileModal() {
+    closeDropdown();
+    photoEditorOpen = false;
+    var label = document.getElementById("filterStripLabel");
+    var strip = document.getElementById("modalFilterStrip");
+    var btns  = document.getElementById("photoActionBtns");
+    var badge = document.querySelector(".modal-avatar-badge");
+    if (label) label.classList.remove("visible");
+    if (strip) strip.classList.remove("visible");
+    if (btns)  btns.classList.remove("visible");
+    if (badge) badge.style.background = "var(--teal)";
+    document.getElementById("profileModal").classList.add("open");
+    initProgress();
+  }
+
+  function closeProfileModal() {
+    document.getElementById("profileModal").classList.remove("open");
+  }
+
+  function buildFilterStrip() {
+    var strip = document.getElementById("modalFilterStrip");
+    strip.innerHTML = "";
+    FILTERS.forEach(function (f) {
+      var wrap = document.createElement("div");
+      wrap.className = "filter-thumb" + (pendingFilter === f.id ? " active" : "");
+      wrap.onclick = function () {
+        pendingFilter = f.id;
+        var previewImg  = document.getElementById("modalAvatarImg");
+        var previewInit = document.getElementById("modalAvatarInitials");
+        if (previewImg)  previewImg.style.filter  = f.css;
+        if (previewInit) previewInit.style.filter = f.css;
+        buildFilterStrip();
+      };
+      var ring = document.createElement("div");
+      ring.className = "ft-ring";
+      ring.style.filter = f.css;
+      ring.innerHTML = pendingPhoto
+        ? '<img src="' + pendingPhoto + '" alt="' + f.label + '">'
+        : initial1;
+      var nm = document.createElement("div");
+      nm.className = "ft-name";
+      nm.textContent = f.label;
+      wrap.appendChild(ring);
+      wrap.appendChild(nm);
+      strip.appendChild(wrap);
+    });
+  }
+
+  function savePhoto() {
+    if (!pendingFile && !pendingPhoto) { showToast("Please upload a photo first."); return; }
+    document.getElementById("hiddenFilterInput").value = pendingFilter;
+    if (pendingFile) {
+      var dt = new DataTransfer();
+      dt.items.add(pendingFile);
+      document.getElementById("profilePhotoFileInput").files = dt.files;
+      document.getElementById("photoUploadForm").submit();
+    } else {
+      showToast("No new photo selected.");
+    }
+  }
+
+  function removePhoto() {
+    if (!confirm("Remove your profile photo?")) return;
+    var f = document.createElement("form");
+    f.method = "POST";
+    f.action = REMOVE_URL;
+    var c = document.createElement("input");
+    c.type = "hidden"; c.name = "csrfmiddlewaretoken"; c.value = CSRF_TOKEN;
+    f.appendChild(c);
+    document.body.appendChild(f);
+    f.submit();
+  }
+
+  function onFileChange(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    pendingFile = file;
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      pendingPhoto = ev.target.result;
+      var existingImg  = document.getElementById("modalAvatarImg");
+      var existingInit = document.getElementById("modalAvatarInitials");
+      if (existingImg) {
+        existingImg.src = ev.target.result;
+      } else if (existingInit) {
+        var img = document.createElement("img");
+        img.className = "modal-avatar-img";
+        img.id = "modalAvatarImg";
+        img.src = ev.target.result;
+        img.alt = "Profile";
+        existingInit.replaceWith(img);
+      }
+      buildFilterStrip();
+      updateAllAvatars(ev.target.result, null);
+      /* ── Mark photo progress step as done immediately ── */
+      var photoStep = document.getElementById("progressStepPhoto");
+      if (photoStep) {
+        photoStep.classList.add("done");
+        initProgress();
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  }
+
+  function updateAllAvatars(photoSrc, name) {
+    var navCircle  = document.getElementById("navAvatarCircle");
+    var dropCircle = document.getElementById("dropdownAvatarCircle");
+    if (photoSrc) {
+      if (navCircle)  navCircle.innerHTML  = '<img src="' + photoSrc + '" alt="Profile" id="navAvatarImg" style="width:100%;height:100%;object-fit:cover;">';
+      if (dropCircle) dropCircle.innerHTML = '<img src="' + photoSrc + '" alt="Profile" style="width:100%;height:100%;object-fit:cover;">';
+    } else if (name !== null) {
+      var i1 = (name || "S").charAt(0).toUpperCase();
+      var i2 = (name || "S").slice(0,2).toUpperCase();
+      var navInit = navCircle ? navCircle.querySelector("span") : null;
+      if (navInit) navInit.textContent = i1;
+      if (dropCircle) dropCircle.textContent = i2;
+      initials = i2;
+      initial1 = i1;
+    }
+  }
+
+  function liveUpdateName(val) {
+    var nameEl   = document.getElementById("modalProfileName");
+    var dropName = document.getElementById("dropdownUserName");
+    if (nameEl)   nameEl.textContent   = val || "Student Name";
+    if (dropName) dropName.textContent = val || "Student";
+    if (!PHOTO_URL) updateAllAvatars(null, val);
+  }
+
+  function liveUpdateRole(val) {
+    var roleEl   = document.getElementById("modalProfileRole");
+    var dropRole = document.getElementById("dropdownUserRole");
+    if (roleEl)   roleEl.textContent   = val.trim();
+    if (dropRole) dropRole.textContent = val.trim() || "Student";
+  }
+
+  function initProgress() {
+    var all   = document.querySelectorAll(".modal-progress-step");
+    var done  = document.querySelectorAll(".modal-progress-step.done");
+    var pct   = all.length ? Math.round((done.length / all.length) * 100) : 0;
+    var bar   = document.getElementById("modalProgressBar");
+    var pctEl = document.getElementById("modalProgressPct");
+    if (bar)   setTimeout(function () { bar.style.width = pct + "%"; }, 300);
+    if (pctEl) {
+      pctEl.textContent = pct + "%";
+      pctEl.style.color = pct >= 80 ? "#10b981" : pct >= 50 ? "#f59e0b" : "#ef4444";
+    }
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById("toastMsg");
+    t.textContent = msg;
+    t.style.display = "block";
+    clearTimeout(t._tmr);
+    t._tmr = setTimeout(function () { t.style.display = "none"; }, 2800);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("profilePhotoFileInput").addEventListener("change", onFileChange);
+
+    document.getElementById("profileModal").addEventListener("click", function (e) {
+      if (e.target === this) closeProfileModal();
+    });
+
+    document.addEventListener("click", function (e) {
+      var wrap = document.getElementById("avatarDropdownWrap");
+      if (wrap && !wrap.contains(e.target)) closeDropdown();
+    });
+
+    MESSAGES.forEach(function (m) { showToast(m); });
+  });
+
+  return {
+    openProfileModal:  openProfileModal,
+    closeProfileModal: closeProfileModal,
+    toggleDropdown:    toggleDropdown,
+    togglePhotoEditor: togglePhotoEditor,
+    savePhoto:         savePhoto,
+    removePhoto:       removePhoto,
+    liveUpdateName:    liveUpdateName,
+    liveUpdateRole:    liveUpdateRole
+  };
+}());
+</script>
+
 </body>
 </html>
