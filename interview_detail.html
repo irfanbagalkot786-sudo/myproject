@@ -23,25 +23,33 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
 
+    /* ── NAVBAR ── */
     .navbar {
-      position:sticky; top:0; z-index:100;
-      display:flex; justify-content:space-between; align-items:center;
-      padding:0 40px; height:64px;
-      background:rgba(255,255,255,0.88); backdrop-filter:blur(20px);
-      border-bottom:1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 32px; height: 62px;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 8px rgba(10,163,181,0.07);
     }
     .navbar-brand {
-      font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
-      background:var(--gradient); -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent; background-clip:text;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
     }
-    .navbar a {
-      text-decoration:none; color:var(--slate);
-      font-weight:700; font-size:0.9rem;
-      display:flex; align-items:center; gap:8px;
-      transition:color 0.2s;
+    .navbar-spacer {
+      display: flex;
+      justify-content: flex-end;
     }
-    .navbar a:hover { color:var(--teal); }
+    .navbar-links {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .navbar-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500;
+      padding: 6px 12px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
+    }
+    .navbar-links a:hover { color: var(--slate); background: var(--teal-dim); }
+    .navbar-links a.active { color: var(--teal); background: var(--teal-dim); }
 
     .container {
       max-width:1200px; margin:40px auto; padding:0 20px;
@@ -252,9 +260,19 @@
 
 <nav class="navbar">
   <div class="navbar-brand">🎯 Smart Placement Portal</div>
-  <a href="{% url 'interview_results' %}">
-    <i class="fas fa-arrow-left"></i> All Interviews
-  </a>
+  <div class="navbar-links">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'companies' %}">Companies</a>
+    <a href="{% url 'upload_resume' %}">Resume</a>
+    <a href="{% url 'recommendations' %}">Recs</a>
+    <a href="{% url 'test' %}">Test</a>
+    <a href="{% url 'interview_results' %}" class="active">Interviews</a>
+    <a href="{% url 'projects' %}">Projects</a>
+    <a href="{% url 'jobs' %}">Jobs</a>
+  </div>
+  <div class="navbar-spacer">
+    <div style="width: 42px;"></div>
+  </div>
 </nav>
 
 <div class="container">
@@ -390,8 +408,10 @@
           <div><i class="fas fa-clock"></i> <b>Date:</b> {{ interview.created_at|date:"M d, Y" }}</div>
         </div>
 
-        <a href="{% url 'dashboard' %}" class="btn-dashboard">
-          Return to Dashboard
+          </a>
+            <a href="{% url 'interview_results' %}" class="btn-dashboard">
+            <i class="fas fa-arrow-left"></i> Back to Interview List
+            </a>
         </a>
       </div>
     </div>
@@ -401,15 +421,13 @@
 </div>
 
 <script>
-  // Automatically apply widths from data-progress to avoid IDE CSS errors
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('[data-progress]').forEach(el => {
-      const val = el.getAttribute('data-progress');
-      if (val) {
-        el.style.width = val + '%';
-      }
-    });
+// Progress bars for metrics
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('[data-progress]').forEach(el => {
+    const val = el.getAttribute('data-progress');
+    if (val) el.style.width = val + '%';
   });
+});
 </script>
 </body>
 </html>
