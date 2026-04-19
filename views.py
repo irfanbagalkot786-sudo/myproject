@@ -29,7 +29,7 @@ except ImportError:
     import google.generativeai as genai
 
 # ─── Config ─────────────────────────────────────────────────────────────────
-GEMINI_API_KEY = "AIzaSyAUOfzbbLIWys3nY2szpKLbiuQpP6asRbU"
+GEMINI_API_KEY = ""
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
 # ────────────────────────────────────────────────────────────────────────────
 
