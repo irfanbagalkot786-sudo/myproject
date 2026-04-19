@@ -5,17 +5,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.core.management import call_command
-
 from .forms import LoginForm, StudentProfileForm
-from .models import StudentProfile, Skill, StudentSkill, Project, Resume, ResumeAnalysis, Company, JobRole, Recommendation, Question
-
+from .models import StudentProfile, Skill, StudentSkill, CustomSkill, Project, Resume, ResumeAnalysis, Company, JobRole, Recommendation, Question
+import anthropic, json
 import os
 import subprocess
 import json
 import time
-import fitz  # pymupdf
+import fitz  
 import base64
-import google.generativeai as genai
 import PyPDF2
 import whisper
 from django.conf import settings
@@ -24,12 +22,16 @@ from django.core.files.base import ContentFile
 from .models import InterviewSession
 from django.http import HttpResponse
 
-# ─── Config ─────────────────────────────────────────────────────────────────
-GEMINI_API_KEY = "AIzaSyD6ClT2cU6zIS7Tu1thWyG3nrvF5a-15uA"
-GEMINI_MODEL   = "gemini-2.5-flash-lite"   # ✅ working model
-# ────────────────────────────────────────────────────────────────────────────
+try:
+    from google import genai as genai_new
+    import google.generativeai as genai
+except ImportError:
+    import google.generativeai as genai
 
-#----------whispermodel---------
+# ─── Config ─────────────────────────────────────────────────────────────────
+GEMINI_API_KEY = "AIzaSyAUOfzbbLIWys3nY2szpKLbiuQpP6asRbU"
+GEMINI_MODEL   = "gemini-2.5-flash-lite"
+# ────────────────────────────────────────────────────────────────────────────
 
 model = None
 
@@ -45,13 +47,8 @@ def your_view(request):
 
 
 def gemini_generate(prompt_or_parts):
-    """
-    Call Gemini with automatic retry (3 attempts, 10s apart).
-    Accepts either a string prompt or a list of parts (for vision).
-    """
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel(GEMINI_MODEL)
-
     last_error = None
     for attempt in range(3):
         try:
@@ -63,8 +60,7 @@ def gemini_generate(prompt_or_parts):
             if attempt < 2:
                 print(f"Retrying in 10 seconds...")
                 time.sleep(10)
-
-    raise last_error  # re-raise after all retries exhausted
+    raise last_error
 
 
 # ================= REGISTER VIEW =================
@@ -96,7 +92,6 @@ def register_view(request):
 
 def login_view(request):
     form = LoginForm()
-
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -110,7 +105,6 @@ def login_view(request):
                 messages.error(request, "Invalid username or password")
         else:
             messages.error(request, "Form is invalid")
-
     return render(request, "login.html", {'form': form})
 
 
@@ -126,13 +120,12 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
-    student = request.user.studentprofile  # or however you fetch it
-    student_skills = student.studentskill_set.all()
-    all_skills = Skill.objects.all()
+    student = request.user.studentprofile
+    # Custom (student-defined) skills
+    custom_skills = CustomSkill.objects.filter(student=student)
     return render(request, 'dashboard.html', {
-        'student': student,
-        'student_skills': student_skills,
-        'all_skills': all_skills,
+        'student':       student,
+        'custom_skills': custom_skills,
     })
 
 
@@ -180,69 +173,90 @@ def student_profile(request):
             student.profile_photo = request.FILES['profile_photo']
 
         student.save()
+
+        # Return JSON if request is AJAX (from dashboard modal)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('ajax') == '1':
+            return JsonResponse({'status': 'ok', 'message': 'Profile updated successfully!'})
+
         messages.success(request, 'Profile updated successfully!')
         return redirect('student_profile')
 
-    student_skills = StudentSkill.objects.filter(student=student).select_related('skill')
+    custom_skills = CustomSkill.objects.filter(student=student)
     context = {
         'student':           student,
-        'student_skills':    student_skills,
+        'custom_skills':     custom_skills,
         'student_languages': student.get_languages_list(),
     }
     return render(request, 'student_profile.html', context)
 
-# ================= REMOVE PHOTO  =================
+
+# ================= REMOVE PHOTO =================
 
 def remove_photo(request):
-        if request.method == "POST":
-            student = request.user.studentprofile  # adjust if needed
-            student.profile_photo.delete(save=True)
-        return redirect('student_profile')
+    if request.method == "POST":
+        student = request.user.studentprofile
+        student.profile_photo.delete(save=True)
+    return redirect('student_profile')
 
 
-# ================= UPDATE PHOTO  =================
+# ================= UPDATE PHOTO =================
 
 def update_photo(request):
     if request.method == "POST":
-        student = request.user.studentprofile  # adjust if needed
-
+        student = request.user.studentprofile
         if 'profile_photo' in request.FILES:
             student.profile_photo = request.FILES['profile_photo']
             student.save()
+    return redirect('dashboard')
 
-    return redirect('student_profile')
 
-# ================= DELETE SKILL  =================
+# ================= CUSTOM SKILL: ADD =================
+
+@login_required
+def add_custom_skill(request):
+    """Add a student-defined skill with a 1-5 level. Always returns JSON."""
+    if request.method == "POST":
+        student    = request.user.studentprofile
+        skill_name = request.POST.get('skill_name', '').strip()
+        try:
+            level = int(request.POST.get('level', 1))
+            level = max(1, min(5, level))
+        except (ValueError, TypeError):
+            level = 1
+
+        if skill_name:
+            CustomSkill.objects.update_or_create(
+                student=student,
+                skill_name__iexact=skill_name,
+                defaults={'skill_name': skill_name, 'level': level}
+            )
+            return JsonResponse({'status': 'ok', 'message': f'"{skill_name}" saved!'})
+        return JsonResponse({'status': 'error', 'message': 'Please enter a skill name.'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid method.'}, status=405)
+
+
+# ================= CUSTOM SKILL: DELETE =================
+
+@login_required
+def delete_custom_skill(request, skill_id):
+    student = request.user.studentprofile
+    skill   = get_object_or_404(CustomSkill, id=skill_id, student=student)
+    if request.method == "POST":
+        skill.delete()
+    referer = request.META.get('HTTP_REFERER', '')
+    if 'dashboard' in referer:
+        return redirect('dashboard')
+    return redirect('skills')
+
+
+# ================= LEGACY delete_skill (kept for old URL compatibility) =================
 
 def delete_skill(request, skill_id):
-    student = request.user.studentprofile  # ✅ correct relation
+    """Kept for backward compatibility — now delegates to delete_custom_skill."""
+    return delete_custom_skill(request, skill_id)
 
-    skill = get_object_or_404(StudentSkill, id=skill_id, student=student)
-    skill.delete()
 
-    return redirect('student_profile')
-
-#================== ADD SKILL  =================
-
-def add_skill_profile(request):
-    if request.method == "POST":
-        student, _ = StudentProfile.objects.get_or_create(user=request.user)
-
-        skill_id = request.POST.get("skill_id")
-        proficiency = request.POST.get("proficiency", "beginner")
-
-        if skill_id:
-            skill = Skill.objects.get(id=skill_id)
-
-            StudentSkill.objects.create(
-                student=student,
-                skill=skill,
-                proficiency_level=proficiency
-            )
-
-    return redirect('student_profile')
-
-# ================= SKILLS VIEW =================
+# ================= SKILLS PAGE VIEW =================
 
 @login_required
 def skills_view(request):
@@ -252,28 +266,26 @@ def skills_view(request):
     )
 
     if request.method == 'POST':
-        skill_id = request.POST.get('skill')
-        level    = request.POST.get('level')
+        skill_name = request.POST.get('skill_name', '').strip()
+        try:
+            level = int(request.POST.get('level', 1))
+            level = max(1, min(5, level))
+        except (ValueError, TypeError):
+            level = 1
 
-        if not skill_id or not level:
-            messages.error(request, 'Please select both a skill and a level.')
-            return redirect('skills')
-
-        skill    = get_object_or_404(Skill, id=skill_id)
-        obj, created = StudentSkill.objects.get_or_create(
-            student=student, skill=skill, defaults={'level': level}
-        )
-        if created:
-            messages.success(request, f'"{skill.name}" added successfully!')
+        if skill_name:
+            CustomSkill.objects.update_or_create(
+                student=student,
+                skill_name__iexact=skill_name,
+                defaults={'skill_name': skill_name, 'level': level}
+            )
+            messages.success(request, f'"{skill_name}" added!')
         else:
-            obj.level = level
-            obj.save()
-            messages.info(request, f'"{skill.name}" level updated to {level}.')
+            messages.error(request, 'Please enter a skill name.')
         return redirect('skills')
 
-    all_skills     = Skill.objects.all().order_by('category', 'name')
-    student_skills = StudentSkill.objects.filter(student=student).select_related('skill')
-    return render(request, 'skills.html', {'skills': all_skills, 'student_skills': student_skills})
+    custom_skills = CustomSkill.objects.filter(student=student)
+    return render(request, 'skills.html', {'custom_skills': custom_skills})
 
 
 # ================= PROJECT VIEWS =================
@@ -313,8 +325,6 @@ def delete_project(request, project_id):
     return redirect('projects')
 
 
-
-
 # ================= TEST & RESULT =================
 
 @login_required
@@ -344,7 +354,7 @@ def test(request):
 def save_assessment(request):
     if request.method == 'POST':
         try:
-            data  = json.loads(request.body)
+            data = json.loads(request.body)
             from .models import Assessment
             Assessment.objects.create(
                 student=request.user.studentprofile,
@@ -362,7 +372,22 @@ def result(request):
     return render(request, 'result.html')
 
 
-# ================= PDF → BASE64 IMAGES HELPER =================
+@csrf_exempt
+def ai_generate_questions(request):
+    if request.method == 'POST':
+        data   = json.loads(request.body)
+        prompt = data.get('prompt', '')
+        client = anthropic.Anthropic(api_key='YOUR_API_KEY_HERE')
+        message = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=16000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return JsonResponse({'content': message.content[0].text})
+    return JsonResponse({'error': 'POST only'}, status=405)
+
+
+# ================= PDF → BASE64 IMAGES =================
 
 def pdf_to_base64_images(file):
     file.seek(0)
@@ -370,9 +395,9 @@ def pdf_to_base64_images(file):
     doc       = fitz.open(stream=pdf_bytes, filetype="pdf")
     images    = []
     for page in doc:
-        mat       = fitz.Matrix(2, 2)
-        pix       = page.get_pixmap(matrix=mat)
-        b64       = base64.b64encode(pix.tobytes("png")).decode("utf-8")
+        mat = fitz.Matrix(2, 2)
+        pix = page.get_pixmap(matrix=mat)
+        b64 = base64.b64encode(pix.tobytes("png")).decode("utf-8")
         images.append(b64)
     print(f"PDF CONVERTED: {len(images)} page(s) → base64 images")
     return images
@@ -392,7 +417,6 @@ def upload_resume(request):
 
         print("FILE NAME:", file.name)
 
-        # Save resume to DB
         try:
             resume = Resume.objects.create(student=request.user.studentprofile, file=file)
             print("RESUME SAVED:", resume.id)
@@ -401,23 +425,24 @@ def upload_resume(request):
             messages.error(request, f"Save error: {e}")
             return redirect('upload_resume')
 
-        # ✅ Prevent duplicate API calls — reuse existing analysis if score > 0
-        existing = ResumeAnalysis.objects.filter(resume=resume).first()
-        if existing and existing.analysis_score > 0:
-            print("REUSING EXISTING ANALYSIS")
-            messages.success(request, "Resume already analyzed!")
-            return redirect('analyze_resume')
-
-        # Decide: Vision (PDF) vs Text (DOCX)
-        use_vision = file.name.lower().endswith('.pdf')
+        fname_lower = file.name.lower()
+        use_vision  = fname_lower.endswith('.pdf') or fname_lower.endswith(('.png', '.jpg', '.jpeg'))
 
         if use_vision:
-            try:
-                page_images = pdf_to_base64_images(file)
-            except Exception as e:
-                print("PDF→IMAGE ERROR:", e)
-                messages.error(request, f"Could not convert PDF: {e}")
-                return redirect('upload_resume')
+            if fname_lower.endswith('.pdf'):
+                try:
+                    page_images = pdf_to_base64_images(file)
+                    mime_type   = "image/png"
+                except Exception as e:
+                    print("PDF→IMAGE ERROR:", e)
+                    messages.error(request, f"Could not convert PDF: {e}")
+                    return redirect('upload_resume')
+            else:
+                import base64
+                file.seek(0)
+                img_data    = base64.b64encode(file.read()).decode('utf-8')
+                page_images = [img_data]
+                mime_type   = "image/jpeg" if fname_lower.endswith(('.jpg', '.jpeg')) else "image/png"
         else:
             try:
                 file.seek(0)
@@ -430,42 +455,60 @@ def upload_resume(request):
                 messages.error(request, f"Could not read file: {e}")
                 return redirect('upload_resume')
 
-        # ✅ Call Gemini with retry
         json_instruction = """
-Analyze this resume and return ONLY valid JSON, no extra text, no backticks.
+You are a senior technical recruiter with 15+ years of hiring experience at top tech companies.
+Analyze this resume carefully and return ONLY a valid JSON object — no markdown, no backticks, no extra text.
 
-Return exactly:
+STRICT SCORING RULES (follow exactly):
+- 85 to 100: Senior engineer / highly experienced. Strong projects with measurable impact,
+             5+ years experience, multiple certifications, leadership roles, well-formatted.
+- 70 to 84:  Mid-level candidate. Good relevant projects, 2–5 years experience, solid tech stack.
+- 55 to 69:  Junior developer / fresher with real projects and relevant skills. Decent formatting.
+- 40 to 54:  Fresher with only basic skills, few or no projects, simple formatting.
+- 0  to 39:  Very weak — missing key sections, near-empty, irrelevant content, or poorly structured.
+
+Return this exact JSON structure:
 {
-    "score": <number 0-100>,
-    "feedback": "<detailed feedback about layout, content, and improvements>",
-    "recommended_roles": ["role1", "role2", "role3"]
+  "score": <integer 0-100>,
+  "ats_score": <integer 0-100>,
+  "summary": "<2-3 sentence honest overall verdict>",
+  "strong_points": [{"title": "<strength>", "detail": "<evidence>"}],
+  "weak_points": [{"title": "<weakness>", "detail": "<concrete fix>"}],
+  "skills_present": ["skill1", "skill2"],
+  "skills_missing": ["skill1", "skill2"],
+  "ats_keywords": ["keyword1", "keyword2"],
+  "pro_tips": ["<tip1>", "<tip2>"],
+  "recommended_roles": ["Role 1", "Role 2", "Role 3", "Role 4", "Role 5"],
+  "feedback": "<same as summary>"
 }
 """
+
         try:
             print(f"CALLING GEMINI ({GEMINI_MODEL})...")
 
             if use_vision:
                 parts = [
-                    {"inline_data": {"mime_type": "image/png", "data": img}}
+                    {"inline_data": {"mime_type": mime_type, "data": img}}
                     for img in page_images
                 ]
                 parts.append({"text": json_instruction})
                 response = gemini_generate(parts)
             else:
-                prompt   = f"Analyze this resume:\n{resume_text[:3000]}\n\n{json_instruction}"
+                prompt   = f"Analyze this resume carefully:\n\n{resume_text[:5000]}\n\n{json_instruction}"
                 response = gemini_generate(prompt)
 
             raw = response.text.strip()
-            print("GEMINI RESPONSE:", raw[:200])
+            print("GEMINI RESPONSE:", raw[:300])
 
-            if "```" in raw:
+            raw = raw.strip()
+            if raw.startswith("```"):
                 raw = raw.split("```")[1]
                 if raw.startswith("json"):
                     raw = raw[4:]
             raw = raw.strip()
 
             data = json.loads(raw)
-            print("PARSED DATA:", data)
+            print("PARSED DATA — score:", data.get('score'), "| ats:", data.get('ats_score'))
 
         except json.JSONDecodeError as e:
             print("JSON ERROR:", e)
@@ -476,11 +519,18 @@ Return exactly:
             messages.error(request, f"Gemini error: {e}")
             return redirect('upload_resume')
 
-        # Save analysis to DB
         try:
             analysis, _             = ResumeAnalysis.objects.get_or_create(resume=resume)
             analysis.analysis_score = data.get('score', 0)
-            analysis.feedback       = data.get('feedback', 'No feedback.')
+            analysis.ats_score      = data.get('ats_score', 0)
+            analysis.feedback       = data.get('feedback') or data.get('summary', 'No feedback.')
+            analysis.summary        = data.get('summary', '')
+            analysis.strong_points  = data.get('strong_points', [])
+            analysis.weak_points    = data.get('weak_points', [])
+            analysis.skills_present = data.get('skills_present', [])
+            analysis.skills_missing = data.get('skills_missing', [])
+            analysis.ats_keywords   = data.get('ats_keywords', [])
+            analysis.pro_tips       = data.get('pro_tips', [])
             analysis.save()
             print("ANALYSIS SAVED — score:", analysis.analysis_score)
         except Exception as e:
@@ -507,45 +557,72 @@ def analyze_resume(request):
         messages.error(request, "No resume found. Please upload one first.")
         return redirect('upload_resume')
 
-    # Read PDF text
+    existing_analysis = ResumeAnalysis.objects.filter(resume=resume_obj).last()
+
+    if existing_analysis and existing_analysis.analysis_score > 0:
+        recommended_roles = request.session.get('recommended_roles', [])
+        return render(request, "upload_resume.html", {
+            'analysis':          existing_analysis,
+            'recommended_roles': recommended_roles,
+            'student':           student,
+        })
+
     resume_text = ""
     try:
         pdf_reader = PyPDF2.PdfReader(resume_obj.file.path)
         for page in pdf_reader.pages:
-            resume_text += page.extract_text()
+            resume_text += page.extract_text() or ""
     except Exception as e:
         print(f"PDF Reader Error: {e}")
         resume_text = "Could not parse PDF content."
 
-    # ✅ Call Gemini with retry
     try:
         prompt = f"""
-Analyze this resume text and provide exactly 4 things in JSON format:
-1. "skills": A list of technical skills found (e.g. ["Python", "Django", "React"]).
-2. "experience_years": A number representing total years of experience.
-3. "score": A match score out of 100 for a general SDE role.
-4. "feedback": A 2-sentence summary of strengths and areas to improve.
+You are a senior technical recruiter. Analyze this resume and return ONLY valid JSON.
+Return this exact JSON (no backticks, no markdown):
+{{
+  "score": <integer 0-100>,
+  "ats_score": <integer 0-100>,
+  "summary": "<2-3 sentence honest verdict>",
+  "strong_points": [{{"title": "<strength>", "detail": "<evidence>"}}],
+  "weak_points": [{{"title": "<weakness>", "detail": "<fix>"}}],
+  "skills": ["skill1", "skill2"],
+  "skills_present": ["skill1", "skill2"],
+  "skills_missing": ["skill1", "skill2"],
+  "ats_keywords": ["keyword1", "keyword2"],
+  "pro_tips": ["<tip1>", "<tip2>"],
+  "experience_years": <number>,
+  "recommended_roles": ["Role 1", "Role 2", "Role 3", "Role 4", "Role 5"],
+  "feedback": "<same as summary>"
+}}
 
-Resume Text:
-{resume_text[:4000]}
+Resume:
+{resume_text[:5000]}
 """
         response = gemini_generate(prompt)
-
         raw_text = response.text.strip()
-        json_str = raw_text
-        if "```json" in raw_text:
-            json_str = raw_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in raw_text:
-            json_str = raw_text.split("```")[1].split("```")[0].strip()
+        if raw_text.startswith("```"):
+            raw_text = raw_text.split("```")[1]
+            if raw_text.startswith("json"):
+                raw_text = raw_text[4:]
+        raw_text = raw_text.strip()
 
-        data = json.loads(json_str)
+        data = json.loads(raw_text)
 
         analysis, _ = ResumeAnalysis.objects.update_or_create(
             resume=resume_obj,
             defaults={
                 'experience_years': data.get('experience_years', 0),
                 'analysis_score':   data.get('score', 0),
-                'feedback':         data.get('feedback', '')
+                'ats_score':        data.get('ats_score', 0),
+                'feedback':         data.get('feedback') or data.get('summary', ''),
+                'summary':          data.get('summary', ''),
+                'strong_points':    data.get('strong_points', []),
+                'weak_points':      data.get('weak_points', []),
+                'skills_present':   data.get('skills_present', []),
+                'skills_missing':   data.get('skills_missing', []),
+                'ats_keywords':     data.get('ats_keywords', []),
+                'pro_tips':         data.get('pro_tips', []),
             }
         )
 
@@ -554,8 +631,11 @@ Resume Text:
             analysis.extracted_skills.add(skill_obj)
             StudentSkill.objects.get_or_create(student=student, skill=skill_obj)
 
+        recommended_roles = data.get('recommended_roles', [])
+        request.session['recommended_roles'] = recommended_roles
+
     except Exception as e:
-        print(f"Gemini Error: {e}")
+        print(f"Gemini Error in analyze_resume: {e}")
         analysis, _ = ResumeAnalysis.objects.update_or_create(
             resume=resume_obj,
             defaults={
@@ -563,8 +643,13 @@ Resume Text:
                 'feedback': "Could not analyze resume. Please ensure the file is readable."
             }
         )
+        recommended_roles = []
 
-    return render(request, "upload_resume.html", {'analysis': analysis, 'student': student})
+    return render(request, "upload_resume.html", {
+        'analysis':          analysis,
+        'recommended_roles': request.session.get('recommended_roles', recommended_roles),
+        'student':           student,
+    })
 
 
 # ================= COMPANY =================
@@ -672,28 +757,25 @@ def company_details(request, company_id):
 
 @login_required
 def virtual_interview(request):
-    company_name = request.GET.get('company', 'General')
+    company_name   = request.GET.get('company', 'General')
     interview_type = request.GET.get('type', 'hr')
     return render(request, 'virtual_interview.html', {'company_name': company_name, 'interview_type': interview_type})
+
 
 @csrf_exempt
 @login_required
 def generate_tech_questions(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)
+            data     = json.loads(request.body)
             language = data.get('language', 'Python')
-            prompt = f"Generate exactly 9 technical interview questions for a candidate specializing in {language}. Return ONLY valid JSON as a list of strings: [\"question 1\", \"question 2\", ...]"
-            
+            prompt   = f"Generate exactly 9 technical interview questions for a candidate specializing in {language}. Return ONLY valid JSON as a list of strings: [\"question 1\", \"question 2\", ...]"
             response = gemini_generate(prompt)
-            raw = response.text.strip()
-            
-            # Clean markdown
+            raw      = response.text.strip()
             if "```" in raw:
                 raw = raw.split("```")[1]
                 if raw.startswith("json"):
                     raw = raw[4:]
-            
             questions = json.loads(raw.strip())
             return JsonResponse({'status': 'success', 'questions': questions[:9]})
         except Exception as e:
@@ -701,58 +783,45 @@ def generate_tech_questions(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
-#============perform_full_interview_analysis=======
+
+# ================= INTERVIEW ANALYSIS =================
 
 def perform_full_interview_analysis(interview):
-    """Helper to run the complete AI analysis pipeline automatically."""
     print(f"🎬 Starting automatic analysis for Interview ID: {interview.id}")
-    
-    # 1. Extract Audio
+
     audio_path = extract_audio_from_video(interview.video_file)
     if not audio_path:
         print("❌ Audio extraction failed during automatic processing")
         return False
 
-    # 2. Transcribe with Whisper
     print("🎤 Transcribing...")
     whisper_model = get_model()
-    result = whisper_model.transcribe(audio_path)
-    transcript = result.get("text", "")
+    result        = whisper_model.transcribe(audio_path)
+    transcript    = result.get("text", "")
     interview.transcript = transcript
     print(f"📝 Transcript length: {len(transcript)}")
 
-    # 3. Analyze with Gemini
     print("🧠 Analyzing with Gemini...")
     analysis = analyze_transcript(transcript)
-    
-    content_score = analysis.get("score", 70)
-    confidence_score = interview.confidence_score
+
+    content_score     = analysis.get("score", 70)
+    confidence_score  = interview.confidence_score
     eye_contact_score = interview.eye_contact_score
-    
-    # Weighted Score Calculation
-    final_score = int((content_score * 0.6) + (confidence_score * 0.2) + (eye_contact_score * 0.2))
+    final_score       = int((content_score * 0.6) + (confidence_score * 0.2) + (eye_contact_score * 0.2))
 
-    interview.ai_score = max(0, min(100, final_score))
+    interview.ai_score    = max(0, min(100, final_score))
     interview.ai_feedback = f"{analysis.get('feedback', '')} \n\nBehavioral Analysis: {analysis.get('behavioral_feedback', 'Processed automatically.')}"
-    
-    strengths = analysis.get("strengths")
-    weaknesses = analysis.get("weaknesses")
 
-    if not strengths:
-        strengths = ["Good communication", "Willing to answer", "Basic understanding"]
-    if not weaknesses:
-        weaknesses = ["Needs more clarity", "Lack of examples", "Short answers"]
+    strengths  = analysis.get("strengths")  or ["Good communication", "Willing to answer", "Basic understanding"]
+    weaknesses = analysis.get("weaknesses") or ["Needs more clarity", "Lack of examples", "Short answers"]
 
-    interview.strengths = json.dumps(strengths)
+    interview.strengths  = json.dumps(strengths)
     interview.weaknesses = json.dumps(weaknesses)
-
-    # ✅ THIS WAS MISSING — save everything to the database
     interview.save()
 
-    print("✅ Strengths:", strengths)
-    print("✅ Weaknesses:", weaknesses)
     print(f"✅ Automatic analysis complete for Interview ID: {interview.id}")
     return True
+
 
 @csrf_exempt
 @login_required
@@ -760,12 +829,12 @@ def save_interview(request):
     if request.method == 'POST':
         video_blob   = request.FILES.get('video')
         company_name = request.POST.get('company_name', 'General')
-        
+
         try:
             confidence_score = int(float(request.POST.get('confidence_score', 0)))
         except (ValueError, TypeError):
             confidence_score = 0
-            
+
         try:
             eye_contact_score = int(float(request.POST.get('eye_contact_score', 0)))
         except (ValueError, TypeError):
@@ -774,30 +843,26 @@ def save_interview(request):
         if video_blob:
             student   = request.user.studentprofile
             interview = InterviewSession.objects.create(
-                student=student, 
-                company_name=company_name, 
+                student=student,
+                company_name=company_name,
                 video_file=video_blob,
                 confidence_score=confidence_score,
                 eye_contact_score=eye_contact_score
             )
 
-            # ✅ AI Analysis with behavioral context
             try:
                 prompt = f"""
-Analyze this interview for {company_name}. 
-The candidate had the following behavioral metrics captured in real-time:
+Analyze this interview for {company_name}.
+Candidate behavioral metrics:
 - Confidence Score: {confidence_score}%
 - Eye Contact Score: {eye_contact_score}%
-
-Provide an evaluation based on the candidate's performance. Consider both behavioral metrics and the likely content of an interview for this company.
 
 Return ONLY valid JSON:
 {{
   "content_score": 0-100,
-  "behavioral_feedback": "specifically about confidence and eye contact",
-  "general_feedback": "overall performance and suggestions",
-  "transcript": "suggested transcript summary"
-
+  "behavioral_feedback": "about confidence and eye contact",
+  "general_feedback": "overall performance",
+  "transcript": "summary",
   "strengths": ["point1", "point2", "point3"],
   "weaknesses": ["point1", "point2", "point3"]
 }}
@@ -810,11 +875,9 @@ Return ONLY valid JSON:
                         raw = raw[4:]
                 data = json.loads(raw.strip())
 
-                # Weighted Score Calculation
-                # 60% Content, 20% Confidence, 20% Eye Contact
                 content_score = data.get('content_score', 70)
-                final_score = int((content_score * 0.6) + (confidence_score * 0.2) + (eye_contact_score * 0.2))
-                
+                final_score   = int((content_score * 0.6) + (confidence_score * 0.2) + (eye_contact_score * 0.2))
+
                 interview.ai_score    = max(0, min(100, final_score))
                 interview.ai_feedback = f"{data.get('general_feedback', '')} \n\nBehavioral Analysis: {data.get('behavioral_feedback', '')}"
                 interview.transcript  = data.get('transcript', 'Transcript summary generated.')
@@ -822,63 +885,36 @@ Return ONLY valid JSON:
 
             except Exception as e:
                 print("AI ANALYSIS ERROR:", e)
-                # Fallback weighted score if AI fails
-                final_score = int((75 * 0.6) + (confidence_score * 0.2) + (eye_contact_score * 0.2))
+                final_score           = int((75 * 0.6) + (confidence_score * 0.2) + (eye_contact_score * 0.2))
                 interview.ai_score    = final_score
-                interview.ai_feedback = "AI analysis encountered an error, but your behavioral scores were factored in. Focus on clear articulation."
+                interview.ai_feedback = "AI analysis encountered an error, but your behavioral scores were factored in."
                 interview.transcript  = "[Automated Summary due to analysis error]"
                 interview.save()
 
-            # 🔥 NEW: AUTOMATIC FULL PROCESSING (Transcription + Detailed Analysis)
-            # This runs synchronously during the save. In a production app, this would be a background task (Celery).
             perform_full_interview_analysis(interview)
-
             return JsonResponse({'status': 'success', 'message': 'Interview saved and processed!', 'id': interview.id})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
-
 def extract_audio_from_video(video_field):
     try:
-        # Step 1: Get full video path
-        video_path = video_field.path   # VERY IMPORTANT
-
-        # Step 2: Create output audio path
-        base_name = os.path.splitext(os.path.basename(video_path))[0]
-        audio_filename = base_name + ".wav"
-        
-        audio_folder = os.path.join(settings.MEDIA_ROOT, "audio")
+        video_path    = video_field.path
+        base_name     = os.path.splitext(os.path.basename(video_path))[0]
+        audio_folder  = os.path.join(settings.MEDIA_ROOT, "audio")
         os.makedirs(audio_folder, exist_ok=True)
-
-        audio_path = os.path.join(audio_folder, audio_filename)
-
-        # Step 3: FFmpeg command
-        command = [
-            "ffmpeg",
-            "-i", video_path,
-            "-vn",              # no video
-            "-acodec", "pcm_s16le",  # high quality WAV
-            "-ar", "16000",
-            "-ac", "1",
-            audio_path
-        ]
-
-        # Step 4: Run command
+        audio_path    = os.path.join(audio_folder, base_name + ".wav")
+        command = ["ffmpeg", "-i", video_path, "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", audio_path]
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-
         print("✅ Audio extracted:", audio_path)
-
         return audio_path
-
     except subprocess.CalledProcessError as e:
         print("❌ FFmpeg error:", e.stderr.decode())
         return None
-
     except Exception as e:
         print("❌ General error:", str(e))
         return None
-    
+
 
 def process_interview(request, interview_id):
     interview = InterviewSession.objects.get(id=interview_id)
@@ -886,15 +922,10 @@ def process_interview(request, interview_id):
     return redirect('interview_detail', interview_id=interview.id)
 
 
-# ================= Transcript Analyze =================
 def analyze_transcript(transcript):
-    import json
-
     prompt = f"""
 You are an expert HR interviewer.
-
 Analyze the following interview transcript.
-
 Transcript:
 {transcript}
 
@@ -902,7 +933,6 @@ INSTRUCTIONS:
 - Always return at least 3 strengths
 - Always return at least 3 weaknesses
 - Be specific and meaningful
-- Do NOT return empty lists
 
 OUTPUT FORMAT (STRICT JSON ONLY):
 {{
@@ -912,26 +942,20 @@ OUTPUT FORMAT (STRICT JSON ONLY):
   "feedback": "detailed feedback"
 }}
 """
-
     response = gemini_generate(prompt)
     raw = response.text.strip()
-
-    # Clean markdown
     if "```" in raw:
         raw = raw.split("```")[1]
         if raw.startswith("json"):
             raw = raw[4:]
-
-    print("🔥 RAW GEMINI RESPONSE:", raw)  # DEBUG
-
+    print("🔥 RAW GEMINI RESPONSE:", raw)
     data = json.loads(raw.strip())
-
     return data
+
 
 @login_required
 def interview_results(request):
     try:
-        # Temporary trigger to apply pending migrations
         call_command('migrate', interactive=False)
     except Exception as e:
         print(f"Migration error: {e}")
@@ -939,20 +963,16 @@ def interview_results(request):
     interviews = InterviewSession.objects.filter(student=student).order_by('-created_at')
     return render(request, 'interview_results.html', {'interviews': interviews})
 
-#=====interview details====================
 
 @login_required
 def interview_detail(request, interview_id):
     interview = get_object_or_404(
         InterviewSession, id=interview_id, student=request.user.studentprofile
     )
-    
-    # Parse strengths and weaknesses from JSON strings
     try:
         strengths = json.loads(interview.strengths) if interview.strengths else []
     except (json.JSONDecodeError, TypeError):
         strengths = []
-
     try:
         weaknesses = json.loads(interview.weaknesses) if interview.weaknesses else []
     except (json.JSONDecodeError, TypeError):
@@ -963,6 +983,7 @@ def interview_detail(request, interview_id):
         'strengths': strengths,
         'weaknesses': weaknesses,
     })
+
 
 @login_required
 def delete_interview(request, interview_id):
@@ -978,5 +999,69 @@ def delete_interview(request, interview_id):
             return JsonResponse({'status': 'error', 'message': 'Interview not found.'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
-
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+
+# ================= AI QUESTION GENERATION =================
+
+@csrf_exempt
+def generate_ai_questions(request):
+    if request.method == 'POST':
+        try:
+            body        = json.loads(request.body)
+            topic_label = body.get('topic', 'General')
+
+            prompt = f"""You are an expert exam question creator for placement aptitude tests in India.
+Generate exactly 50 unique multiple-choice questions for the topic: "{topic_label}".
+STRICT RULES:
+- Each question must have exactly 4 options
+- Only one option is correct
+- Return ONLY valid JSON, no markdown, no backticks
+
+Exact JSON structure:
+{{"questions": [{{"question": "Question text?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct": 0, "explanation": "One sentence explanation."}}]}}
+Generate all 50 questions now."""
+
+            print(f"Calling Gemini for topic: {topic_label}")
+            response = gemini_generate(prompt)
+            raw      = response.text.strip()
+            print(f"Gemini raw response length: {len(raw)}")
+
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            raw = raw.strip()
+
+            import re
+            raw = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', raw)
+            raw = re.sub(r'(?<!\\)\n', ' ', raw)
+            raw = re.sub(r'(?<!\\)\r', '', raw)
+            raw = re.sub(r'(?<!\\)\t', ' ', raw)
+            raw = raw.strip()
+
+            parsed    = json.loads(raw)
+            questions = parsed.get('questions', [])
+            print(f"Parsed {len(questions)} questions successfully")
+            return JsonResponse({'status': 'success', 'questions': questions})
+
+        except json.JSONDecodeError as e:
+            print(f"JSON Parse Error: {e}")
+            try:
+                import re
+                raw = re.sub(r'[\x00-\x1f\x7f]', ' ', raw)
+                raw = re.sub(r',\s*}', '}', raw)
+                raw = re.sub(r',\s*]', ']', raw)
+                parsed    = json.loads(raw)
+                questions = parsed.get('questions', [])
+                return JsonResponse({'status': 'success', 'questions': questions})
+            except Exception as e2:
+                print(f"Fallback also failed: {e2}")
+                return JsonResponse({'status': 'error', 'message': f'JSON parse error: {str(e)}'}, status=500)
+        except Exception as e:
+            print(f"generate_ai_questions ERROR: {e}")
+            import traceback
+            traceback.print_exc()
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'POST only'}, status=405)
