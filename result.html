@@ -1,5 +1,3 @@
-RESULT.HTML----FILE
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -48,8 +46,7 @@ body::before {
 }
 .navbar-brand {
   font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
-  background:var(--gradient); -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent; background-clip:text; white-space:nowrap;
+  color:#0aa3b5; white-space:nowrap; display:flex; align-items:center; gap:8px;
 }
 .navbar-links { display:flex; align-items:center; gap:4px; }
 .navbar-links a {
@@ -213,7 +210,7 @@ body::before {
 .tips-card {
   background:var(--surface); border:1px solid var(--border);
   border-radius:20px; padding:24px; box-shadow:var(--glow);
-  animation:fadeUp 0.5s 0.2s ease both;
+  animation:fadeUp 0.5s 0.2s ease both; margin-bottom:24px;
 }
 .tips-card h3 { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; color:var(--ink); margin-bottom:14px; }
 .tip-row {
@@ -224,18 +221,222 @@ body::before {
 .tip-row:last-child { border-bottom:none; }
 .tip-row i { color:var(--teal); font-size:0.75rem; margin-top:3px; flex-shrink:0; }
 
+/* ══════════════════════════════════════
+   AI GENERATE BUTTON + SECTION
+══════════════════════════════════════ */
+.ai-generate-banner {
+  background: linear-gradient(135deg, #062a2e 0%, #0a3d44 40%, #0d1b2a 100%);
+  border: 1px solid rgba(10,163,181,0.35);
+  border-radius: 20px; padding: 32px 28px; text-align: center;
+  box-shadow: 0 8px 40px rgba(10,163,181,0.18);
+  animation: fadeUp 0.5s 0.25s ease both; margin-bottom: 24px;
+  position: relative; overflow: hidden;
+}
+.ai-generate-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(10,163,181,0.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+.ai-banner-icon {
+  font-size: 2rem; margin-bottom: 12px; display: block;
+  background: linear-gradient(135deg, #4dd9e8, #0aa3b5);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.ai-banner-title {
+  font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800;
+  color: white; margin-bottom: 8px;
+}
+.ai-banner-sub { font-size: 0.83rem; color: rgba(255,255,255,0.6); margin-bottom: 24px; line-height: 1.6; }
+.ai-generate-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
+  color: white; border: none; border-radius: 14px;
+  font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 800;
+  cursor: pointer; transition: all 0.25s;
+  box-shadow: 0 4px 20px rgba(10,163,181,0.45);
+  letter-spacing: 0.2px;
+}
+.ai-generate-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(10,163,181,0.55); }
+.ai-generate-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.ai-generate-btn .btn-spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;
+  display: none;
+}
+.ai-generate-btn.loading .btn-spinner { display: block; }
+.ai-generate-btn.loading .btn-icon { display: none; }
+
+/* AI QUESTIONS SECTION */
+.ai-questions-section {
+  display: none; animation: fadeUp 0.5s ease both; margin-bottom: 24px;
+}
+.ai-questions-section.visible { display: block; }
+.ai-questions-header {
+  background: linear-gradient(135deg, #062a2e, #0a3d44);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ai-questions-header-left { display: flex; align-items: center; gap: 12px; }
+.ai-q-icon {
+  width: 40px; height: 40px; border-radius: 11px;
+  background: linear-gradient(135deg, #0aa3b5, #088a9a);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 1rem;
+}
+.ai-q-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: white; margin-bottom: 2px; }
+.ai-q-sub { font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+.ai-q-count-badge {
+  background: rgba(10,163,181,0.25); color: #7de8f0;
+  border: 1px solid rgba(10,163,181,0.4); border-radius: 20px;
+  padding: 5px 14px; font-family: 'Syne', sans-serif;
+  font-size: 0.72rem; font-weight: 800;
+}
+
+/* LOADING STATE */
+.ai-loading-state {
+  background: var(--surface); border: 1px solid rgba(10,163,181,0.2);
+  border-top: none; border-radius: 0 0 20px 20px;
+  padding: 48px; text-align: center;
+}
+.ai-loading-pulse {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, #0aa3b5, #088a9a);
+  margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 1.4rem;
+  animation: aiPulse 1.5s ease-in-out infinite;
+}
+.ai-loading-text { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.ai-loading-sub { font-size: 0.8rem; color: var(--muted); }
+.ai-loading-bar {
+  width: 200px; height: 3px; background: var(--border); border-radius: 99px;
+  margin: 20px auto 0; overflow: hidden;
+}
+.ai-loading-bar-fill {
+  height: 100%; background: linear-gradient(90deg, #0aa3b5, #088a9a);
+  border-radius: 99px; animation: loadBar 2.5s ease-in-out infinite;
+}
+
+/* AI QUESTION CARDS */
+.ai-questions-body {
+  background: var(--surface); border: 1px solid rgba(10,163,181,0.15);
+  border-top: none; border-radius: 0 0 20px 20px; padding: 20px;
+}
+.ai-q-card {
+  border: 1.5px solid var(--border); border-radius: 16px;
+  margin-bottom: 12px; overflow: hidden; transition: border-color 0.2s;
+}
+.ai-q-card:last-child { margin-bottom: 0; }
+.ai-q-card:hover { border-color: rgba(10,163,181,0.35); }
+.ai-q-card-header {
+  padding: 16px 20px; cursor: pointer;
+  display: flex; align-items: flex-start; gap: 12px;
+  user-select: none;
+}
+.ai-q-num {
+  font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 800;
+  width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--teal-dim); color: var(--teal); margin-top: 1px;
+}
+.ai-q-text {
+  font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700;
+  color: var(--ink); line-height: 1.5; flex: 1;
+}
+.ai-q-reveal-hint {
+  font-size: 0.68rem; font-weight: 700; color: var(--teal);
+  background: var(--teal-dim); border: 1px solid rgba(10,163,181,0.25);
+  border-radius: 20px; padding: 3px 10px; white-space: nowrap; flex-shrink: 0;
+  margin-top: 2px; transition: all 0.2s;
+}
+.ai-q-card.revealed .ai-q-reveal-hint {
+  background: var(--green-dim); color: var(--green);
+  border-color: rgba(34,197,94,0.25);
+}
+.ai-q-reveal-hint i { font-size: 0.6rem; }
+
+/* Answer panel */
+.ai-q-answer-panel {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.ai-q-card.revealed .ai-q-answer-panel { max-height: 600px; }
+.ai-q-answer-inner {
+  padding: 0 20px 18px;
+  border-top: 1px solid var(--border);
+  margin-top: 0;
+}
+.ai-q-options-list { display: flex; flex-direction: column; gap: 7px; margin: 14px 0 14px; }
+.ai-q-opt {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 13px; border-radius: 11px;
+  font-size: 0.81rem; border: 1.5px solid var(--border);
+  background: var(--bg); color: var(--slate);
+}
+.ai-q-opt.correct {
+  border-color: rgba(34,197,94,0.4); background: var(--green-dim);
+  color: #15803d; font-weight: 600;
+}
+.ai-q-opt-letter {
+  font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 800;
+  width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface); color: var(--muted);
+}
+.ai-q-opt.correct .ai-q-opt-letter { background: var(--green); color: white; }
+.ai-q-correct-badge {
+  margin-left: auto; font-size: 0.6rem; font-weight: 800;
+  background: var(--green); color: white; padding: 2px 8px; border-radius: 99px;
+}
+.ai-q-explanation {
+  background: linear-gradient(135deg, rgba(10,163,181,0.07), rgba(10,163,181,0.03));
+  border: 1px solid rgba(10,163,181,0.2); border-radius: 12px;
+  padding: 12px 16px; margin-top: 4px;
+}
+.ai-q-explanation-label {
+  font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 800;
+  color: var(--teal); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 5px;
+}
+.ai-q-explanation-text { font-size: 0.81rem; color: var(--slate); line-height: 1.65; }
+
+/* Error state */
+.ai-error-state {
+  background: var(--surface); border: 1px solid rgba(239,68,68,0.2);
+  border-top: none; border-radius: 0 0 20px 20px;
+  padding: 40px; text-align: center;
+}
+.ai-error-icon { font-size: 2rem; color: var(--red); margin-bottom: 12px; }
+.ai-error-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.ai-error-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; }
+.ai-retry-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 22px; border-radius: 10px; font-family: 'Syne', sans-serif;
+  font-size: 0.8rem; font-weight: 700; border: none; cursor: pointer;
+  background: linear-gradient(135deg, #0aa3b5, #088a9a); color: white;
+  box-shadow: 0 4px 14px rgba(10,163,181,0.3); transition: all 0.2s;
+}
+.ai-retry-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(10,163,181,0.4); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes aiPulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(10,163,181,0.4); }
+  50% { transform: scale(1.08); box-shadow: 0 0 0 12px rgba(10,163,181,0); }
+}
+@keyframes loadBar { 0% { width:0; margin-left:0; } 50% { width:60%; margin-left:20%; } 100% { width:0; margin-left:100%; } }
 @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
 
 @media(max-width:600px) {
   .actions-grid { grid-template-columns:1fr; }
   .score-hero { padding:32px 20px; }
   .proctor-report { flex-direction:column; align-items:flex-start; }
+  .ai-questions-header { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ── Inject Django URLs for JS ── -->
 <script>
   const URL_TEST      = "{% url 'test' %}";
   const URL_RESULT    = "{% url 'result' %}";
@@ -244,7 +445,7 @@ body::before {
 </script>
 
 <nav class="navbar">
-  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <div class="navbar-brand"><i class="fas fa-bullseye"></i> Smart Placement Portal</div>
   <div class="navbar-links">
     <a href="{% url 'dashboard' %}">Dashboard</a>
     <a href="{% url 'companies' %}">Companies</a>
@@ -255,9 +456,7 @@ body::before {
     <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'jobs' %}">Jobs</a>
   </div>
-  <div class="navbar-right">
-    <div style="width: 42px;"></div>
-  </div>
+  <div class="navbar-right"><div style="width:42px;"></div></div>
 </nav>
 
 <div class="main">
@@ -333,11 +532,45 @@ body::before {
     <div id="tipsContainer"></div>
   </div>
 
+  <!-- ══════════════════════════════════════
+       AI GENERATE MORE QUESTIONS BANNER
+  ══════════════════════════════════════ -->
+  <div class="ai-generate-banner">
+    <span class="ai-banner-icon"><i class="fas fa-wand-magic-sparkles"></i></span>
+    <div class="ai-banner-title">Want More Practice?</div>
+    <div class="ai-banner-sub">
+      Generate <strong style="color:rgba(255,255,255,0.9);">50 fresh AI-created questions</strong> tailored exactly to your topic.<br>
+      Answers are hidden — click any question to reveal the answer with a full explanation.
+    </div>
+    <button class="ai-generate-btn" id="aiGenerateBtn" onclick="generateAIQuestions()">
+      <div class="btn-spinner"></div>
+      <i class="fas fa-wand-magic-sparkles btn-icon"></i>
+      Generate More Practice Questions with AI
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       AI QUESTIONS SECTION (shown after generate)
+  ══════════════════════════════════════ -->
+  <div class="ai-questions-section" id="aiQuestionsSection">
+    <div class="ai-questions-header">
+      <div class="ai-questions-header-left">
+        <div class="ai-q-icon"><i class="fas fa-robot"></i></div>
+        <div>
+          <div class="ai-q-title">AI-Generated Practice Questions</div>
+          <div class="ai-q-sub" id="aiQSub">Click any question to reveal answer & explanation</div>
+        </div>
+      </div>
+      <div class="ai-q-count-badge" id="aiQCountBadge">50 Questions</div>
+    </div>
+    <div id="aiQuestionsBody"></div>
+  </div>
+
 </div>
 
 <script>
 /* ══════════════════════════════════════════
-   QUESTION BANK (mirrors test.html)
+   QUESTION BANK
 ══════════════════════════════════════════ */
 const QUESTION_BANK = {
   quantitative: [
@@ -412,66 +645,11 @@ const QUESTION_BANK = {
     { q:'Counting sort works best when:', options:['Data is random','Data range is small','Data is large','Data is strings'], answer:1 },
     { q:'Heap sort uses which data structure?', options:['Stack','Queue','Heap','Tree'], answer:2 },
   ],
-  tcs_numerical: [
-    { q:'If x : y = 3 : 4 and y : z = 2 : 3, find x : z.', options:['1:2','3:8','1:4','2:3'], answer:0 },
-    { q:'Compound Interest on ₹1000 at 10% for 2 years?', options:['₹200','₹210','₹220','₹230'], answer:1 },
-    { q:'Speed of boat in still water is 10 km/h, stream speed 2 km/h. Upstream speed?', options:['6 km/h','8 km/h','10 km/h','12 km/h'], answer:1 },
-    { q:'Two numbers are in ratio 5:3. Their HCF is 4. Sum of numbers?', options:['28','32','36','40'], answer:1 },
-    { q:'A can do work in 10 days, B in 15 days. Together in?', options:['4 days','5 days','6 days','7 days'], answer:2 },
-    { q:'If 20% of x = 80, then x = ?', options:['300','350','400','450'], answer:2 },
-    { q:'Distance = 240 km, time = 4 hours. Speed = ?', options:['50 km/h','55 km/h','60 km/h','65 km/h'], answer:2 },
-    { q:'Find the odd number: 121, 144, 169, 196, 204', options:['121','196','204','169'], answer:2 },
-    { q:'Profit % if CP = ₹400 and SP = ₹500?', options:['20%','22%','25%','30%'], answer:2 },
-    { q:'Average of first 10 natural numbers?', options:['4.5','5','5.5','6'], answer:2 },
-  ],
-  tcs_verbal: [
-    { q:'Choose the word closest in meaning to DILIGENT:', options:['Lazy','Hardworking','Careless','Slow'], answer:1 },
-    { q:'Choose the antonym of ABUNDANT:', options:['Plenty','Scarce','Rich','Full'], answer:1 },
-    { q:'Correct form: "Neither of the boys __ present."', options:['are','were','was','been'], answer:2 },
-    { q:'One word for "Study of living organisms":', options:['Geology','Biology','Zoology','Botany'], answer:1 },
-    { q:'Choose correct sentence:', options:['I have saw him.','I seen him.','I have seen him.','I seed him.'], answer:2 },
-    { q:'Idiom "once in a blue moon" means:', options:['Very rarely','Very often','Never','Always'], answer:0 },
-    { q:'"Are you ready?" he asked. (Indirect speech) →', options:['He asked if I was ready.','He said am I ready.','He asked am I ready.','He said if I was ready.'], answer:0 },
-    { q:'Prefix meaning "against":', options:['Pro-','Anti-','Re-','Pre-'], answer:1 },
-    { q:'Correctly spelled word:', options:['Recieve','Achieve','Beleive','Freind'], answer:1 },
-    { q:'Conjunction in "I studied hard but failed":', options:['I','hard','but','failed'], answer:2 },
-  ],
-  tcs_programming: [
-    { q:'Which data structure uses LIFO?', options:['Queue','Stack','Array','Linked List'], answer:1 },
-    { q:'Output of: print(2**10) in Python?', options:['20','100','1024','2048'], answer:2 },
-    { q:'What does OOP stand for?', options:['Object Oriented Programming','Object Output Programming','Open Oriented Programming','None'], answer:0 },
-    { q:'Which loop always executes at least once?', options:['for','while','do-while','foreach'], answer:2 },
-    { q:'Function that calls itself is:', options:['Iteration','Recursion','Overloading','Polymorphism'], answer:1 },
-    { q:'Which is NOT a primitive data type in Java?', options:['int','float','String','boolean'], answer:2 },
-    { q:'Time complexity of binary search?', options:['O(n)','O(n²)','O(log n)','O(1)'], answer:2 },
-    { q:'Which operator checks equality in Python?', options:['=','==','===','!='], answer:1 },
-    { q:'What is the output of 10 % 3?', options:['3','1','0','2'], answer:1 },
-    { q:'Abstract class in OOP:', options:['Can be instantiated','Cannot be instantiated','Has no methods','Is same as interface'], answer:1 },
-  ],
-  tcs_coding: [
-    { q:'Fibonacci sequence: 0,1,1,2,3,5,__ ?', options:['7','8','9','10'], answer:1 },
-    { q:'How many iterations does "for i in range(1,6)" run?', options:['4','5','6','7'], answer:1 },
-    { q:'Swap a=3, b=5 without temp: a=a+b; b=a-b; a=a-b. Final values?', options:['a=3,b=5','a=5,b=3','a=5,b=5','a=3,b=3'], answer:1 },
-    { q:'Which is used to handle exceptions in Python?', options:['try-catch','try-except','if-else','switch-case'], answer:1 },
-    { q:'What does len([1,2,3,4,5]) return?', options:['4','5','6','3'], answer:1 },
-    { q:'Sum of digits of 245?', options:['9','10','11','12'], answer:2 },
-    { q:'Which keyword exits a loop in Python?', options:['exit','stop','break','return'], answer:2 },
-    { q:'Output of: print(type(3.14))?', options:["<class 'int'>","<class 'float'>","<class 'double'>","<class 'str'>"], answer:1 },
-    { q:'Index of last element in a list of size n?', options:['n','n+1','n-1','n-2'], answer:2 },
-    { q:'Which sorting algorithm has O(n log n) in ALL cases?', options:['Quick sort','Bubble sort','Merge sort','Insertion sort'], answer:2 },
-  ],
-  tcs_data: [
-    { q:'Pie chart: A=40%, B=30%, C=20%, D=10%. Total=500. How many in B?', options:['100','125','150','175'], answer:2 },
-    { q:'Bar chart: Sales Jan=200, Feb=250, Mar=300. Average monthly sales?', options:['230','250','270','280'], answer:1 },
-    { q:'Profit Q1=₹20000, increases 10% each quarter. Q2 profit?', options:['₹21000','₹22000','₹23000','₹24000'], answer:1 },
-    { q:'Students passed: 2021=80, 2022=90, 2023=100. % increase 2021→2023?', options:['20%','25%','30%','35%'], answer:1 },
-    { q:'Population: 2010=1M, 2020=1.5M. % growth?', options:['40%','45%','50%','55%'], answer:2 },
-    { q:'Boys:Girls = 3:2. Total = 500. How many girls?', options:['150','175','200','225'], answer:2 },
-    { q:'Average speed: 60 km/h for 2h, 90 km/h for 3h. Overall average?', options:['72 km/h','75 km/h','78 km/h','80 km/h'], answer:2 },
-    { q:'Venn diagram: Only A=10, Only B=15, A∩B=5. Total in A or B?', options:['25','28','30','32'], answer:2 },
-    { q:'Income=₹50000, savings=30% of income. Expenditure?', options:['₹30000','₹32000','₹35000','₹40000'], answer:2 },
-    { q:'Runs scored: 45, 67, 89, 23, 56. Median?', options:['45','56','67','89'], answer:1 },
-  ],
+  tcs_numerical: [],
+  tcs_verbal: [],
+  tcs_programming: [],
+  tcs_coding: [],
+  tcs_data: [],
 };
 
 const TOPIC_META = {
@@ -515,9 +693,7 @@ const pct            = Math.round((score / total) * 100);
 const answersParam   = params.get('answers')              || '';
 const studentAnswers = answersParam ? answersParam.split(',').map(Number) : [];
 
-/* ══════════════════════════════════════════
-   SET ACTION BUTTON HREFS  ← KEY FIX
-══════════════════════════════════════════ */
+/* ── Action buttons ── */
 document.getElementById('retryBtn').href     = topicSlug ? URL_TEST + '?topic=' + topicSlug : URL_TEST;
 document.getElementById('companiesBtn').href = URL_COMPANIES;
 document.getElementById('allTestsBtn').href  = URL_TEST;
@@ -541,7 +717,6 @@ document.getElementById('statCorrect').textContent = score;
 document.getElementById('statWrong').textContent   = total - score;
 document.getElementById('statPct').textContent     = pct + '%';
 
-/* ── Grade badge ── */
 const badge   = document.getElementById('gradeBadge');
 const heading = document.getElementById('resultHeading');
 const msg     = document.getElementById('resultMsg');
@@ -584,33 +759,19 @@ if (!questions.length) {
     const correctAns = q.answer;
     const isSkipped  = studentAns === -1 || isNaN(studentAns);
     const isCorrect  = !isSkipped && studentAns === correctAns;
-
     const cardClass = isCorrect ? 'correct-ans' : (isSkipped ? 'skipped-ans' : 'wrong-ans');
     const numClass  = isCorrect ? 'correct' : (isSkipped ? 'skipped' : 'wrong');
     const iconName  = isCorrect ? 'fa-circle-check' : (isSkipped ? 'fa-circle-minus' : 'fa-circle-xmark');
     const iconClass = isCorrect ? 'correct' : (isSkipped ? 'skipped' : 'wrong');
-
     const optionsHTML = q.options.map((opt, idx) => {
-      let cls = '', badge = '';
-      if (idx === correctAns) {
-        cls   = 'correct-opt';
-        badge = `<span class="q-opt-badge">✓ Correct</span>`;
-      } else if (!isSkipped && idx === studentAns && !isCorrect) {
-        cls   = 'wrong-opt';
-        badge = `<span class="q-opt-badge">✗ Your answer</span>`;
-      }
-      return `<div class="q-opt ${cls}">
-        <div class="q-opt-label">${optionLetters[idx]}</div>
-        <span>${opt}</span>${badge}
-      </div>`;
+      let cls = '', badge2 = '';
+      if (idx === correctAns) { cls = 'correct-opt'; badge2 = `<span class="q-opt-badge">✓ Correct</span>`; }
+      else if (!isSkipped && idx === studentAns && !isCorrect) { cls = 'wrong-opt'; badge2 = `<span class="q-opt-badge">✗ Your answer</span>`; }
+      return `<div class="q-opt ${cls}"><div class="q-opt-label">${optionLetters[idx]}</div><span>${opt}</span>${badge2}</div>`;
     }).join('');
-
     const skippedHTML = isSkipped
-      ? `<div class="q-skipped-note"><i class="fas fa-triangle-exclamation"></i>
-          <span>Not answered. Correct: <strong>${optionLetters[correctAns]}: ${q.options[correctAns]}</strong></span>
-        </div>`
+      ? `<div class="q-skipped-note"><i class="fas fa-triangle-exclamation"></i><span>Not answered. Correct: <strong>${optionLetters[correctAns]}: ${q.options[correctAns]}</strong></span></div>`
       : '';
-
     reviewHTML += `
       <div class="q-review ${cardClass}">
         <div class="q-review-header">
@@ -656,6 +817,136 @@ if (violations === 0) {
   pDesc.textContent  = `Multiple violations (${violations}) detected. This result is under review.`;
   pStatus.textContent = 'Flagged'; pStatus.className = 'proctor-status-pill status-flagged';
 }
+
+/* ══════════════════════════════════════════════════════
+   AI QUESTION GENERATION
+   Calls Anthropic API to generate 50 topic-specific
+   MCQs with options, correct answer, and explanation.
+══════════════════════════════════════════════════════ */
+let aiQuestionsGenerated = false;
+
+async function generateAIQuestions() {
+  if (aiQuestionsGenerated) {
+    document.getElementById('aiQuestionsSection').scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  const btn = document.getElementById('aiGenerateBtn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  const section = document.getElementById('aiQuestionsSection');
+  section.classList.add('visible');
+  document.getElementById('aiQuestionsBody').innerHTML = `
+    <div class="ai-loading-state">
+      <div class="ai-loading-pulse"><i class="fas fa-robot"></i></div>
+      <div class="ai-loading-text">AI is crafting 50 questions for you…</div>
+      <div class="ai-loading-sub">Generating unique ${topic} questions with detailed explanations</div>
+      <div class="ai-loading-bar"><div class="ai-loading-bar-fill"></div></div>
+    </div>`;
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const topicLabel = TOPIC_META[topicSlug]?.label || topic;
+
+  try {
+    const response = await fetch('/generate-ai-questions/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}',
+      },
+      body: JSON.stringify({ topic: topicLabel })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.status !== 'success') throw new Error(data.message || 'Failed');
+    
+    const aiQs = data.questions;
+    if (!aiQs || !aiQs.length) throw new Error('No questions returned');
+
+    aiQuestionsGenerated = true;
+    renderAIQuestions(aiQs, topicLabel);
+
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.innerHTML = `<i class="fas fa-arrow-down btn-icon"></i> View Generated Questions`;
+    btn.onclick = () => document.getElementById('aiQuestionsSection').scrollIntoView({ behavior: 'smooth' });
+
+    document.getElementById('aiQCountBadge').textContent = `${aiQs.length} Questions`;
+    document.getElementById('aiQSub').textContent = `${aiQs.length} questions · Click any to reveal answer & explanation`;
+
+  } catch (err) {
+    console.error('AI generation error:', err);
+    document.getElementById('aiQuestionsBody').innerHTML = `
+      <div class="ai-error-state">
+        <div class="ai-error-icon"><i class="fas fa-circle-exclamation"></i></div>
+        <div class="ai-error-title">Generation Failed</div>
+        <div class="ai-error-sub">Something went wrong while generating questions. Please try again.</div>
+        <button class="ai-retry-btn" onclick="aiQuestionsGenerated=false; generateAIQuestions();">
+          <i class="fas fa-rotate-right"></i> Try Again
+        </button>
+      </div>`;
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.innerHTML = `<i class="fas fa-wand-magic-sparkles btn-icon"></i> Retry Generation`;
+  }
+}
+function renderAIQuestions(questions, topicLabel) {
+  const letters = ['A', 'B', 'C', 'D'];
+  let html = '<div class="ai-questions-body">';
+
+  questions.forEach((q, i) => {
+    const optionsHTML = (q.options || []).map((opt, idx) => {
+      const isCorrect = idx === q.correct;
+      return `
+        <div class="ai-q-opt ${isCorrect ? 'correct' : ''}">
+          <div class="ai-q-opt-letter">${letters[idx]}</div>
+          <span>${opt}</span>
+          ${isCorrect ? '<span class="ai-q-correct-badge">✓ Correct</span>' : ''}
+        </div>`;
+    }).join('');
+
+    html += `
+      <div class="ai-q-card" id="aiQCard${i}">
+        <div class="ai-q-card-header" onclick="toggleAIQuestion(${i})">
+          <div class="ai-q-num">${i + 1}</div>
+          <div class="ai-q-text">${q.question}</div>
+          <div class="ai-q-reveal-hint" id="aiQHint${i}">
+            <i class="fas fa-eye"></i> Reveal Answer
+          </div>
+        </div>
+        <div class="ai-q-answer-panel" id="aiQPanel${i}">
+          <div class="ai-q-answer-inner">
+            <div class="ai-q-options-list">${optionsHTML}</div>
+            <div class="ai-q-explanation">
+              <div class="ai-q-explanation-label">
+                <i class="fas fa-lightbulb"></i> Explanation
+              </div>
+              <div class="ai-q-explanation-text">${q.explanation || 'No explanation provided.'}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  html += '</div>';
+  document.getElementById('aiQuestionsBody').innerHTML = html;
+}
+
+function toggleAIQuestion(index) {
+  const card = document.getElementById(`aiQCard${index}`);
+  const hint = document.getElementById(`aiQHint${index}`);
+  const isRevealed = card.classList.toggle('revealed');
+  if (isRevealed) {
+    hint.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Answer';
+  } else {
+    hint.innerHTML = '<i class="fas fa-eye"></i> Reveal Answer';
+  }
+}
 </script>
 </body>
-</html> 
+</html>
