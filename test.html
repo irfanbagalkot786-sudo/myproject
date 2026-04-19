@@ -24,11 +24,7 @@
   --red:       #ef4444;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg); color:var(--ink);
-  min-height:100vh; overflow-x:hidden;
-}
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; overflow-x:hidden; }
 body::before {
   content:''; position:fixed; inset:0;
   background:
@@ -37,55 +33,50 @@ body::before {
   pointer-events:none; z-index:0;
 }
 .navbar {
-  position:sticky; top:0; z-index:100;
-  display:flex; justify-content:space-between; align-items:center;
-  padding:0 40px; height:64px;
-  background:rgba(255,255,255,0.88);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  box-shadow:0 1px 8px rgba(10,163,181,0.07);
+  position: sticky; top: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 32px; height: 62px;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(10,163,181,0.07);
+  flex-shrink: 0;
 }
 .navbar-brand {
-  font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
-  background:var(--gradient); -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent; background-clip:text; white-space:nowrap;
+  font-family: 'Syne', sans-serif; 
+  font-weight: 800;
+  font-size: 1.1rem;
+  color:#0aa3b5;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.navbar-links { display:flex; align-items:center; gap:4px; flex-wrap:nowrap; overflow-x:auto; }
+.navbar-links { display: flex; align-items: center; gap: 4px; }
 .navbar-links a {
-  color:var(--muted); text-decoration:none; font-size:0.8rem; font-weight:500;
-  padding:6px 12px; border-radius:8px; transition:all 0.2s; white-space:nowrap;
+  color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500;
+  padding: 6px 12px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
 }
-.navbar-links a:hover { color:var(--slate); background:var(--teal-dim); }
-.navbar-links a.active { color:var(--teal); background:var(--teal-dim); }
+.navbar-links a:hover { color: var(--slate); background: var(--teal-dim); }
+.navbar-links a.active { color: var(--teal); background: var(--teal-dim); }
+.navbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
-.main {
-  position:relative; z-index:1;
-  max-width:760px; margin:0 auto;
-  padding:40px 24px 60px;
-}
+.main { position:relative; z-index:1; max-width:760px; margin:0 auto; padding:40px 24px 60px; }
 
-/* ── TOPIC SELECTOR PANEL ── */
+/* TOPIC SELECTOR */
 .topic-selector-panel {
   background:var(--surface); border:1px solid var(--border);
   border-radius:20px; padding:24px 28px;
   box-shadow:var(--glow); margin-bottom:24px;
   animation:fadeUp 0.35s ease both;
 }
-.panel-toggle-row {
-  display:flex; align-items:center; justify-content:space-between; cursor:pointer;
-}
-.panel-header {
-  display:flex; align-items:center; gap:10px; margin-bottom:0;
-}
+.panel-toggle-row { display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+.panel-header { display:flex; align-items:center; gap:10px; }
 .panel-company-logo {
   width:38px; height:38px; border-radius:10px;
   display:flex; align-items:center; justify-content:center;
-  font-family:'Syne',sans-serif; font-weight:800; font-size:0.78rem;
-  color:white; flex-shrink:0;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:0.78rem; color:white; flex-shrink:0;
 }
-.panel-header-text h3 {
-  font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:800; color:var(--ink);
-}
+.panel-header-text h3 { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:800; color:var(--ink); }
 .panel-header-text p { font-size:0.75rem; color:var(--muted); margin-top:1px; }
 .panel-toggle-btn {
   display:flex; align-items:center; gap:6px;
@@ -118,9 +109,7 @@ body::before {
   transition:background 0.18s, border-color 0.18s;
 }
 .topic-select-btn:hover .tsb-icon-wrap,
-.topic-select-btn.active-topic .tsb-icon-wrap {
-  background:var(--teal); border-color:var(--teal); color:white;
-}
+.topic-select-btn.active-topic .tsb-icon-wrap { background:var(--teal); border-color:var(--teal); color:white; }
 .tsb-text { flex:1; }
 .tsb-name { font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700; line-height:1.2; }
 .tsb-qs { font-size:0.68rem; color:var(--muted); margin-top:1px; }
@@ -128,7 +117,7 @@ body::before {
 .topic-select-btn.active-topic .tsb-qs { color:var(--teal); }
 .tsb-arrow { font-size:0.62rem; color:var(--muted); flex-shrink:0; }
 
-/* ── TEST HEADER ── */
+/* TEST HEADER */
 .test-header {
   background:var(--surface); border:1px solid var(--border);
   border-radius:20px; padding:28px 32px;
@@ -136,10 +125,7 @@ body::before {
   animation:fadeUp 0.4s ease both;
   display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
 }
-.test-header-left h1 {
-  font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800;
-  color:var(--ink); margin-bottom:6px;
-}
+.test-header-left h1 { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; color:var(--ink); margin-bottom:6px; }
 .test-header-left p { font-size:0.85rem; color:var(--muted); }
 .topic-badge {
   display:none; align-items:center; gap:6px;
@@ -149,19 +135,15 @@ body::before {
   font-size:0.75rem; font-weight:700;
   white-space:nowrap; flex-shrink:0;
 }
-.topic-badge i { font-size:0.68rem; }
 
-/* ── QUESTION CARDS ── */
+/* QUESTIONS */
 .question-card {
   background:var(--surface); border:1px solid var(--border);
   border-radius:18px; padding:24px 28px;
   box-shadow:var(--glow); margin-bottom:16px;
   animation:fadeUp 0.4s ease both;
 }
-.question-text {
-  font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700;
-  color:var(--ink); margin-bottom:18px; line-height:1.5;
-}
+.question-text { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; color:var(--ink); margin-bottom:18px; line-height:1.5; }
 .options-list { display:flex; flex-direction:column; gap:10px; }
 .option-label {
   display:flex; align-items:center; gap:12px;
@@ -172,10 +154,9 @@ body::before {
 }
 .option-label:hover { border-color:var(--teal); background:var(--teal-dim); color:var(--teal-dark); }
 .option-label input[type="radio"] { accent-color:var(--teal); width:16px; height:16px; flex-shrink:0; }
-.option-label input[type="radio"]:checked + span { color:var(--teal-dark); font-weight:600; }
 .option-label:has(input:checked) { border-color:var(--teal); background:var(--teal-dim); }
 
-/* ── SUBMIT ── */
+/* SUBMIT */
 .submit-wrap { text-align:center; margin-top:32px; }
 .submit-btn {
   display:inline-flex; align-items:center; gap:10px;
@@ -187,215 +168,138 @@ body::before {
 }
 .submit-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(10,163,181,0.4); }
 
-/* ── NO TOPIC / LANDING ── */
+/* LANDING */
 .no-topic-state {
   background:var(--surface); border:1px solid var(--border);
-  border-radius:18px; padding:52px 28px; text-align:center;
-  box-shadow:var(--glow);
+  border-radius:18px; padding:52px 28px; text-align:center; box-shadow:var(--glow);
 }
 .no-topic-state i { font-size:2.4rem; color:var(--teal); margin-bottom:16px; display:block; }
-.no-topic-state h3 {
-  font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800;
-  color:var(--ink); margin-bottom:8px;
-}
+.no-topic-state h3 { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; color:var(--ink); margin-bottom:8px; }
 .no-topic-state p { font-size:0.85rem; color:var(--muted); line-height:1.65; }
 
-    /* ── COMPANY CARDS ── */
-    .company-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px; margin-top: 24px;
-    }
-    .company-card {
-      background: var(--surface); border: 1.5px solid var(--border);
-      border-radius: 20px; padding: 24px; text-align: center;
-      cursor: pointer; transition: all 0.2s; position: relative;
-      overflow: hidden; box-shadow: var(--glow);
-    }
-    .company-card:hover {
-      transform: translateY(-4px); border-color: var(--teal);
-      box-shadow: 0 12px 28px rgba(10,163,181,0.15);
-    }
-    .cc-logo {
-      width: 54px; height: 54px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
-      color: white; margin: 0 auto 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .cc-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
-    .cc-topics { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
-    /* ── COMPANY CARDS ── */
-    .company-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px; margin-top: 24px;
-    }
-    .company-card {
-      background: var(--surface); border: 1.5px solid var(--border);
-      border-radius: 20px; padding: 24px; text-align: center;
-      cursor: pointer; transition: all 0.2s; position: relative;
-      overflow: hidden; box-shadow: var(--glow);
-    }
-    .company-card:hover {
-      transform: translateY(-4px); border-color: var(--teal);
-      box-shadow: 0 12px 28px rgba(10,163,181,0.15);
-    }
-    .cc-logo {
-      width: 54px; height: 54px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
-      color: white; margin: 0 auto 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .cc-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
-    .cc-topics { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
-    /* ── COMPANY CARDS ── */
-    .company-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px; margin-top: 24px;
-    }
-    .company-card {
-      background: var(--surface); border: 1.5px solid var(--border);
-      border-radius: 20px; padding: 24px; text-align: center;
-      cursor: pointer; transition: all 0.2s; position: relative;
-      overflow: hidden; box-shadow: var(--glow);
-    }
-    .company-card:hover {
-      transform: translateY(-4px); border-color: var(--teal);
-      box-shadow: 0 12px 28px rgba(10,163,181,0.15);
-    }
-    .cc-logo {
-      width: 54px; height: 54px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
-      color: white; margin: 0 auto 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .cc-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
-    .cc-topics { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
-    /* ── PROCTORING HUD ── */
-    .proctor-status {
-      font-size: 0.65rem; color: var(--muted); display: flex; align-items: center; gap: 6px;
-      margin-top: 4px; font-weight: 700; text-transform: uppercase;
-    }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
-    .status-dot.active { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
-    .status-dot.error { background: #ff4444; }
-    
-    .ai-loading-overlay {
-      position: absolute; inset: 0; background: rgba(13,27,42,0.8);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: white; z-index: 10; font-size: 0.8rem; font-weight: 600;
-    }
-    .ai-spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: var(--teal); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
-    .proctor-hud {
-      position: fixed; bottom: 20px; right: 20px; z-index: 1000;
-      width: 200px; height: 150px; background: rgba(13,27,42,0.6);
-      backdrop-filter: blur(10px); border: 1.5px solid rgba(10,163,181,0.3);
-      border-radius: 16px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.3);
-      display: none;
-    }
-    .proctor-hud video { width:100%; height:100%; object-fit:cover; opacity:0.85; filter:grayscale(0.3); }
-    .proctor-label {
-      position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.5);
-      color:var(--teal); font-size:0.58rem; font-weight:800; padding:2px 6px;
-      border-radius:4px; text-transform:uppercase; letter-spacing:1px;
-    }
-    .detect-canvas { position:absolute; inset:0; z-index:2; pointer-events:none; }
-
-    /* ── VIOLATION OVERLAY ── */
-    .violation-overlay {
-      display: none; position: fixed; inset: 0; z-index: 2000;
-      background: rgba(13,27,42,0.85); backdrop-filter: blur(12px);
-      align-items: center; justify-content: center; padding: 24px;
-      animation: fadeIn 0.3s ease;
-    }
-    .violation-overlay.open { display: flex; }
-    .violation-box {
-      background: white; border-radius: 24px; width: 100%; max-width: 440px;
-      padding: 40px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.4);
-    }
-    .violation-icon {
-      width: 72px; height: 72px; background: rgba(239, 68, 68, 0.1);
-      color: var(--red); border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; font-size: 1.8rem; margin: 0 auto 24px;
-    }
-    .violation-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
-    .violation-desc { font-size: 0.95rem; color: var(--slate); margin-bottom: 30px; line-height: 1.6; }
-    .violation-btn {
-      padding: 14px 28px; background: var(--ink); color: white;
-      border: none; border-radius: 12px; font-family: 'Syne', sans-serif;
-      font-weight: 700; cursor: pointer; width: 100%;
-    }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(16px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-
-@media (max-width:600px) {
-  .navbar { padding:0 16px; }
-  .navbar-links a { padding:5px 8px; font-size:0.72rem; }
-  .test-header { flex-direction:column; padding:20px; }
-  .question-card { padding:18px 20px; }
-  .topic-grid { grid-template-columns:1fr; }
+.company-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin-top:0; }
+.company-card-sel {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:20px; padding:24px; text-align:center;
+  cursor:pointer; transition:all 0.2s; box-shadow:var(--glow);
 }
+.company-card-sel:hover { transform:translateY(-4px); border-color:var(--teal); box-shadow:0 12px 28px rgba(10,163,181,0.15); }
+.cc-logo {
+  width:54px; height:54px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
+  color:white; margin:0 auto 16px; box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+.cc-name { font-family:'Syne',sans-serif; font-size:1rem; font-weight:800; color:var(--ink); margin-bottom:4px; }
+.cc-topics { font-size:0.72rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+
+/* PROCTORING HUD */
+.proctor-hud {
+  position:fixed; bottom:20px; right:20px; z-index:1000;
+  width:200px; height:150px; background:rgba(13,27,42,0.6);
+  backdrop-filter:blur(10px); border:1.5px solid rgba(10,163,181,0.3);
+  border-radius:16px; overflow:hidden; box-shadow:0 12px 32px rgba(0,0,0,0.3);
+  display:none;
+}
+.proctor-hud video { width:100%; height:100%; object-fit:cover; opacity:0.85; }
+.proctor-label {
+  position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.5);
+  color:var(--teal); font-size:0.58rem; font-weight:800; padding:2px 6px;
+  border-radius:4px; text-transform:uppercase; letter-spacing:1px;
+}
+.ai-loading-overlay {
+  position:absolute; inset:0; background:rgba(13,27,42,0.8);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:white; z-index:10; font-size:0.8rem; font-weight:600;
+}
+.ai-spinner { width:20px; height:20px; border:3px solid rgba(255,255,255,0.3); border-top-color:var(--teal); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:10px; }
+
+/* VIOLATION OVERLAY */
+.violation-overlay {
+  display:none; position:fixed; inset:0; z-index:2000;
+  background:rgba(13,27,42,0.85); backdrop-filter:blur(12px);
+  align-items:center; justify-content:center; padding:24px;
+}
+.violation-overlay.open { display:flex; }
+.violation-box {
+  background:white; border-radius:24px; width:100%; max-width:440px;
+  padding:40px; text-align:center; box-shadow:0 40px 80px rgba(0,0,0,0.4);
+}
+.violation-icon {
+  width:72px; height:72px; background:rgba(239,68,68,0.1);
+  color:var(--red); border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-size:1.8rem; margin:0 auto 24px;
+}
+.violation-title { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; color:var(--ink); margin-bottom:12px; }
+.violation-desc { font-size:0.95rem; color:var(--slate); margin-bottom:30px; line-height:1.6; }
+.violation-btn {
+  padding:14px 28px; background:var(--ink); color:white;
+  border:none; border-radius:12px; font-family:'Syne',sans-serif;
+  font-weight:700; cursor:pointer; width:100%;
+}
+
+/* TIMER */
+.test-timer {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--ink); color:white;
+  border-radius:20px; padding:6px 14px;
+  font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700;
+  flex-shrink:0;
+}
+.test-timer.warning { background:#f59e0b; }
+.test-timer.danger  { background:var(--red); animation:pulse 1s infinite; }
+
+@keyframes spin { to { transform:rotate(360deg); } }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
 </style>
 </head>
 <body>
-  <!-- UNIFIED DATA INJECTION -->
-  {{ questions_json|json_script:"questions-data" }}
-  <script id="companies-data" type="application/json">
-    [
-      {% for co in companies %}
-        { "id": {{ co.id }}, "name": "{{ co.name|escapejs }}", "logo_text": "{{ co.logo_text|escapejs }}" }{% if not forloop.last %},{% endif %}
-      {% endfor %}
-    ]
-  </script>
 
-  <!-- PROCTORING OVERLAYS -->
-  <div id="violationOverlay" class="violation-overlay">
-    <div class="violation-box">
-      <div class="violation-icon"><i class="fas fa-triangle-exclamation"></i></div>
-      <div class="violation-title">Security Alert</div>
-      <div class="violation-desc" id="violationMsg">Violation detected! Please clear the area to resume.</div>
-      <button class="violation-btn" onclick="resumeTest()">I am ready to resume</button>
-    </div>
+<!-- ── Inject Django URLs for JS ── -->
+<script>
+  const URL_TEST      = "{% url 'test' %}";
+  const URL_RESULT    = "{% url 'result' %}";
+  const URL_COMPANIES = "{% url 'companies' %}";
+  const URL_DASHBOARD = "{% url 'dashboard' %}";
+  const URL_INTERVIEW = "{% url 'virtual_interview' %}";
+</script>
+
+<!-- VIOLATION OVERLAY -->
+<div id="violationOverlay" class="violation-overlay">
+  <div class="violation-box">
+    <div class="violation-icon"><i class="fas fa-triangle-exclamation"></i></div>
+    <div class="violation-title">Security Alert</div>
+    <div class="violation-desc" id="violationMsg">Violation detected! Please clear the area to resume.</div>
+    <button class="violation-btn" id="violationBtn" onclick="resumeTest()">I am ready to resume</button>
   </div>
+</div>
 
-  <div id="proctorHud" class="proctor-hud" style="display:none;">
-    <div class="ai-loading-overlay" id="aiLoading">
-      <div class="ai-spinner"></div>
-      <span>Initializing AI...</span>
-    </div>
-    <div class="proctor-label">AI Proctor HUD</div>
-    <video id="webcamView" autoplay muted playsinline></video>
-    <canvas id="detectCanvas" class="detect-canvas"></canvas>
-    <div class="proctor-status">
-      <div class="status-dot" id="statusDot"></div>
-      <span id="statusLabel">Camera Offline</span>
-    </div>
+<!-- PROCTOR HUD -->
+<div id="proctorHud" class="proctor-hud">
+  <div class="ai-loading-overlay" id="aiLoading">
+    <div class="ai-spinner"></div>
+    <span>Starting AI...</span>
   </div>
-
-  <!-- Django URL anchors -->
-  <span id="resultBaseUrl" data-url="{% url 'result' %}" style="display:none;"></span>
-  <span id="testBaseUrl"   data-url="{% url 'test' %}"   style="display:none;"></span>
-  <span id="saveAssessmentUrl" data-url="{% url 'save_assessment' %}" style="display:none;"></span>
+  <div class="proctor-label">AI Proctor</div>
+  <video id="webcamView" autoplay muted playsinline></video>
+</div>
 
 <nav class="navbar">
-  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+    <div class="navbar-brand"><i class="fas fa-bullseye"></i>
+      Smart Placement Portal</div>
   <div class="navbar-links">
     <a href="{% url 'dashboard' %}">Dashboard</a>
-    <a href="{% url 'student_profile' %}">Profile</a>
-    <a href="{% url 'skills' %}">Skills</a>
-    <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'companies' %}">Companies</a>
     <a href="{% url 'upload_resume' %}">Resume</a>
     <a href="{% url 'recommendations' %}">Recs</a>
     <a href="{% url 'test' %}" class="active">Test</a>
+    <a href="{% url 'interview_results' %}">Interviews</a>
+    <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'jobs' %}">Jobs</a>
-    <a href="{% url 'logout' %}">Logout</a>
-
+  </div>
+  <div class="navbar-right">
+    <div style="width: 42px;"></div>
   </div>
 </nav>
 
@@ -403,7 +307,7 @@ body::before {
 
   <!-- TOPIC SELECTOR PANEL -->
   <div class="topic-selector-panel" id="topicSelectorPanel" style="display:none;">
-    <div class="panel-toggle-row">
+    <div class="panel-toggle-row" onclick="togglePanel()">
       <div class="panel-header">
         <div class="panel-company-logo" id="panelLogo"></div>
         <div class="panel-header-text">
@@ -411,7 +315,7 @@ body::before {
           <p  id="panelCompanySubtitle"></p>
         </div>
       </div>
-      <button class="panel-toggle-btn" onclick="togglePanel()">
+      <button class="panel-toggle-btn">
         <i class="fas fa-chevron-up" id="panelToggleIcon"></i>
         <span id="panelToggleLabel">Hide</span>
       </button>
@@ -424,11 +328,17 @@ body::before {
   <div class="test-header">
     <div class="test-header-left">
       <h1 id="pageTitle">Practice Tests</h1>
-      <p  id="pageSubtitle">Select a topic to begin</p>
+      <p  id="pageSubtitle">Select a topic to begin your AI-proctored session</p>
     </div>
-    <div class="topic-badge" id="topicBadge">
-      <i class="fas fa-tag"></i>
-      <span id="topicBadgeLabel"></span>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <div class="topic-badge" id="topicBadge">
+        <i class="fas fa-tag"></i>
+        <span id="topicBadgeLabel"></span>
+      </div>
+      <div class="test-timer" id="testTimer" style="display:none;">
+        <i class="fas fa-clock"></i>
+        <span id="timerDisplay">30:00</span>
+      </div>
     </div>
   </div>
 
@@ -437,187 +347,232 @@ body::before {
 
 </div>
 
+<!-- AI SCRIPTS — must load BEFORE our logic -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
 <script>
-const RESULT_URL = document.getElementById('resultBaseUrl').dataset.url;
-const TEST_URL   = document.getElementById('testBaseUrl').dataset.url;
+/* ══════════════════════════════════════════
+   FULL QUESTION BANKS
+   Keys MUST match the `topic` slugs used in
+   companies.html practice-test-btn links.
+══════════════════════════════════════════ */
+const QUESTION_BANK = {
+  quantitative: [
+    { q:'A train travels 60 km in 1 hour. How far will it travel in 3.5 hours?', options:['180 km','200 km','210 km','220 km'], answer:2 },
+    { q:'Find 15% of 340.', options:['48','51','54','57'], answer:1 },
+    { q:'If a = 4 and b = 7, find 2a + 3b.', options:['26','27','28','29'], answer:3 },
+    { q:'What is the LCM of 12 and 18?', options:['24','36','48','54'], answer:1 },
+    { q:'Simple Interest on ₹2000 at 5% per annum for 3 years?', options:['₹250','₹300','₹350','₹400'], answer:1 },
+    { q:'A shopkeeper sells an item at 20% profit. If cost is ₹500, selling price is?', options:['₹580','₹590','₹600','₹620'], answer:2 },
+    { q:'What is 12² + 5²?', options:['144','164','169','174'], answer:2 },
+    { q:'If 3x = 27, what is x?', options:['7','8','9','10'], answer:2 },
+    { q:'Average of 10, 20, 30, 40, 50?', options:['25','30','35','40'], answer:1 },
+    { q:'A pipe fills a tank in 4 hours. What fraction is filled in 1.5 hours?', options:['1/4','3/8','1/2','5/8'], answer:1 },
+  ],
+  logical: [
+    { q:'If all Roses are Flowers and all Flowers are Plants, are all Roses Plants?', options:['Yes','No','Cannot determine','Partially'], answer:0 },
+    { q:'Complete the series: 2, 6, 12, 20, __', options:['28','30','32','36'], answer:1 },
+    { q:'Odd one out: Apple, Mango, Carrot, Banana', options:['Apple','Mango','Carrot','Banana'], answer:2 },
+    { q:'If BOOK = 2-15-15-11, what is CAT?', options:['3-1-20','3-2-20','4-1-20','3-1-19'], answer:0 },
+    { q:'A is taller than B. B is taller than C. Who is shortest?', options:['A','B','C','Cannot determine'], answer:2 },
+    { q:'Mirror image of "p" is?', options:['q','d','b','p'], answer:1 },
+    { q:'Series: 1, 4, 9, 16, __', options:['20','24','25','30'], answer:2 },
+    { q:'If Monday is 2 days after Saturday, what day is 3 days before Friday?', options:['Monday','Tuesday','Wednesday','Thursday'], answer:1 },
+    { q:'Find the missing: 3:9 :: 5:?', options:['15','20','25','30'], answer:2 },
+    { q:'If South-West is 225°, what direction is 135°?', options:['North-East','South-East','North-West','South-West'], answer:1 },
+  ],
+  verbal: [
+    { q:'Choose the synonym of BENEVOLENT:', options:['Cruel','Kind','Lazy','Brave'], answer:1 },
+    { q:'Choose the antonym of TRANSPARENT:', options:['Clear','Opaque','Visible','Bright'], answer:1 },
+    { q:'Fill in: He __ to school every day.', options:['go','goes','going','gone'], answer:1 },
+    { q:'Identify the error: "She don\'t like apples."', options:['She','don\'t','like','apples'], answer:1 },
+    { q:'Choose the correct spelling:', options:['Accomodate','Accommodate','Acommodate','Accommadate'], answer:1 },
+    { q:'Passive voice of "She writes a letter":', options:['A letter is written by her.','A letter was written by her.','A letter has been written.','A letter written by her.'], answer:0 },
+    { q:'One word for "Fear of water":', options:['Claustrophobia','Hydrophobia','Acrophobia','Xenophobia'], answer:1 },
+    { q:'Choose the idiom meaning "to be in difficulty":', options:['In hot water','On thin ice','Under the weather','Bite the bullet'], answer:0 },
+    { q:'Indirect speech: He said, "I am happy." →', options:['He said he is happy.','He said he was happy.','He told he was happy.','He says he was happy.'], answer:1 },
+    { q:'Choose the correctly punctuated sentence:', options:['"Its a dog" he said.','Its a dog, he said.',"It's a dog, he said.",'Its a dog he said.'], answer:2 },
+  ],
+  arrays: [
+    { q:'What is the time complexity of accessing an element in an array by index?', options:['O(n)','O(log n)','O(1)','O(n²)'], answer:2 },
+    { q:'Which of the following finds the maximum element in an unsorted array?', options:['Binary search','Linear scan','Jump search','Interpolation search'], answer:1 },
+    { q:'Array: [3,1,4,1,5,9,2,6]. What is arr[4]?', options:['1','5','9','2'], answer:1 },
+    { q:'What happens when you access an out-of-bounds index in C?', options:['Returns 0','Returns null','Undefined behavior','Throws exception'], answer:2 },
+    { q:'Reverse of [1,2,3,4,5] is:', options:['[5,4,3,2,1]','[1,2,3,4,5]','[5,3,1,2,4]','[2,4,1,3,5]'], answer:0 },
+    { q:'Two-sum problem asks you to find:', options:['Two elements with max product','Two elements that sum to target','Max subarray','Min element pair'], answer:1 },
+    { q:"Kadane's algorithm solves:", options:['Sorting','Maximum subarray sum','Binary search','Two pointers'], answer:1 },
+    { q:'Which data structure uses contiguous memory?', options:['Linked list','Tree','Array','Graph'], answer:2 },
+    { q:'Time complexity of inserting at beginning of array (size n)?', options:['O(1)','O(log n)','O(n)','O(n²)'], answer:2 },
+    { q:'Merge of two sorted arrays of size m and n has complexity:', options:['O(m)','O(n)','O(m+n)','O(m*n)'], answer:2 },
+  ],
+  strings: [
+    { q:'Length of string "Hello World"?', options:['10','11','12','9'], answer:1 },
+    { q:'Which function reverses a string in Python?', options:['str.reverse()','reversed(str)','str[::-1]','str.flip()'], answer:2 },
+    { q:'Palindrome check time complexity (length n)?', options:['O(1)','O(log n)','O(n)','O(n²)'], answer:2 },
+    { q:'"abcabc" — how many unique characters?', options:['3','4','5','6'], answer:0 },
+    { q:'Anagram of "listen" is:', options:['silent','listen','enlist','tinsel'], answer:0 },
+    { q:'Which algorithm finds pattern in string efficiently?', options:['Bubble sort','KMP algorithm','Binary search','DFS'], answer:1 },
+    { q:'String concatenation of "Hello" + " " + "World" = ?', options:['HelloWorld','Hello World','Hello  World','helloworld'], answer:1 },
+    { q:"ASCII value of 'A' is:", options:['65','97','64','66'], answer:0 },
+    { q:'Count of vowels in "Placement"?', options:['2','3','4','5'], answer:1 },
+    { q:'In Java, strings are:', options:['Mutable','Immutable','Both','Neither'], answer:1 },
+  ],
+  sorting: [
+    { q:'Best case time complexity of Bubble Sort?', options:['O(n²)','O(n log n)','O(n)','O(1)'], answer:2 },
+    { q:'Which sorting algorithm uses divide and conquer?', options:['Bubble sort','Insertion sort','Merge sort','Selection sort'], answer:2 },
+    { q:'Worst case of Quick Sort?', options:['O(n)','O(n log n)','O(n²)','O(log n)'], answer:2 },
+    { q:'Which sort is stable?', options:['Quick sort','Heap sort','Merge sort','Selection sort'], answer:2 },
+    { q:'Space complexity of Merge Sort?', options:['O(1)','O(log n)','O(n)','O(n²)'], answer:2 },
+    { q:'Insertion sort is best suited for:', options:['Large random data','Nearly sorted data','Reverse sorted data','All equal elements'], answer:1 },
+    { q:'Selection sort always makes __ swaps for n elements:', options:['n','n-1','n/2','n²'], answer:1 },
+    { q:'Which sorting has best average time complexity?', options:['Bubble sort','Insertion sort','Selection sort','Merge sort'], answer:3 },
+    { q:'Counting sort works best when:', options:['Data is random','Data range is small','Data is large','Data is strings'], answer:1 },
+    { q:'Heap sort uses which data structure?', options:['Stack','Queue','Heap','Tree'], answer:2 },
+  ],
+  tcs_numerical: [
+    { q:'If x : y = 3 : 4 and y : z = 2 : 3, find x : z.', options:['1:2','3:8','1:4','2:3'], answer:0 },
+    { q:'Compound Interest on ₹1000 at 10% for 2 years?', options:['₹200','₹210','₹220','₹230'], answer:1 },
+    { q:'Speed of boat in still water is 10 km/h, stream speed 2 km/h. Upstream speed?', options:['6 km/h','8 km/h','10 km/h','12 km/h'], answer:1 },
+    { q:'Two numbers are in ratio 5:3. Their HCF is 4. Sum of numbers?', options:['28','32','36','40'], answer:1 },
+    { q:'A can do work in 10 days, B in 15 days. Together in?', options:['4 days','5 days','6 days','7 days'], answer:2 },
+    { q:'If 20% of x = 80, then x = ?', options:['300','350','400','450'], answer:2 },
+    { q:'Distance = 240 km, time = 4 hours. Speed = ?', options:['50 km/h','55 km/h','60 km/h','65 km/h'], answer:2 },
+    { q:'Find the odd number: 121, 144, 169, 196, 204', options:['121','196','204','169'], answer:2 },
+    { q:'Profit % if CP = ₹400 and SP = ₹500?', options:['20%','22%','25%','30%'], answer:2 },
+    { q:'Average of first 10 natural numbers?', options:['4.5','5','5.5','6'], answer:2 },
+  ],
+  tcs_verbal: [
+    { q:'Choose the word closest in meaning to DILIGENT:', options:['Lazy','Hardworking','Careless','Slow'], answer:1 },
+    { q:'Choose the antonym of ABUNDANT:', options:['Plenty','Scarce','Rich','Full'], answer:1 },
+    { q:'Correct form: "Neither of the boys __ present."', options:['are','were','was','been'], answer:2 },
+    { q:'One word for "Study of living organisms":', options:['Geology','Biology','Zoology','Botany'], answer:1 },
+    { q:'Choose correct sentence:', options:['I have saw him.','I seen him.','I have seen him.','I seed him.'], answer:2 },
+    { q:'Idiom "once in a blue moon" means:', options:['Very rarely','Very often','Never','Always'], answer:0 },
+    { q:'"Are you ready?" he asked. (Indirect speech) →', options:['He asked if I was ready.','He said am I ready.','He asked am I ready.','He said if I was ready.'], answer:0 },
+    { q:'Prefix meaning "against":', options:['Pro-','Anti-','Re-','Pre-'], answer:1 },
+    { q:'Correctly spelled word:', options:['Recieve','Achieve','Beleive','Freind'], answer:1 },
+    { q:'Conjunction in "I studied hard but failed":', options:['I','hard','but','failed'], answer:2 },
+  ],
+  tcs_programming: [
+    { q:'Which data structure uses LIFO?', options:['Queue','Stack','Array','Linked List'], answer:1 },
+    { q:'Output of: print(2**10) in Python?', options:['20','100','1024','2048'], answer:2 },
+    { q:'What does OOP stand for?', options:['Object Oriented Programming','Object Output Programming','Open Oriented Programming','None'], answer:0 },
+    { q:'Which loop always executes at least once?', options:['for','while','do-while','foreach'], answer:2 },
+    { q:'Function that calls itself is:', options:['Iteration','Recursion','Overloading','Polymorphism'], answer:1 },
+    { q:'Which is NOT a primitive data type in Java?', options:['int','float','String','boolean'], answer:2 },
+    { q:'Time complexity of binary search?', options:['O(n)','O(n²)','O(log n)','O(1)'], answer:2 },
+    { q:'Which operator checks equality in Python?', options:['=','==','===','!='], answer:1 },
+    { q:'What is the output of 10 % 3?', options:['3','1','0','2'], answer:1 },
+    { q:'Abstract class in OOP:', options:['Can be instantiated','Cannot be instantiated','Has no methods','Is same as interface'], answer:1 },
+  ],
+  tcs_coding: [
+    { q:'Fibonacci sequence: 0,1,1,2,3,5,__ ?', options:['7','8','9','10'], answer:1 },
+    { q:'How many iterations does "for i in range(1,6)" run?', options:['4','5','6','7'], answer:1 },
+    { q:'Swap a=3, b=5 without temp: a=a+b; b=a-b; a=a-b. Final values?', options:['a=3,b=5','a=5,b=3','a=5,b=5','a=3,b=3'], answer:1 },
+    { q:'Which is used to handle exceptions in Python?', options:['try-catch','try-except','if-else','switch-case'], answer:1 },
+    { q:'What does len([1,2,3,4,5]) return?', options:['4','5','6','3'], answer:1 },
+    { q:'Sum of digits of 245?', options:['9','10','11','12'], answer:2 },
+    { q:'Which keyword exits a loop in Python?', options:['exit','stop','break','return'], answer:2 },
+    { q:'Output of: print(type(3.14))?', options:["<class 'int'>","<class 'float'>","<class 'double'>","<class 'str'>"], answer:1 },
+    { q:'Index of last element in a list of size n?', options:['n','n+1','n-1','n-2'], answer:2 },
+    { q:'Which sorting algorithm has O(n log n) in ALL cases?', options:['Quick sort','Bubble sort','Merge sort','Insertion sort'], answer:2 },
+  ],
+  tcs_data: [
+    { q:'Pie chart: A=40%, B=30%, C=20%, D=10%. Total=500. How many in B?', options:['100','125','150','175'], answer:2 },
+    { q:'Bar chart: Sales Jan=200, Feb=250, Mar=300. Average monthly sales?', options:['230','250','270','280'], answer:1 },
+    { q:'Profit Q1=₹20000, increases 10% each quarter. Q2 profit?', options:['₹21000','₹22000','₹23000','₹24000'], answer:1 },
+    { q:'Students passed: 2021=80, 2022=90, 2023=100. % increase 2021→2023?', options:['20%','25%','30%','35%'], answer:1 },
+    { q:'Population: 2010=1M, 2020=1.5M. % growth?', options:['40%','45%','50%','55%'], answer:2 },
+    { q:'Boys:Girls = 3:2. Total = 500. How many girls?', options:['150','175','200','225'], answer:2 },
+    { q:'Average speed: 60 km/h for 2h, 90 km/h for 3h. Overall average?', options:['72 km/h','75 km/h','78 km/h','80 km/h'], answer:2 },
+    { q:'Venn diagram: Only A=10, Only B=15, A∩B=5. Total in A or B?', options:['25','28','30','32'], answer:2 },
+    { q:'Income=₹50000, savings=30% of income. Expenditure?', options:['₹30000','₹32000','₹35000','₹40000'], answer:2 },
+    { q:'Runs scored: 45, 67, 89, 23, 56. Median?', options:['45','56','67','89'], answer:1 },
+  ],
+};
 
-function testUrl(slug) {
-  return TEST_URL.replace(/\/$/, '') + '/?topic=' + slug;
-}
+const TOPIC_META = {
+  quantitative:    { label:'Quantitative Aptitude',  company:'Infosys InfyTQ' },
+  logical:         { label:'Logical Reasoning',       company:'Infosys InfyTQ' },
+  verbal:          { label:'Verbal Ability',           company:'Infosys InfyTQ' },
+  arrays:          { label:'Arrays',                   company:'Infosys InfyTQ' },
+  strings:         { label:'Strings',                  company:'Infosys InfyTQ' },
+  sorting:         { label:'Sorting Algorithms',       company:'Infosys InfyTQ' },
+  tcs_numerical:   { label:'Numerical Ability',        company:'TCS NQT' },
+  tcs_verbal:      { label:'Verbal Reasoning',         company:'TCS NQT' },
+  tcs_programming: { label:'Programming Logic',        company:'TCS NQT' },
+  tcs_coding:      { label:'Coding',                   company:'TCS NQT' },
+  tcs_data:        { label:'Data Interpretation',      company:'TCS NQT' },
+};
 
-/* ── Full data for mapping UI ── */
 const COMPANY_TOPICS = {
   infosys: {
     name: 'Infosys',
-    subtitle: 'InfyTQ & Certification — 3 topics',
+    subtitle: 'InfyTQ & HackWithInfy — 6 topics',
     logo: 'IF',
     bg: 'linear-gradient(135deg,#007CC3 0%,#005A8E 100%)',
     topics: [
-      { label:'Quantitative Aptitude', slug:'quantitative', icon:'fa-calculator' },
-      { label:'Logical Reasoning',     slug:'logical',      icon:'fa-brain' },
-      { label:'Verbal Ability',        slug:'verbal',       icon:'fa-pen-clip' },
+      { label:'Quantitative Aptitude', slug:'quantitative',   icon:'fa-calculator' },
+      { label:'Logical Reasoning',     slug:'logical',        icon:'fa-brain' },
+      { label:'Verbal Ability',        slug:'verbal',         icon:'fa-pen-clip' },
+      { label:'Arrays',                slug:'arrays',         icon:'fa-layer-group' },
+      { label:'Strings',               slug:'strings',        icon:'fa-font' },
+      { label:'Sorting Algorithms',    slug:'sorting',        icon:'fa-arrow-down-wide-short' },
     ],
   },
   tcs: {
     name: 'TCS NQT',
-    subtitle: 'National Qualifier Test — 8 topics',
+    subtitle: 'National Qualifier Test — 5 topics',
     logo: 'TC',
     bg: 'linear-gradient(135deg,#1b2024 0%,#0d1b2a 100%)',
     topics: [
-      { label:'Numerical Ability',   slug:'tcs_numerical',   icon:'fa-calculator' },
-      { label:'Verbal Reasoning',    slug:'tcs_verbal',      icon:'fa-language' },
-      { label:'Programming Logic',   slug:'tcs_programming', icon:'fa-code' },
-      { label:'Coding',              slug:'tcs_coding',      icon:'fa-keyboard' },
-      { label:'Data Interpretation', slug:'tcs_data',        icon:'fa-chart-pie' },
+      { label:'Numerical Ability',    slug:'tcs_numerical',   icon:'fa-calculator' },
+      { label:'Verbal Reasoning',     slug:'tcs_verbal',      icon:'fa-language' },
+      { label:'Programming Logic',    slug:'tcs_programming', icon:'fa-code' },
+      { label:'Coding',               slug:'tcs_coding',      icon:'fa-keyboard' },
+      { label:'Data Interpretation',  slug:'tcs_data',        icon:'fa-chart-pie' },
     ],
-  }
+  },
 };
 
-const SLUG_TO_COMPANY = {};
-Object.entries(COMPANY_TOPICS).forEach(([co, data]) =>
-  data.topics.forEach(t => { SLUG_TO_COMPANY[t.slug] = co; })
-);
-
-const TOPIC_META = {
-  quantitative:    { label:'Quantitative Aptitude', company:'Infosys InfyTQ' },
-  logical:         { label:'Logical Reasoning',     company:'Infosys InfyTQ' },
-  verbal:          { label:'Verbal Ability',        company:'Infosys InfyTQ' },
-  tcs_numerical:   { label:'Numerical Ability',     company:'TCS NQT' },
-  tcs_verbal:      { label:'Verbal Reasoning',      company:'TCS NQT' },
-  tcs_programming: { label:'Programming Logic',     company:'TCS NQT' },
-  tcs_coding:      { label:'Coding',                company:'TCS NQT' },
-  tcs_data:        { label:'Data Interpretation',   company:'TCS NQT' }
-};
-
-/* ── READ URL PARAM ── */
-const params          = new URLSearchParams(window.location.search);
-const topicSlug       = (params.get('topic') || '').trim();
-/* ── Fallback Bank (Used if DB is empty) ── */
-const FALLBACK_BANK = {
-  quantitative: [
-    { q:'If a person sells an item for $120 making 20% profit, what was CP?', options:['$80','$90','$100','$110'], answer:2 },
-    { q:'Simple interest on $5000 at 10% for 2 years?', options:['$500','$800','$1000','$1200'], answer:2 }
-  ],
-  logical: [
-    { q:'Complete series: 2, 4, 8, 16, ?', options:['24','32','48','64'], answer:1 },
-    { q:'Find odd one: Apple, Orange, Banana, Potato', options:['Apple','Orange','Banana','Potato'], answer:3 }
-  ],
-  verbal: [
-    { q:'Synonym of "Vibrant"?', options:['Dull','Lively','Hidden','Heavy'], answer:1 }
-  ]
-};
-
-const serverQs = JSON.parse(document.getElementById('questions-data').textContent);
-const QUESTION_BANK = {
-  [topicSlug]: (serverQs && serverQs.length > 0) ? serverQs : (FALLBACK_BANK[topicSlug] || [])
-};
-
-/* ════════════════════════════════════════════════
-   submitTest — GLOBAL SCOPE
-════════════════════════════════════════════════ */
-function submitTest() {
-  const slug  = new URLSearchParams(window.location.search).get('topic') || '';
-  const qs    = QUESTION_BANK[slug] || [];
-  const meta  = TOPIC_META[slug];
-  
-  // ALLOW submission even if no questions (empty array) IF disqualification is happening
-  if (!meta) return;
-  if (!qs.length && violationCount < 3) return; 
-
-  let score = 0;
-  const studentAnswers = [];
-
-  qs.forEach((q, i) => {
-    const sel = document.querySelector(`input[name="q${i}"]:checked`);
-    const ans = sel ? parseInt(sel.value) : -1;
-    studentAnswers.push(ans);
-    if (ans !== -1 && ans === q.answer) score++;
-  });
-
-  const totalQs = qs.length || 10; // Fallback total for URL
-
-  const saveUrl = document.getElementById('saveAssessmentUrl').dataset.url;
-  fetch(saveUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ score, total: qs.length })
-  }).then(() => {
-    window.location.href =
-      RESULT_URL +
-      '?score=' + score +
-      '&total=' + totalQs +
-      '&topic=' + encodeURIComponent(meta.label) +
-      '&topicSlug=' + encodeURIComponent(slug) +
-      '&answers=' + encodeURIComponent(studentAnswers.join(',')) +
-      '&violations=' + violationCount +
-      '&submitted=1';
-  });
-}
-
-/* ── togglePanel — GLOBAL SCOPE ── */
-let panelOpen = true;
-function togglePanel() {
-  panelOpen = !panelOpen;
-  document.getElementById('panelDivider').style.display   = panelOpen ? '' : 'none';
-  document.getElementById('topicGrid').style.display      = panelOpen ? '' : 'none';
-  document.getElementById('panelToggleIcon').className    = panelOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-  document.getElementById('panelToggleLabel').textContent = panelOpen ? 'Hide' : 'Show Topics';
-}
-
-/* ── PROCTORING LOGIC (AI POWERED) ── */
-let model = null;
-let proctoringEnabled = false;
+/* ══════════════════════════════════════════
+   PROCTORING
+══════════════════════════════════════════ */
 let violationCount = 0;
 let isPaused = false;
-let webcamStream = null;
+let proctoringEnabled = false;
+let cocoModel = null;
+let timerInterval = null;
+let timeLeft = 30 * 60;
 
 async function startProctoring() {
   const hud   = document.getElementById('proctorHud');
   const video = document.getElementById('webcamView');
-  const dot   = document.getElementById('statusDot');
-  const lab   = document.getElementById('statusLabel');
-  
   hud.style.display = 'block';
-  
   try {
-    // 1. Start Video First (UX)
-    webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
-    video.srcObject = webcamStream;
-    dot.classList.add('active');
-    lab.textContent = 'Camera Active';
-
-    // 2. Load Model
-    model = await cocoSsd.load();
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    cocoModel = await cocoSsd.load();
     document.getElementById('aiLoading').style.display = 'none';
-    
     proctoringEnabled = true;
     detectLoop();
-  } catch (err) {
-    console.error("Proctoring Initialization Failed:", err);
-    document.getElementById('aiLoading').innerHTML = `<i class="fas fa-exclamation-circle" style="color:#ff4444; font-size:1.5rem; margin-bottom:8px;"></i> Access Denied`;
-    dot.classList.add('error');
-    lab.textContent = 'Hardware Error';
+  } catch (e) {
+    document.getElementById('aiLoading').innerHTML =
+      '<i class="fas fa-exclamation-circle" style="color:#ff4444;font-size:1.5rem;margin-bottom:8px;"></i><br>Camera Denied';
   }
 }
 
 async function detectLoop() {
   if (!proctoringEnabled || isPaused) return;
   const video = document.getElementById('webcamView');
-  if (video.readyState === 4) {
-    const predictions = await model.detect(video);
-    let persons = 0;
-    let phoneDetected = false;
-    predictions.forEach(p => {
-      if (p.class === 'person') persons++;
-      if (p.class === 'cell phone') phoneDetected = true;
-    });
-    if (phoneDetected) {
-      triggerViolation("Electronic Device Detected! Use of cell phones is strictly prohibited during the test.");
-    } else if (persons > 1) {
-      triggerViolation("Multiple Persons Detected! Please ensure you are alone in the frame.");
-    } else if (persons === 0) {
-      triggerViolation("User Missing! Please stay visible in the webcam frame at all times.");
-    }
+  if (video.readyState === 4 && cocoModel) {
+    const preds = await cocoModel.detect(video);
+    let persons = 0, phone = false;
+    preds.forEach(p => { if(p.class==='person') persons++; if(p.class==='cell phone') phone=true; });
+    if (phone) triggerViolation('Electronic Device Detected! Cell phones are not allowed.');
+    else if (persons > 1) triggerViolation('Multiple Persons Detected! You must be alone.');
+    else if (persons === 0) triggerViolation('User Missing! Stay visible in the webcam frame.');
   }
   if (!isPaused) requestAnimationFrame(detectLoop);
 }
@@ -626,12 +581,13 @@ function triggerViolation(msg) {
   isPaused = true;
   violationCount++;
   document.getElementById('violationMsg').textContent = msg;
-  document.getElementById('violationOverlay').classList.add('open');
   if (violationCount >= 3) {
-    document.getElementById('violationMsg').textContent = "Disqualified! Multiple security violations detected. Test session has been invalidated.";
-    document.querySelector('.violation-btn').textContent = "Submit & Quit";
-    document.querySelector('.violation-btn').setAttribute('onclick', 'submitTest()');
+    document.getElementById('violationMsg').textContent =
+      'Disqualified! 3 violations detected. Submitting test automatically.';
+    document.getElementById('violationBtn').textContent = 'Submit & Quit';
+    document.getElementById('violationBtn').setAttribute('onclick', 'submitTest()');
   }
+  document.getElementById('violationOverlay').classList.add('open');
 }
 
 function resumeTest() {
@@ -641,103 +597,434 @@ function resumeTest() {
   detectLoop();
 }
 
-/* ── INITIALIZATION ── */
+/* ══════════════════════════════════════════
+   TIMER
+══════════════════════════════════════════ */
+function startTimer() {
+  const timerEl = document.getElementById('testTimer');
+  const display = document.getElementById('timerDisplay');
+  timeLeft = 20;
+  timerEl.style.display = 'inline-flex';
+  display.textContent = '00:20';
+  timerEl.className = 'test-timer';
+  clearInterval(timerInterval);
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    display.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    timerEl.className = 'test-timer' + (timeLeft <= 10 ? ' danger' : '');
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timeExpired();
+    }
+  }, 1000);
+}
+
+function timeExpired() {
+  // Show time expired overlay
+  let expiredBox = document.getElementById('timeExpiredOverlay');
+  if (!expiredBox) {
+    expiredBox = document.createElement('div');
+    expiredBox.id = 'timeExpiredOverlay';
+    expiredBox.style.cssText = `
+      position: fixed; inset: 0; z-index: 3000;
+      background: rgba(13,27,42,0.88);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      animation: fadeUp 0.3s ease both;
+    `;
+    document.body.appendChild(expiredBox);
+  }
+
+  let countdown = 5;
+
+  expiredBox.innerHTML = `
+    <div style="
+      background: white; border-radius: 24px;
+      width: 100%; max-width: 440px;
+      padding: 40px 36px; text-align: center;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+    ">
+      <div style="
+        width: 72px; height: 72px;
+        background: rgba(239,68,68,0.1);
+        color: #ef4444; border-radius: 50%;
+        display: flex; align-items: center;
+        justify-content: center; font-size: 1.8rem;
+        margin: 0 auto 20px;
+      ">⏰</div>
+
+      <div style="
+        font-family: 'Syne', sans-serif;
+        font-size: 1.4rem; font-weight: 800;
+        color: #0d1b2a; margin-bottom: 10px;
+      ">Time's Up!</div>
+
+      <div style="
+        font-size: 0.88rem; color: #7a8fa8;
+        line-height: 1.65; margin-bottom: 20px;
+      ">
+        You didn't complete the test in <strong>20 seconds</strong>.<br>
+        The test will restart automatically.
+      </div>
+
+      <div style="
+        background: #eaf1f6; border-radius: 14px;
+        padding: 14px; margin-bottom: 24px;
+      ">
+        <div style="font-size: 0.75rem; color: #7a8fa8; margin-bottom: 4px; font-weight: 600;">RESTARTING IN</div>
+        <div id="restartCountdown" style="
+          font-family: 'Syne', sans-serif;
+          font-size: 2rem; font-weight: 800;
+          color: #0aa3b5;
+        ">${countdown}</div>
+      </div>
+
+      <button onclick="restartTestNow()" style="
+        width: 100%; padding: 14px;
+        background: linear-gradient(135deg, #0aa3b5, #088a9a);
+        color: white; border: none; border-radius: 12px;
+        font-family: 'Syne', sans-serif;
+        font-size: 0.95rem; font-weight: 700;
+        cursor: pointer; margin-bottom: 10px;
+        box-shadow: 0 4px 16px rgba(10,163,181,0.3);
+      ">
+        🔄 Restart Now
+      </button>
+
+      <button onclick="goBackToTopics()" style="
+        width: 100%; padding: 12px;
+        background: transparent; color: #7a8fa8;
+        border: 1.5px solid #d6e4ed; border-radius: 12px;
+        font-family: 'Syne', sans-serif;
+        font-size: 0.88rem; font-weight: 600;
+        cursor: pointer;
+      ">
+        ← Choose Different Topic
+      </button>
+    </div>`;
+
+  // Countdown timer
+  const countdownInterval = setInterval(() => {
+    countdown--;
+    const el = document.getElementById('restartCountdown');
+    if (el) el.textContent = countdown;
+    if (countdown <= 0) {
+      clearInterval(countdownInterval);
+      restartTestNow();
+    }
+  }, 1000);
+}
+
+function restartTestNow() {
+  // Remove overlay
+  const overlay = document.getElementById('timeExpiredOverlay');
+  if (overlay) overlay.remove();
+
+  // Reset all radio buttons
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+
+  // Reset all question card borders
+  document.querySelectorAll('.question-card').forEach(card => {
+    card.style.border = '';
+    card.style.boxShadow = '';
+  });
+
+  // Scroll to top of test
+  document.getElementById('testArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Restart timer
+  startTimer();
+}
+
+function goBackToTopics() {
+  window.location.href = URL_TEST;
+}
+/* ══════════════════════════════════════════
+   SUBMIT
+══════════════════════════════════════════ */
+function submitTest() {
+  const slug = new URLSearchParams(window.location.search).get('topic') || '';
+  const qs   = QUESTION_BANK[slug] || [];
+  const meta = TOPIC_META[slug];
+  if (!meta) return;
+
+  // ── Check all questions answered ──
+  const unanswered = [];
+  qs.forEach((q, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    if (!sel) unanswered.push(i + 1);
+  });
+
+  if (unanswered.length > 0) {
+    // Show warning message
+    let msgBox = document.getElementById('submitWarningMsg');
+    if (!msgBox) {
+      msgBox = document.createElement('div');
+      msgBox.id = 'submitWarningMsg';
+      msgBox.style.cssText = `
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        background: #fff;
+        border: 2px solid #ef4444;
+        border-radius: 16px;
+        padding: 20px 28px;
+        box-shadow: 0 8px 32px rgba(239,68,68,0.2);
+        font-family: 'DM Sans', sans-serif;
+        max-width: 420px;
+        width: 90%;
+        text-align: center;
+        animation: fadeUp 0.3s ease both;
+      `;
+      document.body.appendChild(msgBox);
+    }
+
+    if (unanswered.length === qs.length) {
+      msgBox.innerHTML = `
+        <div style="font-size:1.8rem; margin-bottom:10px;">⚠️</div>
+        <div style="font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; color:#0d1b2a; margin-bottom:8px;">
+          Please Answer All Questions
+        </div>
+        <div style="font-size:0.85rem; color:#7a8fa8; line-height:1.6;">
+          You haven't answered any questions yet.<br>Complete all <strong>${qs.length} questions</strong> before submitting.
+        </div>
+        <button onclick="document.getElementById('submitWarningMsg').remove()" style="
+          margin-top:14px; padding:9px 24px;
+          background:linear-gradient(135deg,#0aa3b5,#088a9a);
+          color:white; border:none; border-radius:10px;
+          font-family:'Syne',sans-serif; font-weight:700;
+          font-size:0.85rem; cursor:pointer;">
+          OK, Got It
+        </button>`;
+    } else {
+      msgBox.innerHTML = `
+        <div style="font-size:1.8rem; margin-bottom:10px;">📝</div>
+        <div style="font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; color:#0d1b2a; margin-bottom:8px;">
+          ${unanswered.length} Question${unanswered.length > 1 ? 's' : ''} Unanswered
+        </div>
+        <div style="font-size:0.85rem; color:#7a8fa8; line-height:1.6; margin-bottom:4px;">
+          Please answer <strong>Question${unanswered.length > 1 ? 's' : ''} 
+          ${unanswered.slice(0, 5).join(', ')}${unanswered.length > 5 ? '...' : ''}</strong> 
+          before submitting.
+        </div>
+        <div style="display:flex; gap:10px; margin-top:14px; justify-content:center;">
+          <button onclick="document.getElementById('submitWarningMsg').remove()" style="
+            padding:9px 20px;
+            background:linear-gradient(135deg,#0aa3b5,#088a9a);
+            color:white; border:none; border-radius:10px;
+            font-family:'Syne',sans-serif; font-weight:700;
+            font-size:0.82rem; cursor:pointer;">
+            Go Back & Answer
+          </button>
+        </div>`;
+    }
+
+    // Auto-scroll to first unanswered question
+    const firstUnanswered = document.querySelector(`input[name="q${unanswered[0]-1}"]`);
+    if (firstUnanswered) {
+      const card = firstUnanswered.closest('.question-card');
+      if (card) {
+        card.style.border = '2px solid #ef4444';
+        card.style.boxShadow = '0 0 0 4px rgba(239,68,68,0.1)';
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      }
+    }
+
+    // Highlight all unanswered cards red
+    qs.forEach((q, i) => {
+      const sel = document.querySelector(`input[name="q${i}"]:checked`);
+      const card = document.querySelector(`input[name="q${i}"]`)?.closest('.question-card');
+      if (!sel && card) {
+        card.style.border = '2px solid #ef4444';
+        card.style.boxShadow = '0 0 0 4px rgba(239,68,68,0.1)';
+      }
+    });
+
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+      const box = document.getElementById('submitWarningMsg');
+      if (box) box.remove();
+    }, 5000);
+
+    return; // ← STOP here, don't submit
+  }
+
+  // ── All answered, proceed ──
+  clearInterval(timerInterval);
+
+  let score = 0;
+  const answers = [];
+  qs.forEach((q, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    const ans = sel ? parseInt(sel.value) : -1;
+    answers.push(ans);
+    if (ans !== -1 && ans === q.answer) score++;
+  });
+
+  window.location.href =
+    URL_RESULT +
+    '?score='     + score +
+    '&total='     + qs.length +
+    '&topic='     + encodeURIComponent(meta.label) +
+    '&topicSlug=' + encodeURIComponent(slug) +
+    '&answers='   + encodeURIComponent(answers.join(',')) +
+    '&violations='+ violationCount;
+}
+/* ══════════════════════════════════════════
+   PANEL TOGGLE
+══════════════════════════════════════════ */
+let panelOpen = true;
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('panelDivider').style.display   = panelOpen ? '' : 'none';
+  document.getElementById('topicGrid').style.display      = panelOpen ? '' : 'none';
+  document.getElementById('panelToggleIcon').className    = 'fas fa-chevron-' + (panelOpen ? 'up' : 'down');
+  document.getElementById('panelToggleLabel').textContent = panelOpen ? 'Hide' : 'Show Topics';
+}
+
+/* ══════════════════════════════════════════
+   COMPANY SELECTION (landing page)
+══════════════════════════════════════════ */
+function selectCompany(key) {
+  const co    = COMPANY_TOPICS[key];
+  const panel = document.getElementById('topicSelectorPanel');
+  document.getElementById('panelLogo').style.background        = co.bg;
+  document.getElementById('panelLogo').textContent             = co.logo;
+  document.getElementById('panelCompanyName').textContent      = co.name + ' Practice Tests';
+  document.getElementById('panelCompanySubtitle').textContent  = co.subtitle;
+  document.getElementById('topicGrid').innerHTML = co.topics.map(t =>
+    `<a href="${URL_TEST}?topic=${encodeURIComponent(t.slug)}" class="topic-select-btn">
+      <div class="tsb-icon-wrap"><i class="fas ${t.icon}"></i></div>
+      <div class="tsb-text">
+        <div class="tsb-name">${t.label}</div>
+        <div class="tsb-qs">10 questions</div>
+      </div>
+      <i class="fas fa-chevron-right tsb-arrow"></i>
+    </a>`
+  ).join('');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior:'smooth' });
+  document.getElementById('pageTitle').textContent    = co.name + ' Assessment';
+  document.getElementById('pageSubtitle').textContent =
+    'Select a module to begin your AI-proctored practice session';
+  const grid = document.querySelector('.company-grid');
+  if (grid) { grid.style.opacity = '0.4'; grid.style.pointerEvents = 'none'; }
+}
+
+/* ══════════════════════════════════════════
+   INIT — runs on page load
+══════════════════════════════════════════ */
+const params    = new URLSearchParams(window.location.search);
+const topicSlug = (params.get('topic') || '').trim();
+
 if (topicSlug) {
-  const meta      = TOPIC_META[topicSlug];
-  const questions = QUESTION_BANK[topicSlug];
+  /* ─────────────────────────────────────
+     SHOW TEST for this topic
+  ───────────────────────────────────── */
+  const meta = TOPIC_META[topicSlug];
+  const qs   = QUESTION_BANK[topicSlug];
 
-  if (!meta || !questions) {
-    document.getElementById('testArea').innerHTML = `<div class="no-topic-state"><h3>Topic Not Found</h3></div>`;
+  if (!meta || !qs) {
+    document.getElementById('testArea').innerHTML =
+      `<div class="no-topic-state">
+        <i class="fas fa-circle-exclamation"></i>
+        <h3>Topic Not Found</h3>
+        <p>Please go back and select a valid topic.</p>
+        <a href="${URL_COMPANIES}" style="display:inline-block;margin-top:16px;
+           padding:10px 24px;background:var(--gradient);color:white;
+           border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;
+           text-decoration:none;">← Back to Companies</a>
+      </div>`;
   } else {
-    document.getElementById('pageTitle').textContent     = meta.label + ' Test';
-    document.getElementById('pageSubtitle').textContent  = '10 questions · Based on ' + meta.company;
-    document.getElementById('topicBadge').style.display  = 'inline-flex';
+    /* Update header */
+    document.getElementById('pageTitle').textContent    = meta.label + ' Test';
+    document.getElementById('pageSubtitle').textContent = '10 questions · ' + meta.company;
+    document.getElementById('topicBadge').style.display = 'inline-flex';
     document.getElementById('topicBadgeLabel').textContent = meta.company + ' · ' + meta.label;
-    document.title = meta.label + ' Test — Smart Placement Portal';
+    document.title = meta.label + ' — Smart Placement Portal';
 
+    /* Show the company's topic panel so user can switch topic easily */
+    const coKey = Object.keys(COMPANY_TOPICS).find(k =>
+      COMPANY_TOPICS[k].topics.some(t => t.slug === topicSlug)
+    );
+    if (coKey) {
+      const co    = COMPANY_TOPICS[coKey];
+      const panel = document.getElementById('topicSelectorPanel');
+      document.getElementById('panelLogo').style.background        = co.bg;
+      document.getElementById('panelLogo').textContent             = co.logo;
+      document.getElementById('panelCompanyName').textContent      = co.name + ' Practice Tests';
+      document.getElementById('panelCompanySubtitle').textContent  = co.subtitle;
+      document.getElementById('topicGrid').innerHTML = co.topics.map(t =>
+        `<a href="${URL_TEST}?topic=${encodeURIComponent(t.slug)}"
+            class="topic-select-btn ${t.slug === topicSlug ? 'active-topic' : ''}">
+          <div class="tsb-icon-wrap"><i class="fas ${t.icon}"></i></div>
+          <div class="tsb-text">
+            <div class="tsb-name">${t.label}</div>
+            <div class="tsb-qs">10 questions</div>
+          </div>
+          <i class="fas fa-chevron-right tsb-arrow"></i>
+        </a>`
+      ).join('');
+      panel.style.display = 'block';
+    }
+
+    /* Start camera proctoring + timer */
     startProctoring();
+    startTimer();
 
+    /* Render questions */
     let html = '';
-    questions.forEach((q, i) => {
+    qs.forEach((q, i) => {
       html += `
-        <div class="question-card" style="animation-delay:${0.04 * i}s;">
+        <div class="question-card" style="animation-delay:${0.04*i}s;">
           <div class="question-text">Q${i+1}. ${q.q}</div>
           <div class="options-list">
-            ${q.options.map((opt, idx) => `
-              <label class="option-label">
+            ${q.options.map((opt, idx) =>
+              `<label class="option-label">
                 <input type="radio" name="q${i}" value="${idx}">
                 <span>${opt}</span>
-              </label>`).join('')}
+              </label>`
+            ).join('')}
           </div>
         </div>`;
     });
-    html += `<div class="submit-wrap"><button class="submit-btn" onclick="submitTest()"><i class="fas fa-paper-plane"></i> Submit &amp; See Results</button></div>`;
+    html += `
+      <div class="submit-wrap">
+        <button class="submit-btn" onclick="submitTest()">
+          <i class="fas fa-paper-plane"></i> Submit &amp; See Results
+        </button>
+      </div>`;
     document.getElementById('testArea').innerHTML = html;
   }
-} else {
-  /* ── NO TOPIC — show company selection ── */
-  const companiesList = JSON.parse(document.getElementById('companies-data').textContent);
-  
-  document.getElementById('pageTitle').textContent    = 'Explore Assessments';
-  document.getElementById('pageSubtitle').textContent = 'Select a company to view their specific practice modules';
 
-  let gridHtml = '<div class="company-grid">';
-  companiesList.forEach(co => {
-    const slug = co.name.toLowerCase().includes('infosys') ? 'infosys' : 'tcs';
-    
-    gridHtml += `
-      <div class="company-card" onclick="selectCompany('${slug}')">
-        <div class="cc-logo" style="background:${COMPANY_TOPICS[slug]?.bg || 'var(--gradient)'}">
-          ${co.logo_text || co.name.substring(0,2).toUpperCase()}
-        </div>
+} else {
+  /* ─────────────────────────────────────
+     LANDING — company selector
+  ───────────────────────────────────── */
+  document.getElementById('pageTitle').textContent    = 'Explore Assessments';
+  document.getElementById('pageSubtitle').textContent =
+    'Select a company to view their specific practice modules';
+
+  let html = '<div class="company-grid">';
+  Object.entries(COMPANY_TOPICS).forEach(([key, co]) => {
+    html += `
+      <div class="company-card-sel" onclick="selectCompany('${key}')">
+        <div class="cc-logo" style="background:${co.bg}">${co.logo}</div>
         <div class="cc-name">${co.name}</div>
-        <div class="cc-topics">${COMPANY_TOPICS[slug]?.topics.length || 0} Modules Available</div>
+        <div class="cc-topics">${co.topics.length} Modules Available</div>
       </div>`;
   });
-  gridHtml += '</div>';
-  document.getElementById('testArea').innerHTML = gridHtml;
-}
-
-function selectCompany(slug) {
-  if (COMPANY_TOPICS[slug]) {
-    const coData = COMPANY_TOPICS[slug];
-    const panel  = document.getElementById('topicSelectorPanel');
-    const logo   = document.getElementById('panelLogo');
-    
-    logo.textContent = coData.logo;
-    logo.style.background = coData.bg;
-    document.getElementById('panelCompanyName').textContent     = coData.name + ' Practice Tests';
-    document.getElementById('panelCompanySubtitle').textContent = coData.subtitle;
-
-    document.getElementById('topicGrid').innerHTML = coData.topics.map(t => `
-      <a href="${testUrl(t.slug)}"
-         class="topic-select-btn">
-        <div class="tsb-icon-wrap"><i class="fas ${t.icon}"></i></div>
-        <div class="tsb-text">
-          <div class="tsb-name">${t.label}</div>
-          <div class="tsb-qs">10 questions</div>
-        </div>
-        <i class="fas fa-chevron-right tsb-arrow"></i>
-      </a>`).join('');
-
-    panel.style.display = 'block';
-    panel.scrollIntoView({ behavior: 'smooth' });
-    
-    // Update header
-    document.getElementById('pageTitle').textContent = coData.name + ' Discovery';
-    document.getElementById('pageSubtitle').textContent = "Select a module to begin your AI-proctored session";
-    
-    // Hide company grid if visible
-    document.querySelector('.company-grid').style.opacity = '0.4';
-    document.querySelector('.company-grid').style.pointerEvents = 'none';
-  }
+  html += '</div>';
+  document.getElementById('testArea').innerHTML = html;
 }
 </script>
-
-
-<!-- AI SCRIPTS -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
-
 </body>
 </html>
