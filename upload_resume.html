@@ -54,9 +54,15 @@ body::before {
   flex-shrink: 0;
 }
 .navbar-brand {
-  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
-  background: var(--gradient); -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; 
+  font-size: 1.1rem;
+  color: #0aa3b5;
+  white-space: nowrap;  
+  display: flex; 
+  align-items: center;
+  gap: 8px;
+
 }
 .navbar-links {
   display: flex; align-items: center; gap: 4px;
@@ -79,7 +85,7 @@ body::before {
 .main {
   position: relative;
   z-index: 1;
-  max-width: 580px;
+  max-width: 680px;
   margin: 0 auto;
   padding: 40px 24px 60px;
 }
@@ -217,7 +223,6 @@ body::before {
   gap: 6px;
 }
 
-
 /* ── SUBMIT BUTTON ── */
 .submit-btn {
   width: 100%;
@@ -310,16 +315,143 @@ body::before {
 
 .analysis-card-title i { color: var(--teal); font-size: 0.9rem; }
 
-.feedback-text {
-  font-size: 0.9rem;
+/* ── FEEDBACK SECTIONS ── */
+.feedback-overview {
+  font-size: 0.92rem;
   color: var(--slate);
-  line-height: 1.7;
+  line-height: 1.75;
   background: var(--bg);
   border-radius: 12px;
-  padding: 16px;
+  padding: 16px 18px;
   border-left: 3px solid var(--teal);
+  margin-bottom: 20px;
 }
 
+.feedback-section {
+  margin-bottom: 20px;
+}
+
+.feedback-section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback-section-title.green { color: #10b981; }
+.feedback-section-title.red   { color: #ef4444; }
+.feedback-section-title.amber { color: #f59e0b; }
+.feedback-section-title.blue  { color: #3b82f6; }
+
+.feedback-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feedback-list li {
+  font-size: 0.88rem;
+  color: var(--slate);
+  line-height: 1.6;
+  padding: 10px 14px;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.feedback-list li.good  { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.18); }
+.feedback-list li.bad   { background: rgba(239,68,68,0.07);  border: 1px solid rgba(239,68,68,0.16); }
+.feedback-list li.tip   { background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.16); }
+
+.feedback-list li .bullet {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.feedback-list li.good .bullet { background: #10b981; color: white; }
+.feedback-list li.bad  .bullet { background: #ef4444; color: white; }
+.feedback-list li.tip  .bullet { background: #3b82f6; color: white; }
+
+.feedback-list li strong {
+  display: block;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+/* ── ATS SCORE BAR ── */
+.ats-wrap {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.ats-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ats-label {
+  font-size: 0.85rem;
+  color: var(--slate);
+  font-weight: 500;
+}
+
+.ats-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--teal);
+}
+
+.ats-bar-bg {
+  height: 8px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.ats-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--gradient);
+  transition: width 1s ease;
+}
+
+.ats-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.ats-kw {
+  padding: 4px 10px;
+  background: var(--teal-dim);
+  color: var(--teal-dark);
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba(10,163,181,0.2);
+}
+
+/* ── ROLES ── */
 .roles-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
 
 .role-tag {
@@ -335,6 +467,70 @@ body::before {
   font-weight: 600;
 }
 
+/* ── SKILL GAP ── */
+.skill-gap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.skill-gap-card {
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.skill-gap-card.have {
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2);
+}
+
+.skill-gap-card.missing {
+  background: rgba(239,68,68,0.07);
+  border: 1px solid rgba(239,68,68,0.18);
+}
+
+.skill-gap-card h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.skill-gap-card.have h4 { color: #10b981; }
+.skill-gap-card.missing h4 { color: #ef4444; }
+
+.skill-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.skill-chip {
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.have .skill-chip { background: rgba(16,185,129,0.15); color: #065f46; }
+.missing .skill-chip { background: rgba(239,68,68,0.12); color: #991b1b; }
+
+/* ── VERDICT BADGE ── */
+.verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.verdict-badge.excellent { background: rgba(16,185,129,0.12); color: #065f46; border: 1px solid rgba(16,185,129,0.3); }
+.verdict-badge.good      { background: rgba(245,158,11,0.12); color: #92400e; border: 1px solid rgba(245,158,11,0.3); }
+.verdict-badge.average   { background: rgba(249,115,22,0.12); color: #9a3412; border: 1px solid rgba(249,115,22,0.3); }
+.verdict-badge.weak      { background: rgba(239,68,68,0.1);   color: #991b1b; border: 1px solid rgba(239,68,68,0.25); }
+
+/* ── ACTIONS ── */
 .actions { display: flex; gap: 12px; margin-top: 8px; }
 
 .btn {
@@ -359,6 +555,13 @@ body::before {
 .btn-outline { background: var(--surface); color: var(--teal); border: 1px solid rgba(10,163,181,0.35); }
 .btn-outline:hover { background: var(--teal-dim); }
 
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
   from { opacity:0; transform:translateY(18px); }
@@ -371,18 +574,18 @@ body::before {
   .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
   .main { padding: 20px 14px 40px; }
   .card { padding: 28px 18px; }
-  .format-hints { flex-direction: column; }
   .actions { flex-direction: column; }
+  .skill-gap-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 
-<!-- KEY FIX: Pass Django context into data attributes on <body> so JS stays pure -->
-<body data-has-analysis="{% if analysis %}true{% else %}false{% endif %}" data-score="{% if analysis %}{{ analysis.analysis_score }}{% else %}0{% endif %}">
+<body data-has-analysis="{% if analysis %}true{% else %}false{% endif %}" data-score="{% if analysis %}{{ analysis.analysis_score }}{% else %}0{% endif %}" data-ats="{% if analysis %}{{ analysis.ats_score|default:0 }}{% else %}0{% endif %}">
 
 <!-- NAVBAR -->
 <nav class="navbar">
-  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <div class="navbar-brand"><i class="fas fa-bullseye"></i>
+      Smart Placement Portal</div>
   <div class="navbar-links">
     <a href="{% url 'dashboard' %}">Dashboard</a>
     <a href="{% url 'companies' %}">Companies</a>
@@ -406,7 +609,7 @@ body::before {
   <!-- ── ANALYSIS RESULT VIEW ── -->
   <div class="page-header">
     <h1>Resume Analysis</h1>
-    <p>AI-powered feedback based on your uploaded resume</p>
+    <p>AI-powered deep review of your uploaded resume</p>
   </div>
 
   <!-- SCORE CARD -->
@@ -427,23 +630,136 @@ body::before {
       </div>
     </div>
     <div class="score-label" id="scoreLabel">
-      {% if analysis.analysis_score >= 75 %}Excellent Resume!
-      {% elif analysis.analysis_score >= 50 %}Good Resume
+      {% if analysis.analysis_score >= 80 %}Excellent Resume!
+      {% elif analysis.analysis_score >= 65 %}Good Resume
+      {% elif analysis.analysis_score >= 45 %}Average Resume
       {% else %}Needs Improvement{% endif %}
     </div>
-    <div class="score-sublabel">Based on AI analysis of your resume content</div>
+    <div class="score-sublabel">Based on deep AI analysis of your resume content, structure &amp; market fit</div>
   </div>
 
-  <!-- FEEDBACK -->
+  <!-- OVERALL SUMMARY -->
   <div class="analysis-card">
-    <div class="analysis-card-title"><i class="fas fa-comment-dots"></i> AI Feedback</div>
-    <div class="feedback-text">{{ analysis.feedback }}</div>
+    <div class="analysis-card-title"><i class="fas fa-star"></i> Overall Summary</div>
+
+    {% if analysis.analysis_score >= 80 %}
+      <span class="verdict-badge excellent"><i class="fas fa-trophy"></i> Strong Candidate</span>
+    {% elif analysis.analysis_score >= 65 %}
+      <span class="verdict-badge good"><i class="fas fa-thumbs-up"></i> Competitive Profile</span>
+    {% elif analysis.analysis_score >= 45 %}
+      <span class="verdict-badge average"><i class="fas fa-exclamation-circle"></i> Moderate Profile</span>
+    {% else %}
+      <span class="verdict-badge weak"><i class="fas fa-times-circle"></i> Needs Work</span>
+    {% endif %}
+
+    <div class="feedback-overview">{{ analysis.summary }}</div>
   </div>
+
+  <!-- STRONG POINTS -->
+  {% if analysis.strong_points %}
+  <div class="analysis-card">
+    <div class="analysis-card-title"><i class="fas fa-check-circle"></i> What's Working Well</div>
+    <ul class="feedback-list">
+      {% for point in analysis.strong_points %}
+      <li class="good">
+        <span class="bullet"><i class="fas fa-check"></i></span>
+        <div>
+          <strong>{{ point.title }}</strong>
+          {{ point.detail }}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- WEAK POINTS -->
+  {% if analysis.weak_points %}
+  <div class="analysis-card">
+    <div class="analysis-card-title"><i class="fas fa-exclamation-triangle"></i> Areas to Improve</div>
+    <ul class="feedback-list">
+      {% for point in analysis.weak_points %}
+      <li class="bad">
+        <span class="bullet"><i class="fas fa-times"></i></span>
+        <div>
+          <strong>{{ point.title }}</strong>
+          {{ point.detail }}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- SKILL GAP -->
+  {% if analysis.skills_present or analysis.skills_missing %}
+  <div class="analysis-card">
+    <div class="analysis-card-title"><i class="fas fa-layer-group"></i> Skill Gap Analysis</div>
+    <div class="skill-gap-grid">
+      {% if analysis.skills_present %}
+      <div class="skill-gap-card have">
+        <h4><i class="fas fa-check" style="margin-right:4px;"></i> Skills You Have</h4>
+        <div class="skill-chips">
+          {% for s in analysis.skills_present %}
+          <span class="skill-chip">{{ s }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      {% if analysis.skills_missing %}
+      <div class="skill-gap-card missing">
+        <h4><i class="fas fa-plus" style="margin-right:4px;"></i> Skills to Add</h4>
+        <div class="skill-chips">
+          {% for s in analysis.skills_missing %}
+          <span class="skill-chip">{{ s }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ATS SCORE -->
+  <div class="analysis-card">
+    <div class="analysis-card-title"><i class="fas fa-robot"></i> ATS Compatibility</div>
+    <div class="ats-wrap">
+      <div class="ats-top">
+        <span class="ats-label">Applicant Tracking System Score</span>
+        <span class="ats-val" id="atsVal">{{ analysis.ats_score|default:0 }}%</span>
+      </div>
+      <div class="ats-bar-bg">
+        <div class="ats-bar-fill" id="atsBar" style="width: 0%;"></div>
+      </div>
+      {% if analysis.ats_keywords %}
+      <div class="ats-keywords">
+        {% for kw in analysis.ats_keywords %}
+        <span class="ats-kw">{{ kw }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  {% if analysis.pro_tips %}
+  <div class="analysis-card">
+    <div class="analysis-card-title"><i class="fas fa-lightbulb"></i> Pro Tips for 2026</div>
+    <ul class="feedback-list">
+      {% for tip in analysis.pro_tips %}
+      <li class="tip">
+        <span class="bullet"><i class="fas fa-arrow-right"></i></span>
+        <div>{{ tip }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
 
   <!-- RECOMMENDED ROLES -->
   {% if recommended_roles %}
   <div class="analysis-card">
-    <div class="analysis-card-title"><i class="fas fa-briefcase"></i> Recommended Job Roles</div>
+    <div class="analysis-card-title"><i class="fas fa-briefcase"></i> Best Matched Job Roles</div>
     <div class="roles-wrap">
       {% for role in recommended_roles %}
         <span class="role-tag">
@@ -469,7 +785,7 @@ body::before {
   <!-- ── UPLOAD FORM VIEW ── -->
   <div class="page-header">
     <h1>Upload Resume</h1>
-    <p>Upload your latest resume to improve placement recommendations</p>
+    <p>Upload your latest resume to get a detailed AI-powered analysis</p>
   </div>
 
   <div class="card">
@@ -477,7 +793,7 @@ body::before {
       <div class="card-icon"><i class="fas fa-file-arrow-up"></i></div>
       <div>
         <h2>Your Resume</h2>
-        <p>Supported formats: PDF, DOC, DOCX</p>
+        <p>Supported formats: PDF, DOC, DOCX, PNG, JPG</p>
       </div>
     </div>
 
@@ -486,10 +802,10 @@ body::before {
 
       <!-- DROP ZONE -->
       <div class="drop-zone" id="dropZone">
-        <input type="file" name="resume" id="resumeInput" accept=".pdf,.doc,.docx" required>
+        <input type="file" name="resume" id="resumeInput" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" required>
         <div class="drop-icon"><i class="fas fa-cloud-arrow-up"></i></div>
         <div class="drop-title">Drag & drop your resume here</div>
-        <div class="drop-sub">or <span>browse files</span> from your device</div>
+        <div class="drop-sub">or <span>browse files</span> — PDF, DOC, DOCX, or image</div>
         <div class="file-chosen" id="fileChosen">
           <i class="fas fa-file-check"></i>
           <span id="fileName"></span>
@@ -497,7 +813,7 @@ body::before {
       </div>
 
       <button type="submit" class="submit-btn">
-        <i class="fas fa-upload" style="margin-right:8px;"></i>Upload Resume
+        <i class="fas fa-upload" style="margin-right:8px;"></i>Analyse My Resume
       </button>
     </form>
   </div>
@@ -506,16 +822,16 @@ body::before {
 
 </div>
 
-<!-- KEY FIX: All Django template tags removed from JS — data comes from body data attributes instead -->
 <script>
   var hasAnalysis = document.body.dataset.hasAnalysis === 'true';
   var score = parseInt(document.body.dataset.score) || 0;
+  var ats   = parseInt(document.body.dataset.ats)   || 0;
 
   if (!hasAnalysis) {
-    var input = document.getElementById('resumeInput');
+    var input      = document.getElementById('resumeInput');
     var fileChosen = document.getElementById('fileChosen');
-    var fileName = document.getElementById('fileName');
-    var dropZone = document.getElementById('dropZone');
+    var fileName   = document.getElementById('fileName');
+    var dropZone   = document.getElementById('dropZone');
 
     if (input) {
       input.addEventListener('change', function() {
@@ -531,11 +847,9 @@ body::before {
         e.preventDefault();
         dropZone.classList.add('dragover');
       });
-
       dropZone.addEventListener('dragleave', function() {
         dropZone.classList.remove('dragover');
       });
-
       dropZone.addEventListener('drop', function(e) {
         e.preventDefault();
         dropZone.classList.remove('dragover');
@@ -550,18 +864,29 @@ body::before {
 
   if (hasAnalysis) {
     document.addEventListener('DOMContentLoaded', function() {
-      var ring = document.getElementById('scoreRing');
+      var ring  = document.getElementById('scoreRing');
       var label = document.getElementById('scoreLabel');
+      var atsBar = document.getElementById('atsBar');
       var circumference = 364;
 
       if (ring) {
-        ring.style.strokeDashoffset = circumference - (circumference * score / 100);
+        setTimeout(function() {
+          ring.style.transition = 'stroke-dashoffset 1.2s ease';
+          ring.style.strokeDashoffset = circumference - (circumference * score / 100);
+        }, 200);
       }
 
       if (label) {
-        if (score >= 75) label.style.color = '#10b981';
-        else if (score >= 50) label.style.color = '#f59e0b';
-        else label.style.color = '#ef4444';
+        if (score >= 80)      label.style.color = '#10b981';
+        else if (score >= 65) label.style.color = '#f59e0b';
+        else if (score >= 45) label.style.color = '#f97316';
+        else                  label.style.color = '#ef4444';
+      }
+
+      if (atsBar) {
+        setTimeout(function() {
+          atsBar.style.width = ats + '%';
+        }, 400);
       }
     });
   }
