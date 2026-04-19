@@ -34,9 +34,13 @@
       flex-shrink: 0;
     }
     .navbar-brand {
-      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
-      background: var(--gradient); -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
+      font-family: 'Syne', sans-serif; 
+      font-weight: 800; font-size: 1.1rem;
+      color:#0aa3b5;
+      white-space: nowrap;
+      display: flex; 
+      align-items: center;
+      gap: 8px;
     }
     .navbar-links { display: flex; align-items: center; gap: 4px; }
     .navbar-links a {
@@ -227,7 +231,8 @@
 <body>
 
 <nav class="navbar">
-  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+    <div class="navbar-brand"><i class="fas fa-bullseye"></i>
+      Smart Placement Portal</div>
   <div class="navbar-links">
     <a href="{% url 'dashboard' %}">Dashboard</a>
     <a href="{% url 'companies' %}">Companies</a>
