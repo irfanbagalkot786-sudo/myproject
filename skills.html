@@ -4,354 +4,196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skills - Smart Placement Portal</title>
+<title>Skills — Smart Placement Portal</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-
 <style>
 :root {
-  --teal:       #0aa3b5;
-  --teal-dark:  #088a9a;
-  --teal-dim:   rgba(10,163,181,0.12);
-  --ink:        #0d1b2a;
-  --slate:      #3a4a5c;
-  --muted:      #7a8fa8;
-  --surface:    #ffffff;
-  --bg:         #eaf1f6;
-  --border:     #d6e4ed;
-  --gradient:   linear-gradient(135deg, #0aa3b5 0%, #088a9a 100%);
-  --glow:       0 0 40px rgba(10,163,181,0.12);
+  --teal:      #0aa3b5;
+  --teal-dark: #088a9a;
+  --teal-dim:  rgba(10,163,181,0.12);
+  --ink:       #0d1b2a;
+  --slate:     #3a4a5c;
+  --muted:     #7a8fa8;
+  --surface:   #ffffff;
+  --bg:        #eaf1f6;
+  --border:    #d6e4ed;
+  --gradient:  linear-gradient(135deg,#0aa3b5 0%,#088a9a 100%);
+  --glow:      0 0 40px rgba(10,163,181,0.10);
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 20%,rgba(10,163,181,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 90% 80%,rgba(8,138,154,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
 
-* { margin:0; padding:0; box-sizing:border-box; }
+/* NAVBAR */
+.navbar{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:0 32px;height:62px;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 1px 8px rgba(10,163,181,.07)}
+.navbar-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#0aa3b5;display:flex;align-items:center;gap:8px}
+.navbar-links{display:flex;align-items:center;gap:4px}
+.navbar-links a{color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:500;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap}
+.navbar-links a:hover{color:var(--slate);background:var(--teal-dim)}
+.navbar-links a.active{color:var(--teal);background:var(--teal-dim)}
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-  overflow-x: hidden;
+/* MAIN */
+.main{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:40px 24px 60px}
+
+.page-header{margin-bottom:32px;animation:fadeUp .5s ease both}
+.page-header h1{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;letter-spacing:-.5px;color:var(--ink)}
+.page-header p{color:var(--muted);font-size:.9rem;margin-top:4px}
+
+/* ADD CARD */
+.add-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px 36px;box-shadow:var(--glow);margin-bottom:28px;animation:fadeUp .5s ease .05s both}
+.add-card-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:9px;margin-bottom:24px}
+.add-card-title i{color:var(--teal)}
+
+/* Skill input */
+.skill-input-wrap{position:relative;margin-bottom:20px}
+.skill-input-wrap label{display:block;font-size:.78rem;font-weight:500;color:var(--muted);margin-bottom:6px;letter-spacing:.3px}
+.skill-input-wrap input{width:100%;padding:13px 16px 13px 42px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s,box-shadow .2s}
+.skill-input-wrap input::placeholder{color:var(--muted);opacity:.7}
+.skill-input-wrap input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,163,181,.13)}
+.skill-input-icon{position:absolute;left:14px;bottom:14px;color:var(--teal);font-size:14px;pointer-events:none}
+
+/* Level selector */
+.level-section{margin-bottom:24px}
+.level-section label{display:block;font-size:.78rem;font-weight:500;color:var(--muted);margin-bottom:12px;letter-spacing:.3px}
+.level-radios{display:flex;gap:10px;flex-wrap:wrap}
+.level-radio-item{flex:1;min-width:52px}
+.level-radio-item input[type=radio]{display:none}
+.level-radio-item label{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:12px 8px;border-radius:14px;cursor:pointer;
+  border:1.5px solid var(--border);background:var(--bg);
+  font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:var(--muted);
+  transition:all .18s;text-align:center;user-select:none
 }
-
-body::before {
-  content:'';
-  position:fixed;
-  inset:0;
-  background:
-    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(10,163,181,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(8,138,154,0.06) 0%, transparent 60%);
-  pointer-events:none;
-  z-index:0;
+.level-radio-item label .lvl-num{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;line-height:1}
+.level-radio-item label .lvl-name{font-size:.65rem;letter-spacing:.3px;line-height:1.2}
+.level-radio-item input[type=radio]:checked + label{
+  border-color:var(--teal);background:var(--teal-dim);color:var(--teal)
 }
+.level-radio-item:nth-child(1) input:checked + label{border-color:#d97706;background:rgba(251,191,36,.12);color:#d97706}
+.level-radio-item:nth-child(2) input:checked + label{border-color:#f59e0b;background:rgba(251,191,36,.15);color:#b45309}
+.level-radio-item:nth-child(3) input:checked + label{border-color:var(--teal);background:var(--teal-dim);color:var(--teal)}
+.level-radio-item:nth-child(4) input:checked + label{border-color:#059669;background:rgba(16,185,129,.1);color:#065f46}
+.level-radio-item:nth-child(5) input:checked + label{border-color:#7c3aed;background:rgba(139,92,246,.1);color:#5b21b6}
 
-    /* ── NAVBAR ── */
-    .navbar {
-      position: sticky; top: 0; z-index: 100;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 0 32px; height: 62px;
-      background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      box-shadow: 0 1px 8px rgba(10,163,181,0.07);
-    }
-    .navbar-brand {
-      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
-      background: var(--gradient); -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
-    }
-    .navbar-spacer {
-      display: flex;
-      justify-content: flex-end;
-    }
-    .navbar-links {
-      display: flex; align-items: center; gap: 4px;
-    }
-    .navbar-links a {
-      color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500;
-      padding: 6px 12px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
-    }
-    .navbar-links a:hover { color: var(--slate); background: var(--teal-dim); }
-    .navbar-links a.active { color: var(--teal); background: var(--teal-dim); }
-
-/* ── MAIN ── */
-.main {
-  position: relative;
-  z-index: 1;
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 40px 24px 60px;
+/* Skill cards (dynamic add UI) */
+.skill-cards-wrap{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.skill-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:16px;padding:18px 20px;
+  animation:fadeUp .3s ease both;position:relative
 }
-
-/* ── PAGE HEADER ── */
-.page-header {
-  margin-bottom: 28px;
-  animation: fadeUp 0.5s ease both;
+.skill-card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--gradient);border-radius:10px 10px 0 0;
+  margin:-18px -20px 16px;padding:12px 18px
 }
-
-.page-header h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.9rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--ink);
+.skill-card-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.skill-card-actions{display:flex;align-items:center;gap:8px}
+.skill-card-btn{
+  width:28px;height:28px;border-radius:7px;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:11px;
+  transition:all .18s;background:rgba(255,255,255,.18);color:#fff
 }
+.skill-card-btn:hover{background:rgba(255,255,255,.35)}
+.skill-card-btn.danger{background:rgba(231,76,60,.25)}
+.skill-card-btn.danger:hover{background:#e74c3c}
 
-.page-header p {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-top: 4px;
+.sc-name-input{width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;margin-bottom:14px;transition:border-color .2s,box-shadow .2s}
+.sc-name-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,163,181,.13)}
+.sc-name-input::placeholder{color:var(--muted);opacity:.7}
+
+.sc-level-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sc-level-label{font-size:.78rem;font-weight:600;color:var(--muted);white-space:nowrap}
+.sc-radios{display:flex;gap:8px}
+.sc-radio{position:relative}
+.sc-radio input[type=radio]{display:none}
+.sc-radio label{
+  width:34px;height:34px;border-radius:50%;border:2px solid var(--border);
+  background:var(--bg);display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;color:var(--muted);
+  cursor:pointer;transition:all .18s;user-select:none
 }
+.sc-radio input:checked + label{border-color:var(--teal);background:var(--teal-dim);color:var(--teal)}
 
-/* ── CARD ── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 36px;
-  box-shadow: var(--glow);
-  animation: fadeUp 0.5s ease 0.1s both;
-  margin-bottom: 28px;
+/* Action buttons */
+.actions-row{display:flex;gap:12px}
+.btn-add{
+  flex:1;padding:13px;background:var(--bg);border:1.5px dashed var(--teal);
+  border-radius:12px;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;
+  color:var(--teal);cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:7px
 }
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 28px;
+.btn-add:hover{background:var(--teal-dim)}
+.btn-save{
+  flex:1;padding:13px;background:var(--gradient);border:none;
+  border-radius:12px;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;
+  color:#fff;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:7px;
+  box-shadow:0 4px 18px rgba(10,163,181,.28)
 }
+.btn-save:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(10,163,181,.42)}
 
-.card-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--gradient);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-  color: white;
+/* SAVED SKILLS CARD */
+.saved-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px 36px;box-shadow:var(--glow);animation:fadeUp .5s ease .12s both}
+.saved-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.saved-card-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px}
+.saved-card-title i{color:var(--teal)}
+.skills-count{font-size:.75rem;color:var(--muted);background:var(--bg);padding:3px 10px;border-radius:20px;border:1px solid var(--border)}
+
+.saved-skills-list{display:flex;flex-direction:column;gap:10px}
+
+.saved-skill-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;background:var(--bg);
+  border:1px solid var(--border);border-left:4px solid var(--teal);
+  border-radius:12px;transition:transform .15s
 }
+.saved-skill-row:hover{transform:translateX(3px)}
+.saved-skill-left{display:flex;align-items:center;gap:12px}
+.saved-skill-icon{width:36px;height:36px;border-radius:10px;background:var(--teal-dim);display:flex;align-items:center;justify-content:center;color:var(--teal);font-size:14px;flex-shrink:0}
+.saved-skill-name{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--ink)}
+.saved-skill-right{display:flex;align-items:center;gap:10px}
 
-.card-header h2 {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--ink);
-}
+/* Level pill */
+.level-pill{font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:20px}
+.lp-1{background:rgba(251,191,36,.12);color:#b45309;border:1px solid rgba(251,191,36,.35)}
+.lp-2{background:rgba(251,191,36,.18);color:#d97706;border:1px solid rgba(251,191,36,.4)}
+.lp-3{background:var(--teal-dim);color:var(--teal-dark);border:1px solid rgba(10,163,181,.28)}
+.lp-4{background:rgba(16,185,129,.1);color:#065f46;border:1px solid rgba(16,185,129,.3)}
+.lp-5{background:rgba(139,92,246,.1);color:#5b21b6;border:1px solid rgba(139,92,246,.28)}
 
-.card-header p {
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin-top: 2px;
-}
+/* Level dot row */
+.level-dots{display:flex;gap:4px;align-items:center}
+.level-dot{width:9px;height:9px;border-radius:50%;background:var(--border);transition:background .2s}
+.level-dot.filled{background:var(--teal)}
 
-/* ── FORM ── */
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 18px;
-}
+.del-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(231,76,60,.35);background:rgba(231,76,60,.06);color:#e74c3c;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;transition:all .18s;flex-shrink:0}
+.del-btn:hover{background:#e74c3c;color:#fff;border-color:#e74c3c;transform:scale(1.1)}
 
-.form-group { display: flex; flex-direction: column; gap: 7px; }
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-state i{font-size:2.4rem;margin-bottom:12px;opacity:.3;color:var(--teal);display:block}
+.empty-state p{font-size:.9rem}
 
-label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--muted);
-  letter-spacing: 0.3px;
-}
+/* Toast */
+.toast-msg{position:fixed;bottom:28px;right:28px;background:var(--teal-dark);color:#fff;padding:12px 22px;border-radius:12px;font-size:.88rem;font-weight:600;box-shadow:0 4px 20px rgba(10,163,181,.3);display:none;z-index:99999;animation:slideUp .22s ease}
 
-select {
-  width: 100%;
-  padding: 12px 16px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--ink);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.88rem;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  -webkit-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a8fa8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  background-color: var(--bg);
-  padding-right: 40px;
-  cursor: pointer;
-}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-select:focus {
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(10,163,181,0.13);
-}
-
-select option { background: var(--surface); color: var(--ink); }
-
-.submit-btn {
-  width: 100%;
-  padding: 14px;
-  background: var(--gradient);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  font-family: 'Syne', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 0.4px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 20px rgba(10,163,181,0.28);
-}
-
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(10,163,181,0.42);
-}
-
-.submit-btn:active { transform: translateY(0); }
-
-.submit-btn::after {
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(rgba(255,255,255,0.1),transparent);
-}
-
-/* ── SKILLS LIST CARD ── */
-.skills-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 36px;
-  box-shadow: var(--glow);
-  animation: fadeUp 0.5s ease 0.2s both;
-}
-
-.section-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.section-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.skills-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.skill-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--teal);
-  border-radius: 12px;
-  transition: border-color 0.2s, transform 0.15s;
-}
-
-.skill-box:hover {
-  border-color: var(--teal);
-  transform: translateX(3px);
-}
-
-.skill-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.skill-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--teal-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--teal);
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.skill-name {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--ink);
-}
-
-.skill-level {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.level-beginner    { background: rgba(251,191,36,0.12); color: #d97706; border: 1px solid rgba(251,191,36,0.3); }
-.level-intermediate{ background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(10,163,181,0.3); }
-.level-advanced    { background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.3); }
-
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--muted);
-}
-
-.empty-state i {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
-  opacity: 0.4;
-  color: var(--teal);
-  display: block;
-}
-
-.empty-state p {
-  font-size: 0.9rem;
-}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(18px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 600px) {
-  .navbar { padding: 0 16px; }
-  .navbar-links a { padding: 5px 8px; font-size: 0.72rem; }
-  .main { padding: 20px 14px 40px; }
-  .form-row { grid-template-columns: 1fr; }
-  .card, .skills-card { padding: 24px 18px; }
+@media(max-width:600px){
+  .navbar{padding:0 16px}
+  .navbar-links a{padding:5px 8px;font-size:.72rem}
+  .main{padding:20px 14px 40px}
+  .add-card,.saved-card{padding:22px 18px}
+  .level-radios{gap:6px}
+  .actions-row{flex-direction:column}
 }
 </style>
 </head>
-
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar">
-  <div class="navbar-brand">🎯 Smart Placement Portal</div>
+  <div class="navbar-brand"><i class="fas fa-bullseye"></i> Smart Placement Portal</div>
   <div class="navbar-links">
     <a href="{% url 'dashboard' %}">Dashboard</a>
     <a href="{% url 'companies' %}">Companies</a>
@@ -361,74 +203,68 @@ select option { background: var(--surface); color: var(--ink); }
     <a href="{% url 'interview_results' %}">Interviews</a>
     <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'jobs' %}">Jobs</a>
+    <a href="{% url 'skills' %}" class="active">Skills</a>
   </div>
-  <div class="navbar-spacer">
-    <div style="width: 42px;"></div>
-  </div>
+  <div style="width:42px"></div>
 </nav>
 
-<!-- MAIN -->
 <div class="main">
 
   <!-- PAGE HEADER -->
   <div class="page-header">
-    <h1>Skills</h1>
-    <p>Add and manage your technical skills to improve placement matches</p>
+    <h1>My Skills</h1>
+    <p>Add your skills and rate your proficiency from 1 (Beginner) to 5 (Expert)</p>
   </div>
 
-  <!-- ADD SKILL CARD -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-icon"><i class="fas fa-plus"></i></div>
-      <div>
-        <h2>Add a Skill</h2>
-        <p>Select a skill and your proficiency level</p>
-      </div>
+  <!-- ADD SKILLS CARD (dynamic JS builder) -->
+  <div class="add-card">
+    <div class="add-card-title">
+      <i class="fas fa-plus-circle"></i> Add Skills
     </div>
 
-    <form method="POST">
-      {% csrf_token %}
+    <!-- Dynamic skill cards injected here -->
+    <div class="skill-cards-wrap" id="skillCardsWrap"></div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Skill</label>
-          <select name="skill" required>
-            <option value="">Select Skill</option>
-            {% for skill in skills %}
-            <option value="{{ skill.id }}">{{ skill.name }} ({{ skill.category }})</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Proficiency Level</label>
-          <select name="level" required>
-            <option value="">Select Level</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
-        </div>
-      </div>
-
-      <button type="submit" class="submit-btn">
-        <i class="fas fa-plus" style="margin-right:8px;"></i>Add Skill
+    <!-- Action row -->
+    <div class="actions-row">
+      <button class="btn-add" id="addMoreBtn" type="button">
+        <i class="fas fa-plus"></i> Add Another Skill
       </button>
-    </form>
+      <button class="btn-save" id="saveAllBtn" type="button">
+        <i class="fas fa-check"></i> Save All
+      </button>
+    </div>
   </div>
 
-  <!-- YOUR SKILLS CARD -->
-  <div class="skills-card">
-    <div class="section-label">Your Skills</div>
+  <!-- SAVED SKILLS CARD -->
+  <div class="saved-card">
+    <div class="saved-card-header">
+      <div class="saved-card-title"><i class="fas fa-layer-group"></i> Your Saved Skills</div>
+      <span class="skills-count">{{ custom_skills|length }} skill{{ custom_skills|length|pluralize }}</span>
+    </div>
 
-    <div class="skills-grid">
-      {% for s in student_skills %}
-      <div class="skill-box">
-        <div class="skill-info">
-          <div class="skill-icon"><i class="fas fa-code"></i></div>
-          <span class="skill-name">{{ s.skill.name }}</span>
+    <div class="saved-skills-list">
+      {% for s in custom_skills %}
+      <div class="saved-skill-row">
+        <div class="saved-skill-left">
+          <div class="saved-skill-icon"><i class="fas fa-code"></i></div>
+          <span class="saved-skill-name">{{ s.skill_name }}</span>
         </div>
-        <span class="skill-level level-{{ s.level }}">{{ s.level }}</span>
+        <div class="saved-skill-right">
+          <div class="level-dots">
+            {% for i in "12345" %}
+              <div class="level-dot {% if forloop.counter <= s.level %}filled{% endif %}"></div>
+            {% endfor %}
+          </div>
+          <span class="level-pill lp-{{ s.level }}">{{ s.level_label }}</span>
+          <form method="POST" action="{% url 'delete_custom_skill' s.id %}" style="margin:0">
+            {% csrf_token %}
+            <button type="submit" class="del-btn" title="Remove"
+                    onclick="return confirm('Remove {{ s.skill_name }}?')">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </form>
+        </div>
       </div>
       {% empty %}
       <div class="empty-state">
@@ -441,5 +277,167 @@ select option { background: var(--surface); color: var(--ink); }
 
 </div>
 
+<div class="toast-msg" id="toastMsg"></div>
+
+<!-- Hidden form for submitting skills to backend -->
+<form id="bulkSaveForm" method="POST" action="{% url 'skills' %}" style="display:none">
+  {% csrf_token %}
+  <div id="hiddenInputs"></div>
+</form>
+
+<!-- Django template data passed to JS via data attributes (fixes VS Code linter errors) -->
+<div id="djangoData"
+  data-skills-url="{% url 'skills' %}"
+  data-messages="{% for message in messages %}{{ message|escapejs }}|{% endfor %}"
+  style="display:none">
+</div>
+
+<script>
+(function(){
+  var LEVEL_LABELS = {1:'Beginner',2:'Elementary',3:'Intermediate',4:'Advanced',5:'Expert'};
+  var cards        = [];
+  var cardIdSeed   = 0;
+  var wrap         = document.getElementById('skillCardsWrap');
+
+  // Read Django data from data attributes (eliminates linter errors)
+  var djangoData   = document.getElementById('djangoData');
+  var skillsUrl    = djangoData.getAttribute('data-skills-url');
+  var rawMessages  = djangoData.getAttribute('data-messages');
+
+  function showToast(msg){
+    var t = document.getElementById('toastMsg');
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(t._t);
+    t._t = setTimeout(function(){t.style.display='none';},2800);
+  }
+
+  function createCard(){
+    var id = ++cardIdSeed;
+    var card = {id:id, el:null};
+    cards.push(card);
+
+    var div = document.createElement('div');
+    div.className = 'skill-card';
+    div.dataset.cardId = id;
+
+    // gradient header
+    var header = '<div class="skill-card-header">' +
+      '<div class="skill-card-title"><i class="fas fa-code"></i> Skills ' + id + '</div>' +
+      '<div class="skill-card-actions">' +
+        (id > 1 ? '<button class="skill-card-btn" title="Move Up" onclick="moveCard('+id+',-1)"><i class="fas fa-arrow-up"></i></button>' : '') +
+        '<button class="skill-card-btn danger" title="Remove" onclick="removeCard('+id+')"><i class="fas fa-times"></i></button>' +
+      '</div></div>';
+
+    // level radio circles 1-5
+    var radios = '';
+    for(var lv=1;lv<=5;lv++){
+      radios += '<div class="sc-radio">' +
+        '<input type="radio" name="lvl_'+id+'" id="lv_'+id+'_'+lv+'" value="'+lv+'"'+(lv===4?' checked':'')+'>'+
+        '<label for="lv_'+id+'_'+lv+'">'+lv+'</label></div>';
+    }
+
+    div.innerHTML = header +
+      '<input class="sc-name-input" type="text" placeholder="e.g. Python, React, Figma…" id="name_'+id+'">' +
+      '<div class="sc-level-row">' +
+        '<span class="sc-level-label">Level</span>' +
+        '<div class="sc-radios">'+radios+'</div>' +
+      '</div>';
+
+    wrap.appendChild(div);
+    card.el = div;
+
+    // focus name input
+    setTimeout(function(){ var inp = document.getElementById('name_'+id); if(inp) inp.focus(); }, 80);
+    return card;
+  }
+
+  function removeCard(id){
+    cards = cards.filter(function(c){ return c.id !== id; });
+    var el = wrap.querySelector('[data-card-id="'+id+'"]');
+    if(el) el.remove();
+    renumberHeaders();
+  }
+
+  function moveCard(id, dir){
+    var idx = cards.findIndex(function(c){ return c.id === id; });
+    var newIdx = idx + dir;
+    if(newIdx < 0 || newIdx >= cards.length) return;
+    // swap in DOM
+    var a = cards[idx].el, b = cards[newIdx].el;
+    if(dir < 0){ wrap.insertBefore(a, b); }
+    else { wrap.insertBefore(b, a); }
+    var tmp = cards[idx]; cards[idx] = cards[newIdx]; cards[newIdx] = tmp;
+    renumberHeaders();
+  }
+
+  function renumberHeaders(){
+    cards.forEach(function(c, i){
+      var titleEl = c.el.querySelector('.skill-card-title');
+      if(titleEl) titleEl.innerHTML = '<i class="fas fa-code"></i> Skills '+(i+1);
+    });
+  }
+
+  function saveAll(){
+    // Validate
+    var entries = [];
+    var hasError = false;
+
+    cards.forEach(function(c){
+      var nameEl  = document.getElementById('name_' + c.id);
+      var levelEl = c.el.querySelector('input[name="lvl_'+c.id+'"]:checked');
+      var name    = nameEl ? nameEl.value.trim() : '';
+      var level   = levelEl ? levelEl.value : '4';
+
+      if(!name){
+        nameEl.style.borderColor = '#e74c3c';
+        nameEl.style.boxShadow   = '0 0 0 3px rgba(231,76,60,.15)';
+        hasError = true;
+      } else {
+        nameEl.style.borderColor = '';
+        nameEl.style.boxShadow   = '';
+        entries.push({name:name, level:level});
+      }
+    });
+
+    if(hasError){ showToast('Please fill in all skill names.'); return; }
+    if(!entries.length){ showToast('Add at least one skill first.'); return; }
+
+    // Build and submit hidden form (one submission per skill via multiple fetches)
+    // We'll just POST them one by one using fetch to avoid page reload
+    var csrfToken = document.querySelector('input[name=csrfmiddlewaretoken]').value;
+    var remaining = entries.length;
+
+    entries.forEach(function(entry){
+      var fd = new FormData();
+      fd.append('csrfmiddlewaretoken', csrfToken);
+      fd.append('skill_name', entry.name);
+      fd.append('level', entry.level);
+
+      fetch(skillsUrl, {method:'POST', body:fd, credentials:'same-origin'})
+        .then(function(){ remaining--; if(remaining===0){ window.location.reload(); } })
+        .catch(function(){ remaining--; if(remaining===0){ window.location.reload(); } });
+    });
+  }
+
+  // Expose globally
+  window.removeCard = removeCard;
+  window.moveCard   = moveCard;
+
+  // Initial card
+  createCard();
+
+  document.getElementById('addMoreBtn').addEventListener('click', function(){ createCard(); });
+  document.getElementById('saveAllBtn').addEventListener('click', function(){ saveAll(); });
+
+  // Show Django messages as toasts
+  if(rawMessages){
+    rawMessages.split('|').forEach(function(msg){
+      msg = msg.trim();
+      if(msg) showToast(msg);
+    });
+  }
+}());
+</script>
 </body>
 </html>
