@@ -7,6 +7,7 @@
 <title>Dashboard — Smart Placement Portal</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/responsive.css' %}">
 <style>
 :root {
   --teal:      #0aa3b5;
@@ -267,6 +268,8 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="navbar-brand"><i class="fas fa-bullseye"></i> Smart Placement Portal</div>
+    <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
+    <label for="menu-toggle" class="menu-icon"><i class="fas fa-bars"></i></label>
     <div class="navbar-links">
       <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
       <a href="{% url 'companies' %}">Companies</a>
@@ -274,6 +277,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
       <a href="{% url 'recommendations' %}">Recs</a>
       <a href="{% url 'test' %}">Test</a>
       <a href="{% url 'interview_results' %}">Interviews</a>
+      <a href="{% url 'communication_skills' %}">Comm AI</a>
       <a href="{% url 'projects' %}">Projects</a>
       <a href="{% url 'jobs' %}">Jobs</a>
     </div>
@@ -584,10 +588,10 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
         <div class="feat-body"><div class="feat-title">AI Recommendations</div><div class="feat-desc">Get smart preparation course recommendations powered by your profile and industry trends.</div></div>
         <div class="feat-footer"><span class="feat-cta">See Recs</span><span class="feat-arrow">↗</span></div>
       </a>
-      <a href="{% url 'skills' %}" class="feat-card">
-        <div class="feat-icon">⚡</div>
-        <div class="feat-body"><div class="feat-title">Manage Your Skills</div><div class="feat-desc">Add, update, and showcase technical &amp; soft skills to boost your profile visibility.</div></div>
-        <div class="feat-footer"><span class="feat-cta">Manage Skills</span><span class="feat-arrow">↗</span></div>
+      <a href="{% url 'communication_skills' %}" class="feat-card">
+        <div class="feat-icon">🎙️</div>
+        <div class="feat-body"><div class="feat-title">AI Communication Coach</div><div class="feat-desc">Practice for interviews with our voice AI. Evaluate your grammar, fluency, and confidence.</div></div>
+        <div class="feat-footer"><span class="feat-cta">Start Practice</span><span class="feat-arrow">↗</span></div>
       </a>
     </div>
   </div>
