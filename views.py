@@ -3,34 +3,47 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.core.management import call_command
 from .forms import LoginForm, StudentProfileForm
-from .models import StudentProfile, Skill, StudentSkill, CustomSkill, Project, Resume, ResumeAnalysis, Company, JobRole, Recommendation, Question
-import anthropic, json
+from .models import (
+    StudentProfile, Skill, StudentSkill, CustomSkill, Project, Resume,
+    ResumeAnalysis, Company, JobRole, Recommendation, Question, InterviewSession,
+    CommunicationSession, CommunicationTurn
+)
+import json
 import os
 import subprocess
-import json
 import time
+import requests
 import fitz  
 import base64
 import PyPDF2
 import whisper
+import re
+from pathlib import Path
+from openai import OpenAI
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.base import ContentFile
-from .models import InterviewSession
-from django.http import HttpResponse
-
-try:
-    from google import genai as genai_new
-    import google.generativeai as genai
-except ImportError:
-    import google.generativeai as genai
 
 # ─── Config ─────────────────────────────────────────────────────────────────
-GEMINI_API_KEY = ""
-GEMINI_MODEL   = "gemini-2.5-flash-lite"
+def load_openai_key():
+    """Loads the OpenAI API Key from env.html in the project root."""
+    try:
+        base_dir = Path(__file__).resolve().parent.parent
+        env_file = base_dir / "env.html"
+        if env_file.exists():
+            content = env_file.read_text(encoding='utf-8')
+            match = re.search(r'OPENAI_API_KEY\s*=\s*"([^"]+)"', content)
+            if match:
+                return match.group(1)
+    except Exception as e:
+        print(f"Error loading OpenAI key: {e}")
+    return os.getenv("OPENAI_API_KEY", "")
+
+OPENAI_API_KEY = load_openai_key()
+client = OpenAI(api_key=OPENAI_API_KEY)
 # ────────────────────────────────────────────────────────────────────────────
 
 model = None
@@ -38,30 +51,39 @@ model = None
 def get_model():
     global model
     if model is None:
-        import whisper
         model = whisper.load_model("small")
     return model
 
 def your_view(request):
     model = get_model()
 
+def openai_generate(prompt, image_parts=None, mime_type="image/png"):
+    """
+    Standard AI generation using OpenAI's GPT-4o-mini.
+    Supports text-only and vision (image) inputs.
+    """
+    try:
+        messages = []
+        if image_parts:
+            content = [{"type": "text", "text": prompt}]
+            for img_base64 in image_parts:
+                content.append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:{mime_type};base64,{img_base64}"}
+                })
+            messages.append({"role": "user", "content": content})
+        else:
+            messages.append({"role": "user", "content": prompt})
 
-def gemini_generate(prompt_or_parts):
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel(GEMINI_MODEL)
-    last_error = None
-    for attempt in range(3):
-        try:
-            response = model.generate_content(prompt_or_parts)
-            return response
-        except Exception as e:
-            last_error = e
-            print(f"Gemini attempt {attempt + 1} failed: {e}")
-            if attempt < 2:
-                print(f"Retrying in 10 seconds...")
-                time.sleep(10)
-    raise last_error
-
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            response_format={ "type": "json_object" } if "JSON" in prompt.upper() else None
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"OpenAI Error: {e}")
+        return None
 
 # ================= REGISTER VIEW =================
 
@@ -372,21 +394,6 @@ def result(request):
     return render(request, 'result.html')
 
 
-@csrf_exempt
-def ai_generate_questions(request):
-    if request.method == 'POST':
-        data   = json.loads(request.body)
-        prompt = data.get('prompt', '')
-        client = anthropic.Anthropic(api_key='YOUR_API_KEY_HERE')
-        message = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=16000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return JsonResponse({'content': message.content[0].text})
-    return JsonResponse({'error': 'POST only'}, status=405)
-
-
 # ================= PDF → BASE64 IMAGES =================
 
 def pdf_to_base64_images(file):
@@ -399,7 +406,6 @@ def pdf_to_base64_images(file):
         pix = page.get_pixmap(matrix=mat)
         b64 = base64.b64encode(pix.tobytes("png")).decode("utf-8")
         images.append(b64)
-    print(f"PDF CONVERTED: {len(images)} page(s) → base64 images")
     return images
 
 
@@ -409,19 +415,13 @@ def pdf_to_base64_images(file):
 def upload_resume(request):
     if request.method == "POST":
         file = request.FILES.get('resume')
-        print("=== UPLOAD RESUME CALLED ===")
-
         if not file:
             messages.error(request, "Please select a file.")
             return redirect('upload_resume')
 
-        print("FILE NAME:", file.name)
-
         try:
             resume = Resume.objects.create(student=request.user.studentprofile, file=file)
-            print("RESUME SAVED:", resume.id)
         except Exception as e:
-            print("SAVE ERROR:", e)
             messages.error(request, f"Save error: {e}")
             return redirect('upload_resume')
 
@@ -430,75 +430,38 @@ def upload_resume(request):
 
         if use_vision:
             if fname_lower.endswith('.pdf'):
-                try:
-                    page_images = pdf_to_base64_images(file)
-                    mime_type   = "image/png"
-                except Exception as e:
-                    print("PDF→IMAGE ERROR:", e)
-                    messages.error(request, f"Could not convert PDF: {e}")
-                    return redirect('upload_resume')
+                page_images = pdf_to_base64_images(file)
+                mime_type   = "image/png"
             else:
-                import base64
                 file.seek(0)
                 img_data    = base64.b64encode(file.read()).decode('utf-8')
                 page_images = [img_data]
                 mime_type   = "image/jpeg" if fname_lower.endswith(('.jpg', '.jpeg')) else "image/png"
         else:
-            try:
-                file.seek(0)
-                resume_text = file.read().decode('utf-8', errors='ignore')
-                print("TEXT EXTRACTED, length:", len(resume_text))
-                if not resume_text.strip():
-                    resume_text = "No text could be extracted from this resume."
-            except Exception as e:
-                print("TEXT EXTRACT ERROR:", e)
-                messages.error(request, f"Could not read file: {e}")
-                return redirect('upload_resume')
+            file.seek(0)
+            resume_text = file.read().decode('utf-8', errors='ignore')
 
         json_instruction = """
-You are a senior technical recruiter with 15+ years of hiring experience at top tech companies.
-Analyze this resume carefully and return ONLY a valid JSON object — no markdown, no backticks, no extra text.
-
-STRICT SCORING RULES (follow exactly):
-- 85 to 100: Senior engineer / highly experienced. Strong projects with measurable impact,
-             5+ years experience, multiple certifications, leadership roles, well-formatted.
-- 70 to 84:  Mid-level candidate. Good relevant projects, 2–5 years experience, solid tech stack.
-- 55 to 69:  Junior developer / fresher with real projects and relevant skills. Decent formatting.
-- 40 to 54:  Fresher with only basic skills, few or no projects, simple formatting.
-- 0  to 39:  Very weak — missing key sections, near-empty, irrelevant content, or poorly structured.
-
-Return this exact JSON structure:
+Analyze this resume and return JSON:
 {
-  "score": <integer 0-100>,
-  "ats_score": <integer 0-100>,
-  "summary": "<2-3 sentence honest overall verdict>",
-  "strong_points": [{"title": "<strength>", "detail": "<evidence>"}],
-  "weak_points": [{"title": "<weakness>", "detail": "<concrete fix>"}],
-  "skills_present": ["skill1", "skill2"],
-  "skills_missing": ["skill1", "skill2"],
-  "ats_keywords": ["keyword1", "keyword2"],
-  "pro_tips": ["<tip1>", "<tip2>"],
-  "recommended_roles": ["Role 1", "Role 2", "Role 3", "Role 4", "Role 5"],
-  "feedback": "<same as summary>"
+  "score": <0-100>,
+  "ats_score": <0-100>,
+  "summary": "...",
+  "strong_points": [{"title": "...", "detail": "..."}],
+  "weak_points": [{"title": "...", "detail": "..."}],
+  "skills_present": [],
+  "skills_missing": [],
+  "ats_keywords": [],
+  "pro_tips": [],
+  "recommended_roles": []
 }
 """
 
         try:
-            print(f"CALLING GEMINI ({GEMINI_MODEL})...")
-
             if use_vision:
-                parts = [
-                    {"inline_data": {"mime_type": mime_type, "data": img}}
-                    for img in page_images
-                ]
-                parts.append({"text": json_instruction})
-                response = gemini_generate(parts)
+                raw = openai_generate(json_instruction, image_parts=page_images, mime_type=mime_type)
             else:
-                prompt   = f"Analyze this resume carefully:\n\n{resume_text[:5000]}\n\n{json_instruction}"
-                response = gemini_generate(prompt)
-
-            raw = response.text.strip()
-            print("GEMINI RESPONSE:", raw[:300])
+                raw = openai_generate(f"{json_instruction}\n\nResume: {resume_text[:5000]}")
 
             raw = raw.strip()
             if raw.startswith("```"):
@@ -599,8 +562,10 @@ Return this exact JSON (no backticks, no markdown):
 Resume:
 {resume_text[:5000]}
 """
-        response = gemini_generate(prompt)
-        raw_text = response.text.strip()
+        raw_text = openai_generate(prompt)
+        if not raw_text:
+            raise Exception("No response from OpenAI")
+        raw_text = raw_text.strip()
         if raw_text.startswith("```"):
             raw_text = raw_text.split("```")[1]
             if raw_text.startswith("json"):
@@ -635,7 +600,7 @@ Resume:
         request.session['recommended_roles'] = recommended_roles
 
     except Exception as e:
-        print(f"Gemini Error in analyze_resume: {e}")
+        print(f"AI Error in analyze_resume: {e}")
         analysis, _ = ResumeAnalysis.objects.update_or_create(
             resume=resume_obj,
             defaults={
@@ -770,8 +735,10 @@ def generate_tech_questions(request):
             data     = json.loads(request.body)
             language = data.get('language', 'Python')
             prompt   = f"Generate exactly 9 technical interview questions for a candidate specializing in {language}. Return ONLY valid JSON as a list of strings: [\"question 1\", \"question 2\", ...]"
-            response = gemini_generate(prompt)
-            raw      = response.text.strip()
+            raw = openai_generate(prompt)
+            if not raw:
+                raise Exception("No response from AI")
+            raw = raw.strip()
             if "```" in raw:
                 raw = raw.split("```")[1]
                 if raw.startswith("json"):
@@ -801,7 +768,7 @@ def perform_full_interview_analysis(interview):
     interview.transcript = transcript
     print(f"📝 Transcript length: {len(transcript)}")
 
-    print("🧠 Analyzing with Gemini...")
+    print("🧠 Analyzing with OpenAI...")
     analysis = analyze_transcript(transcript)
 
     content_score     = analysis.get("score", 70)
@@ -867,8 +834,10 @@ Return ONLY valid JSON:
   "weaknesses": ["point1", "point2", "point3"]
 }}
 """
-                response = gemini_generate(prompt)
-                raw = response.text.strip()
+                raw = openai_generate(prompt)
+                if not raw:
+                    raise Exception("No response from AI")
+                raw = raw.strip()
                 if "```" in raw:
                     raw = raw.split("```")[1]
                     if raw.startswith("json"):
@@ -942,13 +911,15 @@ OUTPUT FORMAT (STRICT JSON ONLY):
   "feedback": "detailed feedback"
 }}
 """
-    response = gemini_generate(prompt)
-    raw = response.text.strip()
+    raw = openai_generate(prompt)
+    if not raw:
+        return {"score": 70, "strengths": [], "weaknesses": [], "feedback": "Analysis failed."}
+    raw = raw.strip()
     if "```" in raw:
         raw = raw.split("```")[1]
         if raw.startswith("json"):
             raw = raw[4:]
-    print("🔥 RAW GEMINI RESPONSE:", raw)
+    print("🔥 RAW AI RESPONSE:", raw)
     data = json.loads(raw.strip())
     return data
 
@@ -1022,10 +993,12 @@ Exact JSON structure:
 {{"questions": [{{"question": "Question text?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct": 0, "explanation": "One sentence explanation."}}]}}
 Generate all 50 questions now."""
 
-            print(f"Calling Gemini for topic: {topic_label}")
-            response = gemini_generate(prompt)
-            raw      = response.text.strip()
-            print(f"Gemini raw response length: {len(raw)}")
+            print(f"Calling AI for topic: {topic_label}")
+            raw = openai_generate(prompt)
+            if not raw:
+                raise Exception("No response from AI")
+            raw = raw.strip()
+            print(f"AI raw response length: {len(raw)}")
 
             if raw.startswith("```"):
                 raw = raw.split("```")[1]
@@ -1065,3 +1038,125 @@ Generate all 50 questions now."""
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
     return JsonResponse({'status': 'error', 'message': 'POST only'}, status=405)
+
+
+# ================= COMMUNICATION SKILLS AGENT =================
+
+@login_required
+def communication_skills(request):
+    """Renders the main communication practice interface."""
+    return render(request, 'communication_skills.html')
+
+@csrf_exempt
+@login_required
+def process_comm_turn(request):
+    """AJAX endpoint to process a single voice-to-text turn with AI coaching."""
+    if request.method == 'POST':
+        try:
+            data      = json.loads(request.body)
+            user_text = data.get('text', '').strip()
+            session_id = data.get('session_id')
+            
+            if not user_text:
+                return JsonResponse({'status': 'error', 'message': 'No text provided'})
+
+            student = request.user.studentprofile
+            
+            # Get or create session
+            if session_id:
+                session = CommunicationSession.objects.get(id=session_id, student=student)
+            else:
+                session = CommunicationSession.objects.create(student=student)
+
+            # AI Prompt for Coaching
+            prompt = f"""
+            You are the "SmartPlace Communication Coach", a specialized AI assistant for senior placement preparation.
+            Your ONLY goal is to evaluate and improve the student's communication skills, confidence, and professional presence for corporate interviews.
+
+            STUDENT RESPONSE: "{user_text}"
+
+            CONSTRAINTS:
+            - Focus strictly on: Grammar, Sentence Formation, Vocabulary, Fluency, and Professional Etiquette.
+            - Do not answer general questions that are NOT related to communication or interview skills.
+            - Be encouraging but professional. Always suggest "Better ways to say" something if the student is colloquial.
+
+            CRITERIA FOR EVALUATION:
+            1. Grammar & Correctness.
+            2. Vocabulary (Professionalism vs Slang).
+            3. Fluency & Confidence.
+            
+            OUTPUT:
+            - A natural oral response (will be spoken via TTS). Keep it concise (2-3 sentences).
+            - A Coaching Tip: Point out exactly where they can improve.
+            
+            STRICT JSON FORMAT:
+            {{
+              "response": "Your spoken feedback/follow-up question",
+              "coaching_tip": "Specific actionable advice on word choice/grammar",
+              "score": 0-100
+            }}
+            """
+            
+            # Use OpenAI instead of Gemini as requested
+            raw = openai_generate(prompt)
+            
+            # Robust JSON extraction
+            try:
+                if "```" in raw:
+                    parts = raw.split("```")
+                    for p in parts:
+                        p = p.strip()
+                        if p.startswith("json"): p = p[4:].strip()
+                        try:
+                            result = json.loads(p)
+                            if "response" in result: break
+                        except: continue
+                else:
+                    result = json.loads(raw)
+            except Exception as parse_err:
+                print("COMM_JSON_PARSE_ERROR:", parse_err, "RAW:", raw)
+                # Fallback if parsing fails but model likely responded something
+                result = {
+                    "response": raw[:200] if len(raw) < 500 else "I'm sorry, I had trouble processing that. Could you say it again?",
+                    "coaching_tip": "Focus on clear pronunciation.",
+                    "score": 75
+                }
+            
+            # Save the turn
+            CommunicationTurn.objects.create(
+                session=session,
+                user_text=user_text,
+                ai_text=result.get('response', ''),
+                coaching_feedback=result.get('coaching_tip', ''),
+                score=result.get('score', 70)
+            )
+            
+            # Update session score (correct average calculation)
+            turns = session.turns.all()
+            if turns.exists():
+                all_scores = [t.score for t in turns if t.score is not None]
+                if all_scores:
+                    session.score = int(sum(all_scores) / len(all_scores))
+                else:
+                    session.score = int(result.get('score', 70))
+                session.save()
+
+            return JsonResponse({
+                'status': 'success',
+                'session_id': session.id,
+                'ai_response': result.get('response', ''),
+                'coaching_tip': result.get('coaching_tip', ''),
+                'score': result.get('score', 0)
+            })
+
+        except Exception as e:
+            print("COMM_AGENT_ERROR:", e)
+            error_msg = str(e).lower()
+            if "exhausted" in error_msg or "429" in error_msg:
+                return JsonResponse({
+                    'status': 'error', 
+                    'message': 'The AI Coach is currently taking a short break (API Limit Reached). Please try again in a few minutes.'
+                }, status=429)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
