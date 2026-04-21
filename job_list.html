@@ -7,6 +7,7 @@
 <title>Jobs - Smart Placement Portal</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/responsive.css' %}">
 
 <style>
 :root {
@@ -54,9 +55,14 @@ body::before {
       box-shadow: 0 1px 8px rgba(10,163,181,0.07);
     }
     .navbar-brand {
-      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
-      background: var(--gradient); -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; 
+      font-size: 1.1rem;
+      color: #0aa3b5;
+      white-space: nowrap;
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
     }
     .navbar-spacer {
       display: flex;
@@ -331,14 +337,17 @@ body::before {
 
 <!-- NAVBAR -->
 <nav class="navbar">
-  <div class="navbar-brand">🎯 Smart Placement Portal</div>
-  <div class="navbar-links">
+    <div class="navbar-brand"><i class="fas fa-bullseye"></i> Smart Placement Portal</div>
+    <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
+    <label for="menu-toggle" class="menu-icon"><i class="fas fa-bars"></i></label>
+    <div class="navbar-links">
     <a href="{% url 'dashboard' %}">Dashboard</a>
     <a href="{% url 'companies' %}">Companies</a>
     <a href="{% url 'upload_resume' %}">Resume</a>
     <a href="{% url 'recommendations' %}">Recs</a>
     <a href="{% url 'test' %}">Test</a>
     <a href="{% url 'interview_results' %}">Interviews</a>
+    <a href="{% url 'communication_skills' %}">Comm AI</a>
     <a href="{% url 'projects' %}">Projects</a>
     <a href="{% url 'jobs' %}" class="active">Jobs</a>
   </div>
