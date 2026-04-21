@@ -31,4 +31,5 @@ class StudentProfileForm(forms.Form):
     phone           = forms.CharField(max_length=15, required=False)
     linkedin_url    = forms.URLField(required=False)
     github_url      = forms.URLField(required=False)
+    job_role        = forms.CharField(max_length=200, required=False)
     work_mode       = forms.CharField(max_length=10, required=False)
