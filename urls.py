@@ -41,4 +41,6 @@ urlpatterns = [
     path('update-photo/', views.update_photo, name='update_photo'),
     path('delete-skill/<int:skill_id>/', views.delete_skill, name='delete_skill'),
     path('generate-ai-questions/', views.generate_ai_questions, name='generate_ai_questions'),
+    path('communication-skills/', views.communication_skills, name='communication_skills'),
+    path('process-comm-turn/', views.process_comm_turn, name='process_comm_turn'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
