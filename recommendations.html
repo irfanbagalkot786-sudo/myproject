@@ -45,6 +45,63 @@ body::before {
   z-index:0;
 }
 
+  /* ── LOADING OVERLAY ── */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .loading-overlay.active { display: flex; }
+
+  .spinner-container {
+    animation: fadeIn 0.5s ease both;
+  }
+
+  .main-spinner {
+    width: 80px;
+    height: 80px;
+    border: 6px solid var(--teal-dim);
+    border-top: 6px solid var(--teal);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 20px rgba(10,163,181,0.2);
+  }
+
+  .loading-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .loading-subtext {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .page-header { flex-direction: column; text-align: center; gap: 20px; }
+  }
+
     /* ── NAVBAR ── */
     .navbar {
       position: sticky; top: 0; z-index: 100;
@@ -378,6 +435,210 @@ body::before {
     color: var(--teal);
     line-height: 1;
   }
+
+  /* ── INTELLIGENT DASHBOARD ── */
+  .intel-dashboard {
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .intel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .intel-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: var(--glow);
+    height: 100%;
+  }
+
+  .intel-score-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--gradient);
+    color: white;
+    border: none;
+  }
+
+  .readiness-circle {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin-bottom: 16px;
+  }
+
+  .readiness-circle svg {
+    transform: rotate(-90deg);
+    width: 140px;
+    height: 140px;
+  }
+
+  .readiness-circle .track {
+    fill: none;
+    stroke: rgba(255,255,255,0.2);
+    stroke-width: 8;
+  }
+
+  .readiness-circle .fill {
+    fill: none;
+    stroke: white;
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 414; /* 2 * PI * 66 */
+    stroke-dashoffset: 414;
+    transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .readiness-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .readiness-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .readiness-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .intel-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .intel-title i { color: var(--teal); }
+
+  .intel-section { margin-bottom: 24px; }
+  .intel-section:last-child { margin-bottom: 0; }
+
+  .intel-subtitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .intel-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .intel-tag {
+    padding: 6px 14px;
+    background: var(--teal-dim);
+    color: var(--teal);
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: 1px solid rgba(10,163,181,0.15);
+  }
+
+  .intel-tag.strength { background: rgba(16,185,129,0.08); color: #059669; border-color: rgba(16,185,129,0.15); }
+  .intel-tag.improve { background: rgba(245,158,11,0.08); color: #d97706; border-color: rgba(245,158,11,0.15); }
+
+  .plan-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding: 14px;
+    background: var(--bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .plan-icon {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--teal);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .plan-content h5 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .plan-content p {
+    font-size: 0.78rem;
+    color: var(--slate);
+    line-height: 1.5;
+  }
+
+  .quote-box {
+    padding: 20px;
+    background: var(--teal-dim);
+    border-radius: 18px;
+    border-left: 4px solid var(--teal);
+    margin-top: 12px;
+  }
+
+  .quote-box p {
+    font-size: 0.88rem;
+    font-style: italic;
+    color: var(--teal-dark);
+    line-height: 1.6;
+  }
+
+  .priority-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: #fee2e2;
+    color: #b91c1c;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 850px) {
+    .intel-grid { grid-template-columns: 1fr; }
+  }
   </style>
 
 </style>
@@ -409,104 +670,200 @@ body::before {
 <!-- MAIN -->
 <div class="main">
 
-  <!-- PAGE HEADER -->
-  <div class="page-header">
-    <div class="page-header-text">
-      <h1>Recommendations</h1>
-      <p>AI-matched job roles based on your skills and profile</p>
+  <!-- LOADING OVERLAY -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner-container">
+      <div class="main-spinner"></div>
+      <div class="loading-text">Agentic AI is analyzing your performance...</div>
+      <div class="loading-subtext">Calculating readiness, identifying gaps, and crafting your roadmap.</div>
     </div>
-    <a href="{% url 'generate_recommendations' %}" class="generate-btn">
-      <i class="fas fa-wand-magic-sparkles"></i> Generate Recommendations
-    </a>
   </div>
 
-  <!-- REC LIST -->
-  <div class="rec-list">
+  <!-- START SCREEN (Always shown first) -->
+  <div id="startScreen" class="intel-dashboard" style="display: block;">
+    <div class="intel-card" style="text-align: center; border-style: dashed; background: var(--bg); padding: 80px 40px; margin-top: 40px;">
+      <i class="fas fa-brain" style="font-size: 5rem; color: var(--teal); opacity: 0.2; margin-bottom: 24px; display: block;"></i>
+      <h3 style="font-family: 'Syne', sans-serif; font-size: 2.2rem; color: var(--ink); margin-bottom: 12px; font-weight: 800;">Ready for Your Growth Roadmap?</h3>
+      <p style="color: var(--slate); font-size: 1.15rem; max-width: 600px; margin: 0 auto 40px; line-height: 1.6;">Our Agentic AI will analyze your resume, aptitude scores, communication skills, and mock interviews to generate a 100% personalized placement strategy.</p>
+      
+      <button onclick="generateRecs()" class="generate-btn" style="float: none; display: inline-flex; height: 64px; padding: 0 48px; font-size: 1.25rem; border-radius: 32px; background: var(--gradient); box-shadow: 0 10px 30px rgba(10,163,181,0.3); border: none; color: white; cursor: pointer; align-items: center; gap: 12px; transition: all 0.3s ease;">
+        <i class="fas fa-wand-magic-sparkles"></i> Generate AI Recommendations
+      </button>
+    </div>
+  </div>
 
-    {% for rec in recommendations %}
-    <div class="rec-card">
+  <!-- RESULTS DASHBOARD -->
+  <div id="resultsDashboard" style="display: none;">
+    <!-- PAGE HEADER -->
+    <div class="page-header" style="margin-bottom: 32px; animation: fadeIn 0.8s ease both;">
+      <div class="page-header-text">
+        <h1 style="font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: #000; text-transform: uppercase; letter-spacing: 0;">Agentic AI Analysis</h1>
+        <p style="color: var(--muted); font-size: 0.85rem; font-weight: 500;">Personalized Career Growth Roadmap & Recommendations</p>
+      </div>
+      <button onclick="showStartScreen()" class="generate-btn" style="background: var(--surface); color: var(--teal); border: 1.5px solid var(--teal); height: 38px; padding: 0 20px; font-size: 0.85rem;">
+        <i class="fas fa-rotate"></i> Re-Analyze
+      </button>
+    </div>
 
-      <div class="rec-card-top">
-        <div class="rec-job-info">
-          <div class="rec-icon"><i class="fas fa-briefcase"></i></div>
-          <div>
-            <h3>{{ rec.job_role.title }}</h3>
-            <span class="rec-company">
-              <i class="fas fa-building" style="font-size:0.65rem;"></i>
-              {{ rec.job_role.company.name }}
-            </span>
-          </div>
-        </div>
-
-          <div class="match-circle" data-pct="{{ rec.match_percentage|floatformat:0 }}">
-            <svg viewBox="0 0 56 56">
-              <circle class="track" cx="28" cy="28" r="26"/>
-              <circle class="fill" cx="28" cy="28" r="26"/>
+    <!-- INTELLIGENT AI DASHBOARD -->
+    {% if intelligent_rec %}
+    <div class="intel-dashboard">
+      <div class="intel-grid">
+        
+        <!-- Readiness Score Card -->
+        <div class="intel-card intel-score-card">
+          <div class="readiness-circle" data-readiness="{{ intelligent_rec.readiness_score }}">
+            <svg viewBox="0 0 140 140">
+              <circle class="track" cx="70" cy="70" r="66"/>
+              <circle class="fill" cx="70" cy="70" r="66"/>
             </svg>
-            <div class="match-text">{{ rec.match_percentage|floatformat:0 }}%</div>
+            <div class="readiness-text">
+              <span class="readiness-val">{{ intelligent_rec.readiness_score }}%</span>
+              <span class="readiness-label">Readiness</span>
+            </div>
           </div>
-          <span class="match-label">Match</span>
+          <div class="quote-box" style="background: rgba(255,255,255,0.1); border-left-color: white; margin-top: 10px;">
+            <p style="color: white; font-size: 0.8rem;">{{ intelligent_rec.motivational_feedback }}</p>
+          </div>
+        </div>
+
+        <!-- Analysis Overview Card -->
+        <div class="intel-card">
+          <h3 class="intel-title"><i class="fas fa-brain"></i> Personalized Analysis</h3>
+          
+          <div class="intel-section">
+            <div class="intel-subtitle">Core Strengths</div>
+            <div class="intel-tags">
+              {% for s in intelligent_rec.strengths %}
+                <span class="intel-tag strength"><i class="fas fa-check-circle"></i> {{ s }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="intel-section">
+            <div class="intel-subtitle">Critical Improvements</div>
+            <div class="intel-tags">
+              {% for imp in intelligent_rec.improvements %}
+                <span class="intel-tag improve"><i class="fas fa-exclamation-triangle"></i> {{ imp }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="intel-section">
+            <div class="intel-subtitle">Priority Focus Areas</div>
+            <div class="intel-tags">
+              {% for area in intelligent_rec.priority_areas %}
+                <div style="width: 100%; margin-bottom: 8px;">
+                  <span class="priority-badge">Priority</span>
+                  <span style="font-size: 0.85rem; font-weight: 600; color: var(--ink);">{{ area }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="rec-divider"></div>
-
-      <div class="skills-row">
-        <div class="skills-block matching">
-          <h4><i class="fas fa-circle-check"></i> Matching Skills</h4>
-          <div class="skill-tags">
-            {% for skill in rec.matching_skills.all %}
-            <span class="skill-tag match">{{ skill.name }}</span>
-            {% empty %}
-            <span class="no-skills">None matched</span>
-            {% endfor %}
-          </div>
+      <!-- Growth Plan Grid -->
+      <div class="intel-grid">
+        <!-- Weekly Plan -->
+        <div class="intel-card">
+          <h3 class="intel-title"><i class="fas fa-calendar-week"></i> Weekly Growth Plan</h3>
+          {% for step in intelligent_rec.weekly_plan %}
+            <div class="plan-item">
+              <div class="plan-icon">{{ forloop.counter }}</div>
+              <div class="plan-content">
+                <h5>Week {{ forloop.counter }} Strategy</h5>
+                <p>{{ step }}</p>
+              </div>
+            </div>
+          {% endfor %}
         </div>
 
-        <div class="skills-block missing">
-          <h4><i class="fas fa-circle-xmark"></i> Missing Skills</h4>
-          <div class="skill-tags">
-            {% for skill in rec.missing_skills.all %}
-            <span class="skill-tag miss">{{ skill.name }}</span>
-            {% empty %}
-            <span class="no-skills">None missing 🎉</span>
+        <!-- Daily Tasks & Learning Path -->
+        <div class="intel-card">
+          <h3 class="intel-title"><i class="fas fa-tasks"></i> Daily Action Items</h3>
+          <div class="intel-section">
+            {% for task in intelligent_rec.daily_tasks %}
+              <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                <i class="fas fa-arrow-right" style="color: var(--teal); font-size: 0.7rem;"></i>
+                <span style="font-size: 0.85rem; color: var(--slate);">{{ task }}</span>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="intel-divider" style="height: 1px; background: var(--border); margin: 20px 0;"></div>
+
+          <h3 class="intel-title" style="font-size: 1.1rem;"><i class="fas fa-graduation-cap"></i> Recommended Learning</h3>
+          <div class="intel-tags">
+            {% for path in intelligent_rec.learning_path %}
+              <span class="intel-tag"><i class="fas fa-book"></i> {{ path }}</span>
             {% endfor %}
           </div>
         </div>
       </div>
-
     </div>
-    {% empty %}
-    <div class="empty-state">
-      <i class="fas fa-star"></i>
-      <h3>No recommendations yet</h3>
-      <p>Click "Generate Recommendations" above to get AI-matched job roles.</p>
-    </div>
-    {% endfor %}
-
+    {% endif %}
   </div>
+
+</div>
 </div>
 
 <script>
+async function generateRecs() {
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+
+  try {
+    const response = await fetch("{% url 'generate_recommendations' %}", {
+      method: 'GET',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
+    const data = await response.json();
+    
+    if (data.status === 'success') {
+      sessionStorage.setItem('showAIResults', 'true'); // Flag to show results after reload
+      window.location.reload(); 
+    } else {
+      alert("Error: " + data.message);
+      overlay.classList.remove('active');
+    }
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    alert("An error occurred while generating recommendations.");
+    overlay.classList.remove('active');
+  }
+}
+
+function showStartScreen() {
+  sessionStorage.removeItem('showAIResults'); // Clear flag to show start screen
+  document.getElementById('resultsDashboard').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 window.addEventListener('load', () => {
-  // Animate match circles
-  document.querySelectorAll('.match-circle').forEach(circle => {
-    const pct = parseInt(circle.getAttribute('data-pct'));
-    const fill = circle.querySelector('.fill');
-    const radius = 26;
-    const circ = 2 * Math.PI * radius;
+  const showResults = sessionStorage.getItem('showAIResults');
+  const hasData = "{% if intelligent_rec %}true{% else %}false{% endif %}" === "true";
+
+  if (showResults === 'true' && hasData) {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('resultsDashboard').style.display = 'block';
     
-    // Set dasharray
-    fill.style.strokeDasharray = circ;
-    
-    // Calculate offset
-    const offset = circ - (pct / 100) * circ;
-    
-    // Trigger animation after a small delay
-    setTimeout(() => {
-      fill.style.strokeDashoffset = offset;
-    }, 100);
-  });
+    // Animate readiness circle
+    const rCircle = document.querySelector('.readiness-circle');
+    if (rCircle) {
+      const pct = parseInt(rCircle.getAttribute('data-readiness'));
+      const fill = rCircle.querySelector('.fill');
+      const radius = 66;
+      const circ = 2 * Math.PI * radius;
+      fill.style.strokeDasharray = circ;
+      const offset = circ - (pct / 100) * circ;
+      setTimeout(() => { fill.style.strokeDashoffset = offset; }, 300);
+    }
+  } else {
+    document.getElementById('startScreen').style.display = 'block';
+    document.getElementById('resultsDashboard').style.display = 'none';
+  }
 });
 </script>
 </body>
