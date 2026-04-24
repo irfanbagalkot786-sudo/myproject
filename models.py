@@ -334,3 +334,20 @@ class CommunicationTurn(models.Model):
 
     def __str__(self):
         return f"Turn in {self.session}"
+
+# ================= INTELLIGENT RECOMMENDATION (HOLISTIC) =================
+
+class IntelligentRecommendation(models.Model):
+    student               = models.OneToOneField(StudentProfile, on_delete=models.CASCADE, related_name='intelligent_rec')
+    strengths             = models.JSONField(default=list, blank=True)
+    improvements          = models.JSONField(default=list, blank=True)
+    weekly_plan           = models.JSONField(default=list, blank=True)
+    daily_tasks           = models.JSONField(default=list, blank=True)
+    learning_path         = models.JSONField(default=list, blank=True)
+    readiness_score       = models.IntegerField(default=0)
+    priority_areas        = models.JSONField(default=list, blank=True)
+    motivational_feedback = models.TextField(blank=True)
+    updated_at            = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Intelligent Rec for {self.student.full_name or self.student.user.username}"
