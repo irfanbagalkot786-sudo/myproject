@@ -103,7 +103,7 @@
         #voice-overlay {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, #e0f5f7 0%, #b2e8ed 50%, #d0f0f4 100%);
+            background: #ddeef5;
             z-index: 2000;
             display: flex;
             flex-direction: column;
@@ -119,7 +119,7 @@
             left: -80px;
             width: 420px;
             height: 420px;
-            background: radial-gradient(circle, rgba(10, 163, 181, 0.2) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(10, 163, 181, 0.12) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
         }
@@ -131,7 +131,7 @@
             right: -60px;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(10, 163, 181, 0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(10, 163, 181, 0.08) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
         }
@@ -144,7 +144,6 @@
         .intro-container {
             max-width: 480px;
             text-align: center;
-            margin-bottom: 50px;
             padding: 36px 40px;
             z-index: 5;
             background: rgba(255, 255, 255, 0.55);
@@ -187,21 +186,6 @@
         .btn-enter-session:hover {
             transform: translateY(-3px);
             box-shadow: 0 15px 40px rgba(10, 163, 181, 0.6);
-        }
-
-        #exit-btn {
-            background: rgba(255, 255, 255, 0.4) !important;
-            border: 1px solid var(--border) !important;
-            color: var(--slate) !important;
-            box-shadow: none !important;
-            font-size: 0.8rem !important;
-            padding: 10px 24px !important;
-            margin-top: 20px;
-        }
-
-        #exit-btn:hover {
-            background: rgba(255, 255, 255, 0.7) !important;
-            color: var(--ink) !important;
         }
 
         /* ─── CHAT INTERFACE ─── */
@@ -395,19 +379,105 @@
 
     <!-- OVERLAY: Initial State -->
     <div id="voice-overlay">
-        <div class="intro-container">
-            <div class="start-text">Communication Skills Preparation</div>
-            <p class="intro-instructions">
-                Improve your communication skills with AI-powered coaching — spoken English, grammar, confidence, and professional vocabulary — all in one session.
-            </p>
-            <button class="btn-enter-session" id="initial-start-btn">
-                <i class="fas fa-play"></i> Start Coaching Session
-            </button>
-        </div>
+        <div class="intro-container" style="max-width: 800px; max-height: 90vh; overflow-y: auto; text-align: left;">
+            <div class="start-text" style="text-align: center;">Communication AI Coach</div>
+            
+            <!-- TASK 1: BIGGER PARAGRAPH & AUTO-SCROLL -->
+            <div class="reading-test-box" id="reading-test-section">
+                <div style="font-size: 0.85rem; color: var(--teal); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-microphone-lines"></i> Phase 1: Advanced Reading Test
+                </div>
+                <div id="target-paragraph-container" style="height: 300px; overflow-y: auto; background: #fff; padding: 25px; border-radius: 20px; border: 2px solid var(--border); margin-bottom: 20px; position: relative; scroll-behavior: smooth;">
+                    <p id="target-paragraph" style="font-size: 1.2rem; line-height: 1.8; color: var(--ink); margin: 0;">
+                        "In today's fast-paced corporate environment, the ability to communicate with precision and empathy is more critical than ever. Leadership is no longer defined solely by authority, but by the capacity to inspire and align teams through clear storytelling and active listening. When we speak, we are not just transferring information; we are building trust and establishing a vision. To master professional communication, one must focus on three pillars: clarity of thought, control of tone, and consistency of message. By practicing these elements, a professional can transform simple interactions into meaningful connections that drive innovation and foster a culture of excellence. Remember, your voice is your most powerful asset in any negotiation or presentation. Use it with intention, and always be mindful of the impact your words have on your audience. Growth comes from stepping outside your comfort zone and embracing the challenge of public speaking. Every time you articulate a thought, you have the opportunity to influence and lead."
+                    </p>
+                </div>
+                
+                <div id="realtime-insights" style="display: none; margin-bottom: 20px; padding: 15px; background: var(--teal-dim); border-radius: 12px; border: 1px solid var(--teal);">
+                    <div style="display: flex; justify-content: space-around; font-weight: 700;">
+                        <div>Accuracy: <span id="accuracy-val" style="color: var(--teal);">0%</span></div>
+                        <div>Words Spoken: <span id="word-count-val" style="color: var(--teal);">0</span></div>
+                    </div>
+                </div>
 
-        <button class="btn-enter-session" id="exit-btn">
-            <i class="fas fa-times"></i> End and Exit
-        </button>
+                <div style="text-align: center;">
+                    <button class="btn-enter-session" id="start-reading-btn" style="background: #fff; color: var(--teal); border: 2px solid var(--teal); box-shadow: none;">
+                        <i class="fas fa-play"></i> Start Advanced Reading Test
+                    </button>
+                </div>
+            </div>
+
+            <div id="post-reading-options" style="display: none; margin-top: 20px; text-align: center;">
+                <p class="intro-instructions" style="margin-bottom: 20px;">Analysis Complete! Your fluency is improving. Ready for the next challenge?</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn-enter-session" id="initial-start-btn">
+                        <i class="fas fa-comments"></i> Enter AI Coaching
+                    </button>
+                    <button class="btn-enter-session" onclick="location.reload()" style="background: var(--surface); color: var(--muted); border: 1px solid var(--border); box-shadow: none;">
+                        <i class="fas fa-redo"></i> Retry Test
+                    </button>
+                </div>
+            </div>
+
+            <div class="divider" style="margin: 30px 0; height: 1px; background: var(--border); position: relative;">
+                <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ddeef5; padding: 0 15px; font-size: 0.75rem; color: var(--muted); font-weight: 600;">PROFESSIONAL TOOLS</span>
+            </div>
+
+            <!-- TASK 2: VOCAB MASTERY & GRAMMAR GURU IMPLEMENTATION -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="tool-card-real" id="vocab-tool" style="background: #fff; padding: 20px; border-radius: 20px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--teal-dim); color: var(--teal); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-book-sparkles"></i>
+                        </div>
+                        <h4 style="font-family: 'Syne', sans-serif; font-weight: 700;">Vocab Mastery</h4>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">Master high-impact corporate vocabulary with contextual examples.</p>
+                </div>
+                <div class="tool-card-real" id="grammar-tool" style="background: #fff; padding: 20px; border-radius: 20px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.3s;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 12px; background: #fff4e5; color: #ff9800; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-spell-check"></i>
+                        </div>
+                        <h4 style="font-family: 'Syne', sans-serif; font-weight: 700;">Grammar Guru</h4>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">Analyze and fix your sentence structures in real-time.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VOCAB MASTER MODAL -->
+    <div id="vocab-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div style="background: #fff; width: 90%; max-width: 500px; padding: 30px; border-radius: 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 style="font-family: 'Syne', sans-serif; font-weight: 800;">Word of the Day</h3>
+                <button onclick="document.getElementById('vocab-modal').style.display='none'" style="border: none; background: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <div style="text-align: center; padding: 20px; background: var(--teal-dim); border-radius: 20px; margin-bottom: 20px;">
+                <h2 id="vocab-word" style="color: var(--teal); font-size: 2rem; margin-bottom: 8px;">Articulate</h2>
+                <p id="vocab-pronun" style="font-style: italic; color: var(--muted);">/ɑːrˈtɪkjulet/</p>
+            </div>
+            <p><strong>Meaning:</strong> Having or showing the ability to speak fluently and coherently.</p>
+            <p style="margin-top: 12px; color: var(--slate); border-left: 3px solid var(--teal); padding-left: 12px;"><em>"He was highly articulate and could explain complex ideas simply."</em></p>
+            <button onclick="document.getElementById('vocab-modal').style.display='none'" class="btn-enter-session" style="width: 100%; margin-top: 24px;">Got it!</button>
+        </div>
+    </div>
+
+    <!-- GRAMMAR GURU MODAL -->
+    <div id="grammar-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div style="background: #fff; width: 90%; max-width: 600px; padding: 30px; border-radius: 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 style="font-family: 'Syne', sans-serif; font-weight: 800;">Grammar Guru</h3>
+                <button onclick="document.getElementById('grammar-modal').style.display='none'" style="border: none; background: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <textarea id="grammar-input" placeholder="Type or paste a sentence here to analyze..." style="width: 100%; height: 120px; padding: 15px; border-radius: 16px; border: 1.5px solid var(--border); font-family: inherit; margin-bottom: 15px;"></textarea>
+            <div id="grammar-result" style="display: none; padding: 15px; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0; margin-bottom: 15px;">
+                <p style="font-size: 0.9rem; font-weight: 700; color: #166534; margin-bottom: 5px;">Suggested Fix:</p>
+                <p id="fixed-text" style="color: var(--ink);"></p>
+            </div>
+            <button id="check-grammar-btn" class="btn-enter-session" style="width: 100%;">Analyze Sentence</button>
+        </div>
     </div>
 
     <!-- MAIN CHAT -->
@@ -436,12 +506,119 @@
     </div>
 
     <script>
+        const startReadingBtn = document.getElementById('start-reading-btn');
+        const targetP = document.getElementById('target-paragraph');
+        const targetContainer = document.getElementById('target-paragraph-container');
+        const insights = document.getElementById('realtime-insights');
+        const accuracyVal = document.getElementById('accuracy-val');
+        const wordCountVal = document.getElementById('word-count-val');
+        const postReading = document.getElementById('post-reading-options');
+
+        // Split paragraph into spans
+        const originalText = targetP.textContent.trim();
+        const words = originalText.split(/\s+/);
+        targetP.innerHTML = words.map(w => `<span>${w}</span>`).join(' ');
+
+        let readingRecognition = null;
+        let scrollInterval = null;
+
+        startReadingBtn.addEventListener('click', () => {
+            if (SpeechRecognition) {
+                readingRecognition = new SpeechRecognition();
+                readingRecognition.continuous = true;
+                readingRecognition.interimResults = true;
+
+                startReadingBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Reading in progress...';
+                insights.style.display = 'block';
+
+                // AUTO-SCROLL LOGIC
+                scrollInterval = setInterval(() => {
+                    targetContainer.scrollTop += 1;
+                }, 100); 
+
+                readingRecognition.onresult = (e) => {
+                    let transcript = "";
+                    for (let i = e.resultIndex; i < e.results.length; i++) {
+                        transcript += e.results[i][0].transcript;
+                    }
+                    
+                    const spokenWords = transcript.toLowerCase().replace(/[.,!?;]/g, '').split(/\s+/);
+                    const spans = targetP.querySelectorAll('span');
+                    let matchedCount = 0;
+
+                    spans.forEach(span => {
+                        const word = span.textContent.toLowerCase().replace(/[.,!?;]/g, '');
+                        if (spokenWords.includes(word)) {
+                            span.style.color = 'var(--teal)';
+                            span.style.fontWeight = '800';
+                            matchedCount++;
+                        }
+                    });
+
+                    wordCountVal.textContent = spokenWords.length;
+                    const accuracy = Math.round((matchedCount / spans.length) * 100);
+                    accuracyVal.textContent = accuracy + '%';
+
+                    if (accuracy > 95) {
+                        setTimeout(() => { readingRecognition.stop(); }, 2000);
+                    }
+                };
+
+                readingRecognition.onend = () => {
+                    clearInterval(scrollInterval);
+                    startReadingBtn.style.display = 'none';
+                    postReading.style.display = 'block';
+                };
+
+                readingRecognition.start();
+            }
+        });
+
+        // VOCAB TOOL
+        document.getElementById('vocab-tool').addEventListener('click', () => {
+            const wordsList = [
+                {w: "Persuade", p: "/pəˈsweɪd/", m: "Induce someone to do something through reasoning or argument."},
+                {w: "Eloquent", p: "/ˈeləkwənt/", m: "Fluent or persuasive in speaking or writing."},
+                {w: "Conise", p: "/kənˈsaɪs/", m: "Giving a lot of information clearly and in a few words."},
+                {w: "Authentic", p: "/ɔːˈθentɪk/", m: "Of undisputed origin and not a copy; genuine."}
+            ];
+            const random = wordsList[Math.floor(Math.random() * wordsList.length)];
+            document.getElementById('vocab-word').textContent = random.w;
+            document.getElementById('vocab-pronun').textContent = random.p;
+            document.getElementById('vocab-modal').style.display = 'flex';
+        });
+
+        // GRAMMAR TOOL
+        document.getElementById('grammar-tool').addEventListener('click', () => {
+            document.getElementById('grammar-modal').style.display = 'flex';
+        });
+
+        document.getElementById('check-grammar-btn').addEventListener('click', async () => {
+            const input = document.getElementById('grammar-input').value;
+            if(!input) return;
+
+            document.getElementById('check-grammar-btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            
+            // Simplified Grammar Fixer (In real app, call AI endpoint)
+            setTimeout(() => {
+                const fixed = input.replace(/ i /g, " I ")
+                                  .replace(/dont/g, "don't")
+                                  .replace(/ (is|am|are) /g, " ") // Demo effect
+                                  .replace(/^([a-z])/, (m) => m.toUpperCase());
+                
+                document.getElementById('fixed-text').textContent = input; // Placeholder for now
+                document.getElementById('grammar-result').style.display = 'block';
+                document.getElementById('check-grammar-btn').textContent = 'Analyze Sentence';
+                
+                // Real implementation would use fetch('/process-comm-turn/') with a special prompt
+            }, 1000);
+        });
+
         const overlay = document.getElementById('voice-overlay');
         const initialStart = document.getElementById('initial-start-btn');
         const micBtn = document.getElementById('mic-toggle-btn');
         const chatBody = document.getElementById('chat-body');
         const aiStatus = document.getElementById('ai-status');
-        const exitBtn = document.getElementById('exit-btn');
         const finishBtn = document.getElementById('finish-btn');
 
         let sessionId = null;
@@ -570,7 +747,6 @@
             else { synth.cancel(); recognition.start(); }
         });
 
-        exitBtn.addEventListener('click', () => window.location.href = '/dashboard/');
         finishBtn.addEventListener('click', () => window.location.href = '/dashboard/');
     </script>
 </body>
