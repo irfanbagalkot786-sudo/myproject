@@ -9,7 +9,7 @@ from .forms import LoginForm, StudentProfileForm
 from .models import (
     StudentProfile, Skill, StudentSkill, CustomSkill, Project, Resume,
     ResumeAnalysis, Company, JobRole, Recommendation, Question, InterviewSession,
-    CommunicationSession, CommunicationTurn
+    CommunicationSession, CommunicationTurn, IntelligentRecommendation, Assessment
 )
 import json
 import os
@@ -672,19 +672,20 @@ def job_list(request):
 def recommendations(request):
     student = request.user.studentprofile
     recs    = Recommendation.objects.filter(student=student).order_by('-match_percentage')
-    return render(request, 'recommendations.html', {'recommendations': recs})
-
-
-@login_required
-def recommendations_view(request):
-    student = request.user.studentprofile
-    recs    = Recommendation.objects.filter(student=student).order_by('-match_percentage')
-    return render(request, "recommendations.html", {'recommendations': recs})
+    intelligent_rec = IntelligentRecommendation.objects.filter(student=student).first()
+    
+    return render(request, "recommendations.html", {
+        'recommendations': recs,
+        'intelligent_rec': intelligent_rec,
+        'student': student
+    })
 
 
 @login_required
 def generate_recommendations(request):
-    student        = request.user.studentprofile
+    student = request.user.studentprofile
+    
+    # 1. Traditional Job Matching (Existing Logic)
     student_skills = set(StudentSkill.objects.filter(student=student).values_list('skill__id', flat=True))
     roles          = JobRole.objects.all()
 
@@ -709,8 +710,83 @@ def generate_recommendations(request):
         rec.matching_skills.set(Skill.objects.filter(id__in=matching))
         rec.missing_skills.set(Skill.objects.filter(id__in=missing))
 
-    messages.success(request, f"Generated {roles.count()} recommendations based on your profile!")
-    return redirect('recommendations')
+    # 2. Intelligent Holistic Analysis (New Logic)
+    try:
+        # Gather Student Data
+        resume_analysis = ResumeAnalysis.objects.filter(resume__student=student).last()
+        assessments = Assessment.objects.filter(student=student)
+        interviews = InterviewSession.objects.filter(student=student)
+        comm_sessions = CommunicationSession.objects.filter(student=student)
+        custom_skills = CustomSkill.objects.filter(student=student)
+        projects = Project.objects.filter(user=request.user)
+
+        # Prepare metrics
+        avg_apt_score = 0
+        if assessments.exists():
+            avg_apt_score = sum([a.score for a in assessments]) / assessments.count()
+            
+        avg_comm_score = 0
+        if comm_sessions.exists():
+            avg_comm_score = sum([s.score for s in comm_sessions]) / comm_sessions.count()
+
+        avg_int_score = 0
+        if interviews.exists():
+            avg_int_score = sum([i.ai_score for i in interviews]) / interviews.count()
+
+        prompt = f"""
+        You are an Intelligent Career Coach. Analyze this student profile and generate a placement readiness plan.
+        
+        PROFILE DATA:
+        - Name: {student.full_name}
+        - Branch: {student.branch}, CGPA: {student.cgpa}
+        - Resume Analysis: Score {resume_analysis.analysis_score if resume_analysis else 'N/A'}, Missing Skills: {resume_analysis.skills_missing if resume_analysis else 'N/A'}
+        - Aptitude Test Avg: {avg_apt_score}%
+        - Communication Avg: {avg_comm_score}%
+        - Mock Interview Avg: {avg_int_score}%
+        - Skills: {[s.skill_name for s in custom_skills]}
+        - Projects: {[p.title for p in projects]}
+        
+        OUTPUT JSON FORMAT:
+        {{
+          "strengths": ["...", "..."],
+          "improvements": ["...", "..."],
+          "weekly_plan": ["Week 1: Focus on...", "Week 2: Focus on..."],
+          "daily_tasks": ["...", "..."],
+          "learning_path": ["...", "..."],
+          "readiness_score": 0-100,
+          "priority_areas": ["...", "..."],
+          "motivational_feedback": "..."
+        }}
+        """
+        
+        raw = openai_generate(prompt)
+        if raw:
+            raw = raw.strip()
+            if "```" in raw:
+                raw = raw.split("```")[1]
+                if raw.startswith("json"): raw = raw[4:]
+            data = json.loads(raw.strip())
+            
+            IntelligentRecommendation.objects.update_or_create(
+                student=student,
+                defaults={
+                    'strengths': data.get('strengths', []),
+                    'improvements': data.get('improvements', []),
+                    'weekly_plan': data.get('weekly_plan', []),
+                    'daily_tasks': data.get('daily_tasks', []),
+                    'learning_path': data.get('learning_path', []),
+                    'readiness_score': data.get('readiness_score', 0),
+                    'priority_areas': data.get('priority_areas', []),
+                    'motivational_feedback': data.get('motivational_feedback', '')
+                }
+            )
+
+    except Exception as e:
+        print(f"Error generating intelligent recommendations: {e}")
+        messages.error(request, f"Intelligent Analysis Error: {str(e)}")
+
+    messages.success(request, "Intelligent recommendations updated!")
+    return JsonResponse({'status': 'success', 'message': 'Intelligent recommendations updated!'})
 
 
 def company_details(request, company_id):
@@ -1097,7 +1173,7 @@ def process_comm_turn(request):
             }}
             """
             
-            # Use OpenAI instead of Gemini as requested
+            # Use OpenAI to generate response and coaching tip
             raw = openai_generate(prompt)
             
             # Robust JSON extraction
