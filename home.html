@@ -363,6 +363,10 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
   footer { flex-direction: column; gap: 16px; text-align: center; }
   .footer-links { justify-content: center; }
 }
+
+.chat-bubble.bubble-ai {
+    color: teal;   /* text color */
+}
 </style>
 </head>
 <body>
@@ -371,11 +375,18 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
 <nav>
   <a href="/" class="nav-logo">
     <div class="nav-logo-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      <!-- TARGET / CROSSHAIR ICON (matching second image) -->
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="12" r="6"/>
+        <circle cx="12" cy="12" r="2"/>
+        <line x1="12" y1="2" x2="12" y2="6"/>
+        <line x1="12" y1="18" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="6" y2="12"/>
+        <line x1="18" y1="12" x2="22" y2="12"/>
       </svg>
     </div>
-    <span class="nav-logo-text">Smart<em>Placement</em></span>
+    <span class="nav-logo-text">Smart<em>PlacementPortal</em></span>
   </a>
   <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
   <label for="menu-toggle" class="menu-icon"><i class="fas fa-bars"></i></label>
@@ -388,7 +399,6 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
   <div class="nav-cta">
     <a href="{% url 'login' %}" class="btn-ghost">Login</a>
     <a href="{% url 'register' %}" class="btn-primary">Get Started →</a>
-
   </div>
 </nav>
 
@@ -478,10 +488,10 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
             <span class="module-badge mb-done">Done</span>
           </div>
           <div class="module-step active">
-            <div class="module-icon">📚</div>
+            <div class="module-icon">🎙️</div>
             <div class="module-info">
-              <div class="module-name">Learning Path</div>
-              <div class="module-sub">Custom AI roadmap for your gaps</div>
+              <div class="module-name">Communication skills</div>
+              <div class="module-sub">Custom AI preparation</div>
             </div>
             <span class="module-badge mb-active">Active</span>
           </div>
@@ -540,7 +550,7 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
       </div>
       <div class="feature-card reveal">
         <div class="feature-icon">💻</div>
-        <h3 class="feature-title">Technical & Coding Skills</h3>
+        <h3 class="feature-title">Technical Skills</h3>
         <p class="feature-desc">Data structures, algorithms, OOP, and DBMS — the AI tracks your coding progress and recommends the right problems based on your skill gaps and company targets.</p>
       </div>
       <div class="feature-card reveal">
@@ -561,7 +571,7 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
 <section class="how-section" id="modules">
   <div class="section-inner">
     <div class="section-eyebrow reveal">Your Complete Journey</div>
-    <h2 class="section-title reveal">8 Modules. One Clear<br>Path to <span class="accent">Placement Readiness.</span></h2>
+    <h2 class="section-title reveal">7 Modules. One Clear<br>Path to <span class="accent">Placement Readiness.</span></h2>
     <p class="section-sub reveal">Our agentic AI walks you through each module in sequence — every step builds on the last, and nothing gets skipped. This is your full preparation roadmap.</p>
 
     <div class="timeline-wrap">
@@ -578,20 +588,10 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
         </div>
       </div>
 
-      <div class="tl-item reveal">
-        <div class="tl-num-wrap"><div class="tl-num">02</div><div class="tl-tag-label">Skills</div></div>
-        <div class="tl-card">
-          <div class="tl-card-top">
-            <div class="tl-card-title"><span class="tl-emoji">⚡</span> Skill Mapping</div>
-            <span class="tl-chip chip-warm">Assessment</span>
-          </div>
-          <p class="tl-card-desc">Tell the AI what you already know. It maps your technical and soft skills, evaluates your current readiness, and pinpoints exactly where the gaps are.</p>
-          <div class="tl-features"><span class="tl-feat">Technical skills</span><span class="tl-feat">Soft skills</span><span class="tl-feat">Gap analysis</span></div>
-        </div>
-      </div>
+      
 
       <div class="tl-item reveal">
-        <div class="tl-num-wrap"><div class="tl-num">03</div><div class="tl-tag-label">Resume</div></div>
+        <div class="tl-num-wrap"><div class="tl-num">02</div><div class="tl-tag-label">Resume</div></div>
         <div class="tl-card">
           <div class="tl-card-top">
             <div class="tl-card-title"><span class="tl-emoji">📄</span> Resume Analyse</div>
@@ -603,7 +603,7 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
       </div>
 
       <div class="tl-item reveal">
-        <div class="tl-num-wrap"><div class="tl-num">04</div><div class="tl-tag-label">Projects</div></div>
+        <div class="tl-num-wrap"><div class="tl-num">03</div><div class="tl-tag-label">Projects</div></div>
         <div class="tl-card">
           <div class="tl-card-top">
             <div class="tl-card-title"><span class="tl-emoji">🛠️</span> Projects Showcase</div>
@@ -614,20 +614,10 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
         </div>
       </div>
 
-      <div class="tl-item reveal">
-        <div class="tl-num-wrap"><div class="tl-num">05</div><div class="tl-tag-label">Learn</div></div>
-        <div class="tl-card">
-          <div class="tl-card-top">
-            <div class="tl-card-title"><span class="tl-emoji">📚</span> Personalized Learning Path</div>
-            <span class="tl-chip chip-teal">AI Curated</span>
-          </div>
-          <p class="tl-card-desc">Based on your skill gaps, the AI builds a custom preparation roadmap — study the right topics in the right order, with no more guessing what to learn next.</p>
-          <div class="tl-features"><span class="tl-feat">Custom roadmap</span><span class="tl-feat">Curated resources</span><span class="tl-feat">Progress tracking</span></div>
-        </div>
-      </div>
+
 
       <div class="tl-item reveal">
-        <div class="tl-num-wrap"><div class="tl-num">06</div><div class="tl-tag-label">Test</div></div>
+        <div class="tl-num-wrap"><div class="tl-num">04</div><div class="tl-tag-label">Test</div></div>
         <div class="tl-card">
           <div class="tl-card-top">
             <div class="tl-card-title"><span class="tl-emoji">🧠</span> Aptitude & Mock Tests</div>
@@ -639,7 +629,7 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
       </div>
 
       <div class="tl-item reveal">
-        <div class="tl-num-wrap"><div class="tl-num">07</div><div class="tl-tag-label">AI Picks</div></div>
+        <div class="tl-num-wrap"><div class="tl-num">05</div><div class="tl-tag-label">AI Picks</div></div>
         <div class="tl-card">
           <div class="tl-card-top">
             <div class="tl-card-title"><span class="tl-emoji">🤖</span> AI Recommendations</div>
@@ -651,7 +641,7 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
       </div>
 
       <div class="tl-item reveal">
-        <div class="tl-num-wrap"><div class="tl-num">08</div><div class="tl-tag-label">Ready!</div></div>
+        <div class="tl-num-wrap"><div class="tl-num">06</div><div class="tl-tag-label">Ready!</div></div>
         <div class="tl-card" style="border-color: rgba(10,163,181,0.25); background: rgba(10,163,181,0.04);">
           <div class="tl-card-top">
             <div class="tl-card-title"><span class="tl-emoji">🏢</span> Company Readiness</div>
@@ -659,6 +649,18 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
           </div>
           <p class="tl-card-desc">Explore companies visiting your campus. See their test patterns, eligibility criteria, and get AI-guided last-mile preparation tailored to each company's placement drive.</p>
           <div class="tl-features"><span class="tl-feat">Company profiles</span><span class="tl-feat">Test patterns</span><span class="tl-feat">Interview tips</span><span class="tl-feat">Eligibility check</span></div>
+        </div>
+      </div>
+
+    <div class="tl-item reveal">
+        <div class="tl-num-wrap"><div class="tl-num">07</div><div class="tl-tag-label">Learn</div></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div class="tl-card-title"><span class="tl-emoji">🎙️</span> communication skills AI</div>
+            <span class="tl-chip chip-teal">AI Curated</span>
+          </div>
+          <p class="tl-card-desc">Based on your communication skills gaps, the AI builds a custom preparation — study the right topics in the right order, with no more guessing what to learn next.</p>
+          <div class="tl-features"><span class="tl-feat">Custom prepartion</span><span class="tl-feat">AI</span></div>
         </div>
       </div>
 
@@ -708,24 +710,22 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
       </div>
       <div class="chat-body">
         <div class="chat-bubble bubble-ai">
-          👋 Hi Arjun! I've analysed your last 3 mock tests. You're doing great in Verbal but <strong>Quantitative Aptitude</strong> needs work — especially Time & Work and Probability.
-        </div>
+          👋 Hello! I'm your AI Coach. Let's practice. Please start by introducing yourself.</div>
         <div class="chat-bubble bubble-user">
-          What should I focus on today?
+         Hello
         </div>
         <div class="chat-bubble bubble-ai">
           Here's your plan for today:
           <div class="chat-tags">
-            <span class="chat-tag">⏱ Time & Work — 30 min</span>
-            <span class="chat-tag">🔢 Probability — 20 min</span>
-            <span class="chat-tag">💻 Arrays (DSA) — 45 min</span>
+            Hello! That's a great start. To make a strong first impression, consider greeting with a bit more warmth. You might say, 'Good morning,' or 'Good afternoon,' depending on the time of day.
           </div>
         </div>
-        <div class="chat-bubble bubble-ai">
-          After this, your readiness score will jump from <strong>67% → 80%</strong>. You'll be ready to attempt the TCS NQT Mock Test! 🚀
-        </div>
+        
         <div class="chat-bubble bubble-user">
-          Start the Quantitative module now!
+          Ok!
+        </div>
+        <div class="chat-bubble bubble-ai">
+          It's great to see your response! Can you tell me more about what makes you interested in this opportunity?.
         </div>
         <div class="chat-typing">
           <div class="typing-dots">
@@ -744,12 +744,7 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
   <div class="company-logos reveal">
     <div class="company-pill"><span class="company-dot"></span>TCS</div>
     <div class="company-pill"><span class="company-dot"></span>Infosys</div>
-    <div class="company-pill"><span class="company-dot"></span>Wipro</div>
-
-    <div class="company-pill"><span class="company-dot"></span>HCL Tech</div>
-    <div class="company-pill"><span class="company-dot"></span>Capgemini</div>
-    <div class="company-pill"><span class="company-dot"></span>Tech Mahindra</div>
-  </div>
+   </div>
 </section>
 
 <!-- ── WHY SMARTPLACE ────────────────────────────────────────── -->
@@ -817,7 +812,7 @@ footer { padding: 40px 6vw; border-top: 1px solid var(--border); display: flex; 
 
 <!-- ── FOOTER ─────────────────────────────────────────────────── -->
 <footer>
-  <div class="footer-brand">Smart<em>Placement</em>Portal ·Agentic AI Prep</div>
+  <div class="footer-brand">Smart<em>Placement</em>Portal · Agentic AI Prep</div>
   <p class="footer-copy">© 2026 SmartPlace. All rights reserved.</p>
   <div class="footer-links">
     <a href="#">Privacy</a>
