@@ -7,9 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Communication AI Agent — Smart Placement Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
     <style>
         :root {
             --teal: #0aa3b5;
@@ -204,37 +202,42 @@
             border: 1px solid var(--border);
         }
 
+        /* ── UPDATED CHAT HEADER — dark navy ── */
         header.chat-header {
             padding: 18px 28px;
-            background: #fff;
-            color: var(--ink);
+            background: #0d1b2a;
+            color: #ffffff;
             display: flex;
             align-items: center;
             gap: 15px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 28px 28px 0 0;
         }
 
         .agent-icon {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: var(--teal-dim);
-            color: var(--teal);
+            background: var(--teal);
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            flex-shrink: 0;
         }
 
         .agent-status {
             display: flex;
             flex-direction: column;
+            gap: 3px;
         }
 
         .agent-name {
             font-family: 'Syne', sans-serif;
             font-weight: 800;
             font-size: 1.1rem;
+            color: #ffffff;
         }
 
         .status-dot {
@@ -243,6 +246,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            font-weight: 600;
         }
 
         .chat-body {
@@ -268,8 +272,15 @@
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: none; }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
         }
 
         .msg-ai {
@@ -335,8 +346,15 @@
         }
 
         @keyframes beat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
         }
 
         .typing-indicator {
@@ -347,14 +365,107 @@
             background: #f8fbff;
         }
 
-        .chat-body::-webkit-scrollbar { width: 6px; }
-        .chat-body::-webkit-scrollbar-thumb { background: #d1d9e6; border-radius: 10px; }
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: #d1d9e6;
+            border-radius: 10px;
+        }
 
         @media (max-width: 900px) {
-            .navbar { padding: 0 16px; }
-            .navbar-links { display: none; }
-            .chat-layout { width: 100%; border-radius: 0; margin: 0; height: calc(100vh - 62px); }
+            .navbar {
+                padding: 0 16px;
+            }
+
+            .navbar-links {
+                display: none;
+            }
+
+            .chat-layout {
+                width: 100%;
+                border-radius: 0;
+                margin: 0;
+                height: calc(100vh - 62px);
+            }
+
+            header.chat-header {
+                border-radius: 0;
+            }
         }
+
+        /* ── WAVEFORM LISTENER PANEL (NEW — purely additive) ── */
+        #waveform-panel {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 30px 16px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            gap: 10px;
+        }
+
+        #waveform-panel.active {
+            display: flex;
+        }
+
+        .waveform-ready-text {
+            font-size: 1rem;
+            color: var(--ink);
+            font-weight: 400;
+        }
+
+        .waveform-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            background: #f2f2f2;
+            border-radius: 50px;
+            padding: 8px 14px;
+        }
+
+        #waveform-canvas {
+            flex: 1;
+            height: 38px;
+            display: block;
+        }
+
+        .wf-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .wf-cancel {
+            background: #ddd;
+            color: #555;
+        }
+
+        .wf-cancel:hover {
+            background: #ccc;
+        }
+
+        .wf-send {
+            background: var(--teal);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(10, 163, 181, 0.3);
+        }
+
+        .wf-send:hover {
+            background: var(--teal-dark);
+        }
+
+        /* ── END WAVEFORM PANEL ── */
     </style>
 </head>
 
@@ -363,6 +474,8 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-brand"><i class="fas fa-bullseye"></i> Smart Placement Portal</div>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
+        <label for="menu-toggle" class="menu-icon"><i class="fas fa-bars"></i></label>
         <div class="navbar-links">
             <a href="{% url 'dashboard' %}">Dashboard</a>
             <a href="{% url 'companies' %}">Companies</a>
@@ -381,19 +494,32 @@
     <div id="voice-overlay">
         <div class="intro-container" style="max-width: 800px; max-height: 90vh; overflow-y: auto; text-align: left;">
             <div class="start-text" style="text-align: center;">Communication AI Coach</div>
-            
-            <!-- TASK 1: BIGGER PARAGRAPH & AUTO-SCROLL -->
+
             <div class="reading-test-box" id="reading-test-section">
-                <div style="font-size: 0.85rem; color: var(--teal); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <div
+                    style="font-size: 0.85rem; color: var(--teal); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-microphone-lines"></i> Phase 1: Advanced Reading Test
                 </div>
-                <div id="target-paragraph-container" style="height: 300px; overflow-y: auto; background: #fff; padding: 25px; border-radius: 20px; border: 2px solid var(--border); margin-bottom: 20px; position: relative; scroll-behavior: smooth;">
+                <div id="target-paragraph-container"
+                    style="height: 300px; overflow-y: auto; background: #fff; padding: 25px; border-radius: 20px; border: 2px solid var(--border); margin-bottom: 20px; position: relative; scroll-behavior: smooth;">
                     <p id="target-paragraph" style="font-size: 1.2rem; line-height: 1.8; color: var(--ink); margin: 0;">
-                        "In today's fast-paced corporate environment, the ability to communicate with precision and empathy is more critical than ever. Leadership is no longer defined solely by authority, but by the capacity to inspire and align teams through clear storytelling and active listening. When we speak, we are not just transferring information; we are building trust and establishing a vision. To master professional communication, one must focus on three pillars: clarity of thought, control of tone, and consistency of message. By practicing these elements, a professional can transform simple interactions into meaningful connections that drive innovation and foster a culture of excellence. Remember, your voice is your most powerful asset in any negotiation or presentation. Use it with intention, and always be mindful of the impact your words have on your audience. Growth comes from stepping outside your comfort zone and embracing the challenge of public speaking. Every time you articulate a thought, you have the opportunity to influence and lead."
+                        "In today's fast-paced corporate environment, the ability to communicate with precision and
+                        empathy is more critical than ever. Leadership is no longer defined solely by authority, but by
+                        the capacity to inspire and align teams through clear storytelling and active listening. When we
+                        speak, we are not just transferring information; we are building trust and establishing a
+                        vision. To master professional communication, one must focus on three pillars: clarity of
+                        thought, control of tone, and consistency of message. By practicing these elements, a
+                        professional can transform simple interactions into meaningful connections that drive innovation
+                        and foster a culture of excellence. Remember, your voice is your most powerful asset in any
+                        negotiation or presentation. Use it with intention, and always be mindful of the impact your
+                        words have on your audience. Growth comes from stepping outside your comfort zone and embracing
+                        the challenge of public speaking. Every time you articulate a thought, you have the opportunity
+                        to influence and lead."
                     </p>
                 </div>
-                
-                <div id="realtime-insights" style="display: none; margin-bottom: 20px; padding: 15px; background: var(--teal-dim); border-radius: 12px; border: 1px solid var(--teal);">
+
+                <div id="realtime-insights"
+                    style="display: none; margin-bottom: 20px; padding: 15px; background: var(--teal-dim); border-radius: 12px; border: 1px solid var(--teal);">
                     <div style="display: flex; justify-content: space-around; font-weight: 700;">
                         <div>Accuracy: <span id="accuracy-val" style="color: var(--teal);">0%</span></div>
                         <div>Words Spoken: <span id="word-count-val" style="color: var(--teal);">0</span></div>
@@ -401,78 +527,99 @@
                 </div>
 
                 <div style="text-align: center;">
-                    <button class="btn-enter-session" id="start-reading-btn" style="background: #fff; color: var(--teal); border: 2px solid var(--teal); box-shadow: none;">
+                    <button class="btn-enter-session" id="start-reading-btn"
+                        style="background: #fff; color: var(--teal); border: 2px solid var(--teal); box-shadow: none;">
                         <i class="fas fa-play"></i> Start Advanced Reading Test
                     </button>
                 </div>
             </div>
 
             <div id="post-reading-options" style="display: none; margin-top: 20px; text-align: center;">
-                <p class="intro-instructions" style="margin-bottom: 20px;">Analysis Complete! Your fluency is improving. Ready for the next challenge?</p>
+                <p class="intro-instructions" style="margin-bottom: 20px;">Analysis Complete! Your fluency is improving.
+                    Ready for the next challenge?</p>
                 <div style="display: flex; gap: 10px; justify-content: center;">
                     <button class="btn-enter-session" id="initial-start-btn">
                         <i class="fas fa-comments"></i> Enter AI Coaching
                     </button>
-                    <button class="btn-enter-session" onclick="location.reload()" style="background: var(--surface); color: var(--muted); border: 1px solid var(--border); box-shadow: none;">
+                    <button class="btn-enter-session" onclick="location.reload()"
+                        style="background: var(--surface); color: var(--muted); border: 1px solid var(--border); box-shadow: none;">
                         <i class="fas fa-redo"></i> Retry Test
                     </button>
                 </div>
             </div>
 
             <div class="divider" style="margin: 30px 0; height: 1px; background: var(--border); position: relative;">
-                <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ddeef5; padding: 0 15px; font-size: 0.75rem; color: var(--muted); font-weight: 600;">PROFESSIONAL TOOLS</span>
+                <span
+                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ddeef5; padding: 0 15px; font-size: 0.75rem; color: var(--muted); font-weight: 600;">PROFESSIONAL
+                    TOOLS</span>
             </div>
 
-            <!-- TASK 2: VOCAB MASTERY & GRAMMAR GURU IMPLEMENTATION -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="tool-card-real" id="vocab-tool" style="background: #fff; padding: 20px; border-radius: 20px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;">
+                <div class="tool-card-real" id="vocab-tool"
+                    style="background: #fff; padding: 20px; border-radius: 20px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                        <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--teal-dim); color: var(--teal); display: flex; align-items: center; justify-content: center;">
+                        <div
+                            style="width: 40px; height: 40px; border-radius: 12px; background: var(--teal-dim); color: var(--teal); display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-book-sparkles"></i>
                         </div>
                         <h4 style="font-family: 'Syne', sans-serif; font-weight: 700;">Vocab Mastery</h4>
                     </div>
-                    <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">Master high-impact corporate vocabulary with contextual examples.</p>
+                    <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">Master high-impact corporate
+                        vocabulary with contextual examples.</p>
                 </div>
-                <div class="tool-card-real" id="grammar-tool" style="background: #fff; padding: 20px; border-radius: 20px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.3s;">
+                <div class="tool-card-real" id="grammar-tool"
+                    style="background: #fff; padding: 20px; border-radius: 20px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.3s;">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                        <div style="width: 40px; height: 40px; border-radius: 12px; background: #fff4e5; color: #ff9800; display: flex; align-items: center; justify-content: center;">
+                        <div
+                            style="width: 40px; height: 40px; border-radius: 12px; background: #fff4e5; color: #ff9800; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-spell-check"></i>
                         </div>
                         <h4 style="font-family: 'Syne', sans-serif; font-weight: 700;">Grammar Guru</h4>
                     </div>
-                    <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">Analyze and fix your sentence structures in real-time.</p>
+                    <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">Analyze and fix your sentence
+                        structures in real-time.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- VOCAB MASTER MODAL -->
-    <div id="vocab-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-        <div style="background: #fff; width: 90%; max-width: 500px; padding: 30px; border-radius: 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);">
+    <div id="vocab-modal"
+        style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div
+            style="background: #fff; width: 90%; max-width: 500px; padding: 30px; border-radius: 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <h3 style="font-family: 'Syne', sans-serif; font-weight: 800;">Word of the Day</h3>
-                <button onclick="document.getElementById('vocab-modal').style.display='none'" style="border: none; background: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                <button onclick="document.getElementById('vocab-modal').style.display='none'"
+                    style="border: none; background: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
             </div>
-            <div style="text-align: center; padding: 20px; background: var(--teal-dim); border-radius: 20px; margin-bottom: 20px;">
+            <div
+                style="text-align: center; padding: 20px; background: var(--teal-dim); border-radius: 20px; margin-bottom: 20px;">
                 <h2 id="vocab-word" style="color: var(--teal); font-size: 2rem; margin-bottom: 8px;">Articulate</h2>
                 <p id="vocab-pronun" style="font-style: italic; color: var(--muted);">/ɑːrˈtɪkjulet/</p>
             </div>
             <p><strong>Meaning:</strong> Having or showing the ability to speak fluently and coherently.</p>
-            <p style="margin-top: 12px; color: var(--slate); border-left: 3px solid var(--teal); padding-left: 12px;"><em>"He was highly articulate and could explain complex ideas simply."</em></p>
-            <button onclick="document.getElementById('vocab-modal').style.display='none'" class="btn-enter-session" style="width: 100%; margin-top: 24px;">Got it!</button>
+            <p style="margin-top: 12px; color: var(--slate); border-left: 3px solid var(--teal); padding-left: 12px;">
+                <em>"He was highly articulate and could explain complex ideas simply."</em></p>
+            <button onclick="document.getElementById('vocab-modal').style.display='none'" class="btn-enter-session"
+                style="width: 100%; margin-top: 24px;">Got it!</button>
         </div>
     </div>
 
     <!-- GRAMMAR GURU MODAL -->
-    <div id="grammar-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-        <div style="background: #fff; width: 90%; max-width: 600px; padding: 30px; border-radius: 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);">
+    <div id="grammar-modal"
+        style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div
+            style="background: #fff; width: 90%; max-width: 600px; padding: 30px; border-radius: 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <h3 style="font-family: 'Syne', sans-serif; font-weight: 800;">Grammar Guru</h3>
-                <button onclick="document.getElementById('grammar-modal').style.display='none'" style="border: none; background: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                <button onclick="document.getElementById('grammar-modal').style.display='none'"
+                    style="border: none; background: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
             </div>
-            <textarea id="grammar-input" placeholder="Type or paste a sentence here to analyze..." style="width: 100%; height: 120px; padding: 15px; border-radius: 16px; border: 1.5px solid var(--border); font-family: inherit; margin-bottom: 15px;"></textarea>
-            <div id="grammar-result" style="display: none; padding: 15px; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0; margin-bottom: 15px;">
+            <textarea id="grammar-input" placeholder="Type or paste a sentence here to analyze..."
+                style="width: 100%; height: 120px; padding: 15px; border-radius: 16px; border: 1.5px solid var(--border); font-family: inherit; margin-bottom: 15px;"></textarea>
+            <div id="grammar-result"
+                style="display: none; padding: 15px; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0; margin-bottom: 15px;">
                 <p style="font-size: 0.9rem; font-weight: 700; color: #166534; margin-bottom: 5px;">Suggested Fix:</p>
                 <p id="fixed-text" style="color: var(--ink);"></p>
             </div>
@@ -486,18 +633,28 @@
             <header class="chat-header">
                 <div class="agent-icon"><i class="fas fa-robot"></i></div>
                 <div class="agent-status">
-                    <div class="agent-name">SmartPlace AI Coach</div>
-                    <div class="status-dot"><i class="fas fa-circle"></i> Analyzing Communication</div>
+                    <div class="agent-name">SmartPlace AI Agent</div>
+                    <div class="status-dot"><i class="fas fa-circle" style="font-size: 8px;"></i> Active now</div>
                 </div>
             </header>
 
-            <div class="chat-body" id="chat-body">
-                <!-- Messages will appear here -->
-            </div>
+            <div class="chat-body" id="chat-body"></div>
 
             <div class="typing-indicator" id="ai-status">AI Agent is evaluating your response...</div>
 
-            <div class="chat-controls">
+            <!-- WAVEFORM PANEL — replaces controls while mic is active -->
+            <div id="waveform-panel">
+                <div class="waveform-ready-text">Ready when you are.</div>
+                <div class="waveform-row">
+                    <button class="wf-btn wf-cancel" id="wf-cancel-btn" title="Cancel"><i
+                            class="fas fa-times"></i></button>
+                    <canvas id="waveform-canvas"></canvas>
+                    <button class="wf-btn wf-send" id="wf-send-btn" title="Send"><i class="fas fa-check"></i></button>
+                </div>
+            </div>
+
+            <!-- DEFAULT CONTROLS -->
+            <div class="chat-controls" id="chat-controls-bar">
                 <button class="btn-round btn-mic" id="mic-toggle-btn"><i class="fas fa-microphone"></i></button>
                 <div style="font-size: 0.85rem; color: var(--muted);">Tap the microphone button to speak</div>
                 <button class="btn-round btn-stop" id="finish-btn"><i class="fas fa-sign-out-alt"></i></button>
@@ -506,6 +663,7 @@
     </div>
 
     <script>
+        // ── READING TEST ──
         const startReadingBtn = document.getElementById('start-reading-btn');
         const targetP = document.getElementById('target-paragraph');
         const targetContainer = document.getElementById('target-paragraph-container');
@@ -514,7 +672,6 @@
         const wordCountVal = document.getElementById('word-count-val');
         const postReading = document.getElementById('post-reading-options');
 
-        // Split paragraph into spans
         const originalText = targetP.textContent.trim();
         const words = originalText.split(/\s+/);
         targetP.innerHTML = words.map(w => `<span>${w}</span>`).join(' ');
@@ -527,60 +684,40 @@
                 readingRecognition = new SpeechRecognition();
                 readingRecognition.continuous = true;
                 readingRecognition.interimResults = true;
-
                 startReadingBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Reading in progress...';
                 insights.style.display = 'block';
-
-                // AUTO-SCROLL LOGIC
-                scrollInterval = setInterval(() => {
-                    targetContainer.scrollTop += 1;
-                }, 100); 
-
+                scrollInterval = setInterval(() => { targetContainer.scrollTop += 1; }, 100);
                 readingRecognition.onresult = (e) => {
                     let transcript = "";
-                    for (let i = e.resultIndex; i < e.results.length; i++) {
-                        transcript += e.results[i][0].transcript;
-                    }
-                    
+                    for (let i = e.resultIndex; i < e.results.length; i++) transcript += e.results[i][0].transcript;
                     const spokenWords = transcript.toLowerCase().replace(/[.,!?;]/g, '').split(/\s+/);
                     const spans = targetP.querySelectorAll('span');
                     let matchedCount = 0;
-
                     spans.forEach(span => {
                         const word = span.textContent.toLowerCase().replace(/[.,!?;]/g, '');
-                        if (spokenWords.includes(word)) {
-                            span.style.color = 'var(--teal)';
-                            span.style.fontWeight = '800';
-                            matchedCount++;
-                        }
+                        if (spokenWords.includes(word)) { span.style.color = 'var(--teal)'; span.style.fontWeight = '800'; matchedCount++; }
                     });
-
                     wordCountVal.textContent = spokenWords.length;
                     const accuracy = Math.round((matchedCount / spans.length) * 100);
                     accuracyVal.textContent = accuracy + '%';
-
-                    if (accuracy > 95) {
-                        setTimeout(() => { readingRecognition.stop(); }, 2000);
-                    }
+                    if (accuracy > 95) { setTimeout(() => { readingRecognition.stop(); }, 2000); }
                 };
-
                 readingRecognition.onend = () => {
                     clearInterval(scrollInterval);
                     startReadingBtn.style.display = 'none';
                     postReading.style.display = 'block';
                 };
-
                 readingRecognition.start();
             }
         });
 
-        // VOCAB TOOL
+        // ── VOCAB TOOL ──
         document.getElementById('vocab-tool').addEventListener('click', () => {
             const wordsList = [
-                {w: "Persuade", p: "/pəˈsweɪd/", m: "Induce someone to do something through reasoning or argument."},
-                {w: "Eloquent", p: "/ˈeləkwənt/", m: "Fluent or persuasive in speaking or writing."},
-                {w: "Conise", p: "/kənˈsaɪs/", m: "Giving a lot of information clearly and in a few words."},
-                {w: "Authentic", p: "/ɔːˈθentɪk/", m: "Of undisputed origin and not a copy; genuine."}
+                { w: "Persuade", p: "/pəˈsweɪd/", m: "Induce someone to do something through reasoning or argument." },
+                { w: "Eloquent", p: "/ˈeləkwənt/", m: "Fluent or persuasive in speaking or writing." },
+                { w: "Conise", p: "/kənˈsaɪs/", m: "Giving a lot of information clearly and in a few words." },
+                { w: "Authentic", p: "/ɔːˈθentɪk/", m: "Of undisputed origin and not a copy; genuine." }
             ];
             const random = wordsList[Math.floor(Math.random() * wordsList.length)];
             document.getElementById('vocab-word').textContent = random.w;
@@ -588,105 +725,217 @@
             document.getElementById('vocab-modal').style.display = 'flex';
         });
 
-        // GRAMMAR TOOL
+        // ── GRAMMAR TOOL ──
         document.getElementById('grammar-tool').addEventListener('click', () => {
             document.getElementById('grammar-modal').style.display = 'flex';
         });
 
         document.getElementById('check-grammar-btn').addEventListener('click', async () => {
             const input = document.getElementById('grammar-input').value;
-            if(!input) return;
-
+            if (!input) return;
             document.getElementById('check-grammar-btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
-            
-            // Simplified Grammar Fixer (In real app, call AI endpoint)
             setTimeout(() => {
-                const fixed = input.replace(/ i /g, " I ")
-                                  .replace(/dont/g, "don't")
-                                  .replace(/ (is|am|are) /g, " ") // Demo effect
-                                  .replace(/^([a-z])/, (m) => m.toUpperCase());
-                
-                document.getElementById('fixed-text').textContent = input; // Placeholder for now
+                document.getElementById('fixed-text').textContent = input;
                 document.getElementById('grammar-result').style.display = 'block';
                 document.getElementById('check-grammar-btn').textContent = 'Analyze Sentence';
-                
-                // Real implementation would use fetch('/process-comm-turn/') with a special prompt
             }, 1000);
         });
 
+        // ── CORE CHAT VARS ──
         const overlay = document.getElementById('voice-overlay');
         const initialStart = document.getElementById('initial-start-btn');
         const micBtn = document.getElementById('mic-toggle-btn');
         const chatBody = document.getElementById('chat-body');
         const aiStatus = document.getElementById('ai-status');
         const finishBtn = document.getElementById('finish-btn');
+        const waveformPanel = document.getElementById('waveform-panel');
+        const controlsBar = document.getElementById('chat-controls-bar');
+        const wfCancelBtn = document.getElementById('wf-cancel-btn');
+        const wfSendBtn = document.getElementById('wf-send-btn');
+        const wfCanvas = document.getElementById('waveform-canvas');
+        const wfCtx = wfCanvas.getContext('2d');
 
         let sessionId = null;
         let isListening = false;
         let isSpeaking = false;
         let synth = window.speechSynthesis;
         let selectedVoice = null;
+        let pendingTranscript = '';
 
-        function initVoice() {
-            const voices = synth.getVoices();
-            if (!voices || voices.length === 0) return;
+        // AudioContext for waveform
+        let audioCtx = null, analyser = null, mediaStream = null, animFrame = null;
 
-            selectedVoice = voices.find(v =>
-                (v.lang && v.lang.includes('en-IN') && v.name && v.name.toLowerCase().includes('female')) ||
-                (v.name && (v.name.includes('Neerja') || v.name.includes('Heera') || v.name.includes('Google हिन्दी')))
-            ) || voices.find(v =>
-                v.name && (
-                    v.name.includes('Female') ||
-                    v.name.includes('Samantha') ||
-                    v.name.includes('Zira') ||
-                    v.name.includes('Libby') ||
-                    v.name.includes('Google UK English Female') ||
-                    v.name.includes('Victoria')
-                )
-            ) || voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
+        // ── WAVEFORM DRAW ──
+        function drawWaveform() {
+            if (!analyser) return;
+            const bufLen = analyser.fftSize;
+            const data = new Uint8Array(bufLen);
+            analyser.getByteTimeDomainData(data);
+
+            const W = wfCanvas.width, H = wfCanvas.height;
+            wfCtx.clearRect(0, 0, W, H);
+
+            const bars = 56, bw = 3;
+            const gap = (W - bars * bw) / (bars + 1);
+            const step = Math.floor(bufLen / bars);
+
+            for (let i = 0; i < bars; i++) {
+                const sample = data[i * step] / 128.0 - 1.0;
+                const bh = Math.max(4, Math.abs(sample) * H * 1.8);
+                const x = gap + i * (bw + gap);
+                const y = (H - bh) / 2;
+                wfCtx.fillStyle = '#0aa3b5';
+                wfCtx.beginPath();
+                if (wfCtx.roundRect) {
+                    wfCtx.roundRect(x, y, bw, bh, bw / 2);
+                } else {
+                    wfCtx.rect(x, y, bw, bh);
+                }
+                wfCtx.fill();
+            }
+            animFrame = requestAnimationFrame(drawWaveform);
         }
 
+        function startWaveformViz(stream) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256;
+            audioCtx.createMediaStreamSource(stream).connect(analyser);
+            // size canvas
+            wfCanvas.width = wfCanvas.offsetWidth || 500;
+            wfCanvas.height = wfCanvas.offsetHeight || 38;
+            drawWaveform();
+        }
+
+        function stopWaveformViz() {
+            if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+            if (audioCtx) { audioCtx.close(); audioCtx = null; analyser = null; }
+            wfCtx.clearRect(0, 0, wfCanvas.width, wfCanvas.height);
+        }
+
+        function showWaveform() {
+            controlsBar.style.display = 'none';
+            waveformPanel.classList.add('active');
+        }
+
+        function hideWaveform() {
+            waveformPanel.classList.remove('active');
+            controlsBar.style.display = 'flex';
+        }
+
+        // ── VOICE INIT ──
+        function initVoice() {
+            const voices = synth.getVoices();
+            if (!voices || !voices.length) return;
+            selectedVoice = voices.find(v =>
+                (v.lang && v.lang.includes('en-IN') && v.name && v.name.toLowerCase().includes('female')) ||
+                (v.name && (v.name.includes('Neerja') || v.name.includes('Heera')))
+            ) || voices.find(v => v.name && (
+                v.name.includes('Female') || v.name.includes('Samantha') ||
+                v.name.includes('Zira') || v.name.includes('Libby') ||
+                v.name.includes('Google UK English Female') || v.name.includes('Victoria')
+            )) || voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
+        }
         if (window.speechSynthesis.onvoiceschanged !== undefined) {
             window.speechSynthesis.onvoiceschanged = initVoice;
         }
         initVoice();
 
+        // ── SPEECH RECOGNITION ──
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
+
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
             recognition.onstart = () => { isListening = true; micBtn.classList.add('listening'); };
             recognition.onend = () => { isListening = false; micBtn.classList.remove('listening'); };
+
             recognition.onresult = (e) => {
                 const text = e.results[0][0].transcript;
-                if (text) { appendMessage('user', text); sendToAI(text); }
+                if (text) { pendingTranscript = text; }
+            };
+
+            recognition.onerror = () => {
+                isListening = false;
+                micBtn.classList.remove('listening');
             };
         }
 
+        // ── START MIC (manual only) ──
+        function startMic() {
+            if (!recognition) return;
+            pendingTranscript = '';
+            synth.cancel();   // stop AI speech if talking
+
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaStream = stream;
+                    showWaveform();
+                    startWaveformViz(stream);
+                    try { recognition.start(); } catch (e) { }
+                })
+                .catch(() => {
+                    // no waveform but still listen
+                    showWaveform();
+                    try { recognition.start(); } catch (e) { }
+                });
+        }
+
+        // ── STOP MIC ──
+        function stopMic() {
+            try { recognition.stop(); } catch (e) { }
+            stopWaveformViz();
+            if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+        }
+
+        // ── CANCEL (✕) — discard recording ──
+        wfCancelBtn.addEventListener('click', () => {
+            stopMic();
+            pendingTranscript = '';
+            hideWaveform();
+        });
+
+        // ── SEND (✓) — confirm and send to AI ──
+        wfSendBtn.addEventListener('click', () => {
+            stopMic();
+            hideWaveform();
+            const txt = pendingTranscript.trim();
+            if (txt) {
+                appendMessage('user', txt);
+                sendToAI(txt);
+                pendingTranscript = '';
+            }
+        });
+
+        // ── MIC BUTTON — ONLY manual, NEVER auto-starts ──
+        micBtn.addEventListener('click', () => {
+            if (isListening) {
+                stopMic();
+                hideWaveform();
+            } else {
+                startMic();
+            }
+        });
+
+        // ── SPEAK — auto-start recognition REMOVED ──
         function speak(text) {
             synth.cancel();
             setTimeout(() => {
                 const utterance = new SpeechSynthesisUtterance(text);
                 if (selectedVoice) utterance.voice = selectedVoice;
-                
                 utterance.pitch = 1.05;
                 utterance.rate = 1.0;
                 utterance.volume = 1.0;
-
                 utterance.onstart = () => { isSpeaking = true; };
-                utterance.onend = () => {
-                    isSpeaking = false;
-                    if (recognition && overlay.classList.contains('hidden')) {
-                        try { recognition.start(); } catch (e) { }
-                    }
-                };
+                utterance.onend = () => { isSpeaking = false; /* NO auto-start here */ };
                 utterance.onerror = (e) => {
                     if (e.error !== 'interrupted' && e.error !== 'canceled') {
-                        const simple = new SpeechSynthesisUtterance(text);
-                        synth.speak(simple);
+                        synth.speak(new SpeechSynthesisUtterance(text));
                     }
                 };
-
                 window._lastUtterance = utterance;
                 synth.speak(utterance);
             }, 100);
@@ -707,9 +956,7 @@
         }
 
         function scrollToBottom() {
-            setTimeout(() => {
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }, 100);
+            setTimeout(() => { chatBody.scrollTop = chatBody.scrollHeight; }, 100);
         }
 
         async function sendToAI(text) {
@@ -720,9 +967,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text, session_id: sessionId })
                 });
-                
                 if (!response.ok) throw new Error("Server error");
-
                 const data = await response.json();
                 aiStatus.style.display = 'none';
                 if (data.status === 'success') {
@@ -730,7 +975,7 @@
                     appendMessage('ai', data.ai_response, data.coaching_tip);
                     speak(data.ai_response);
                 }
-            } catch (err) { 
+            } catch (err) {
                 aiStatus.style.display = 'none';
             }
         }
@@ -740,11 +985,6 @@
             const welcomeText = "Hello! I'm your AI Coach. Let's practice. Please start by introducing yourself.";
             appendMessage('ai', welcomeText);
             speak(welcomeText);
-        });
-
-        micBtn.addEventListener('click', () => {
-            if (isListening) recognition.stop();
-            else { synth.cancel(); recognition.start(); }
         });
 
         finishBtn.addEventListener('click', () => window.location.href = '/dashboard/');
