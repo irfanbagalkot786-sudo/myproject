@@ -600,28 +600,30 @@ function resumeTest() {
   detectLoop();
 }
 
+
 /* ══════════════════════════════════════════
-   TIMER
+  TIMER
 ══════════════════════════════════════════ */
+
 function startTimer() {
   const timerEl = document.getElementById('testTimer');
   const display = document.getElementById('timerDisplay');
-  timeLeft = 20;
+  timeLeft = 20 * 60;
   timerEl.style.display = 'inline-flex';
-  display.textContent = '00:20';
+  display.textContent = '20:00';
   timerEl.className = 'test-timer';
   clearInterval(timerInterval);
 
   timerInterval = setInterval(() => {
-    timeLeft--;
-    const m = Math.floor(timeLeft / 60);
-    const s = timeLeft % 60;
-    display.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    timerEl.className = 'test-timer' + (timeLeft <= 10 ? ' danger' : '');
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      timeExpired();
-    }
+   timeLeft--;
+   const m = Math.floor(timeLeft / 60);
+   const s = timeLeft % 60;
+   display.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+   timerEl.className = 'test-timer' + (timeLeft <= 10 ? ' danger' : '');
+   if (timeLeft <= 0) {
+    clearInterval(timerInterval);
+    timeExpired();
+   }
   }, 1000);
 }
 
@@ -629,96 +631,96 @@ function timeExpired() {
   // Show time expired overlay
   let expiredBox = document.getElementById('timeExpiredOverlay');
   if (!expiredBox) {
-    expiredBox = document.createElement('div');
-    expiredBox.id = 'timeExpiredOverlay';
-    expiredBox.style.cssText = `
-      position: fixed; inset: 0; z-index: 3000;
-      background: rgba(13,27,42,0.88);
-      backdrop-filter: blur(12px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 24px;
-      animation: fadeUp 0.3s ease both;
-    `;
-    document.body.appendChild(expiredBox);
+   expiredBox = document.createElement('div');
+   expiredBox.id = 'timeExpiredOverlay';
+   expiredBox.style.cssText = `
+    position: fixed; inset: 0; z-index: 3000;
+    background: rgba(13,27,42,0.88);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    animation: fadeUp 0.3s ease both;
+   `;
+   document.body.appendChild(expiredBox);
   }
 
   let countdown = 5;
 
   expiredBox.innerHTML = `
+   <div style="
+    background: white; border-radius: 24px;
+    width: 100%; max-width: 440px;
+    padding: 40px 36px; text-align: center;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+   ">
     <div style="
-      background: white; border-radius: 24px;
-      width: 100%; max-width: 440px;
-      padding: 40px 36px; text-align: center;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+      width: 72px; height: 72px;
+      background: rgba(239,68,68,0.1);
+      color: #ef4444; border-radius: 50%;
+      display: flex; align-items: center;
+      justify-content: center; font-size: 1.8rem;
+      margin: 0 auto 20px;
+    ">⏰</div>
+
+    <div style="
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem; font-weight: 800;
+      color: #0d1b2a; margin-bottom: 10px;
+    ">Time's Up!</div>
+
+    <div style="
+      font-size: 0.88rem; color: #7a8fa8;
+      line-height: 1.65; margin-bottom: 20px;
     ">
-      <div style="
-        width: 72px; height: 72px;
-        background: rgba(239,68,68,0.1);
-        color: #ef4444; border-radius: 50%;
-        display: flex; align-items: center;
-        justify-content: center; font-size: 1.8rem;
-        margin: 0 auto 20px;
-      ">⏰</div>
+      You didn't complete the test in <strong>20 minutes</strong>.<br>
+      The test will restart automatically.
+    </div>
 
-      <div style="
-        font-family: 'Syne', sans-serif;
-        font-size: 1.4rem; font-weight: 800;
-        color: #0d1b2a; margin-bottom: 10px;
-      ">Time's Up!</div>
+    <div style="
+      background: #eaf1f6; border-radius: 14px;
+      padding: 14px; margin-bottom: 24px;
+    ">
+      <div style="font-size: 0.75rem; color: #7a8fa8; margin-bottom: 4px; font-weight: 600;">RESTARTING IN</div>
+      <div id="restartCountdown" style="
+       font-family: 'Syne', sans-serif;
+       font-size: 2rem; font-weight: 800;
+       color: #0aa3b5;
+      ">${countdown}</div>
+    </div>
 
-      <div style="
-        font-size: 0.88rem; color: #7a8fa8;
-        line-height: 1.65; margin-bottom: 20px;
-      ">
-        You didn't complete the test in <strong>20 seconds</strong>.<br>
-        The test will restart automatically.
-      </div>
+    <button onclick="restartTestNow()" style="
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #0aa3b5, #088a9a);
+      color: white; border: none; border-radius: 12px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; margin-bottom: 10px;
+      box-shadow: 0 4px 16px rgba(10,163,181,0.3);
+    ">
+      🔄 Restart Now
+    </button>
 
-      <div style="
-        background: #eaf1f6; border-radius: 14px;
-        padding: 14px; margin-bottom: 24px;
-      ">
-        <div style="font-size: 0.75rem; color: #7a8fa8; margin-bottom: 4px; font-weight: 600;">RESTARTING IN</div>
-        <div id="restartCountdown" style="
-          font-family: 'Syne', sans-serif;
-          font-size: 2rem; font-weight: 800;
-          color: #0aa3b5;
-        ">${countdown}</div>
-      </div>
-
-      <button onclick="restartTestNow()" style="
-        width: 100%; padding: 14px;
-        background: linear-gradient(135deg, #0aa3b5, #088a9a);
-        color: white; border: none; border-radius: 12px;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.95rem; font-weight: 700;
-        cursor: pointer; margin-bottom: 10px;
-        box-shadow: 0 4px 16px rgba(10,163,181,0.3);
-      ">
-        🔄 Restart Now
-      </button>
-
-      <button onclick="goBackToTopics()" style="
-        width: 100%; padding: 12px;
-        background: transparent; color: #7a8fa8;
-        border: 1.5px solid #d6e4ed; border-radius: 12px;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.88rem; font-weight: 600;
-        cursor: pointer;
-      ">
-        ← Choose Different Topic
-      </button>
-    </div>`;
+    <button onclick="goBackToTopics()" style="
+      width: 100%; padding: 12px;
+      background: transparent; color: #7a8fa8;
+      border: 1.5px solid #d6e4ed; border-radius: 12px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.88rem; font-weight: 600;
+      cursor: pointer;
+    ">
+      ← Choose Different Topic
+    </button>
+   </div>`;
 
   // Countdown timer
   const countdownInterval = setInterval(() => {
-    countdown--;
-    const el = document.getElementById('restartCountdown');
-    if (el) el.textContent = countdown;
-    if (countdown <= 0) {
-      clearInterval(countdownInterval);
-      restartTestNow();
-    }
+   countdown--;
+   const el = document.getElementById('restartCountdown');
+   if (el) el.textContent = countdown;
+   if (countdown <= 0) {
+    clearInterval(countdownInterval);
+    restartTestNow();
+   }
   }, 1000);
 }
 
@@ -732,8 +734,8 @@ function restartTestNow() {
 
   // Reset all question card borders
   document.querySelectorAll('.question-card').forEach(card => {
-    card.style.border = '';
-    card.style.boxShadow = '';
+   card.style.border = '';
+   card.style.boxShadow = '';
   });
 
   // Scroll to top of test
