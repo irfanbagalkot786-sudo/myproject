@@ -127,6 +127,73 @@ body::before {
   white-space: nowrap;
 }
 
+/* ── TRENDING BANNER ── */
+.trending-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(10,163,181,0.08) 0%, rgba(8,138,154,0.05) 100%);
+  border: 1px solid rgba(10,163,181,0.2);
+  border-radius: 14px;
+  padding: 12px 18px;
+  margin-bottom: 28px;
+  animation: fadeUp 0.5s ease 0.05s both;
+}
+
+.trending-banner i {
+  color: var(--teal);
+  font-size: 1rem;
+}
+
+.trending-banner span {
+  font-size: 0.85rem;
+  color: var(--slate);
+  font-weight: 500;
+}
+
+.trending-banner strong {
+  color: var(--teal-dark);
+}
+
+/* ── COMPANY SECTION LABEL ── */
+.company-section {
+  margin-bottom: 10px;
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadeUp 0.4s ease both;
+}
+
+.company-section:first-of-type {
+  margin-top: 0;
+}
+
+.company-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 7px 16px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--ink);
+  box-shadow: var(--glow);
+}
+
+.company-logo-badge i {
+  color: var(--teal);
+}
+
+.company-role-count {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
 /* ── JOB LIST ── */
 .job-list {
   display: flex;
@@ -362,83 +429,258 @@ body::before {
   <!-- PAGE HEADER -->
   <div class="page-header">
     <div class="page-header-left">
-      <h1>Available Jobs</h1>
-      <p>Explore openings matched to your profile and skills</p>
+      <h1>Trending Jobs</h1>
+      <p>Top hiring roles from leading companies — prepare smart, apply confident</p>
     </div>
-    {% if jobs %}
     <div class="job-count-badge">
-      <i class="fas fa-briefcase"></i>
-      {{ jobs|length }} Opening{{ jobs|length|pluralize }}
+      <i class="fas fa-fire"></i>
+      8 Trending Roles
     </div>
-    {% endif %}
   </div>
 
-  {% if jobs %}
+  <!-- TRENDING BANNER -->
+  <div class="trending-banner">
+    <i class="fas fa-lightbulb"></i>
+    <span>These are <strong>real hiring roles</strong> from TCS &amp; Infosys. Use this portal to prepare for aptitude, coding, and communication rounds before you apply.</span>
+  </div>
+
+  <!-- ══════════════ TCS ══════════════ -->
+  <div class="company-section">
+    <div class="company-logo-badge"><i class="fas fa-building"></i> TCS — Tata Consultancy Services</div>
+    <span class="company-role-count">4 roles</span>
+  </div>
 
   <div class="job-list">
-    {% for job in jobs %}
-    <div class="job-card">
 
-      <!-- TOP -->
+    <!-- TCS 1 -->
+    <div class="job-card">
       <div class="card-top">
         <div class="card-title-group">
-          <div class="job-title">{{ job.title }}</div>
-          <div class="job-company">
-            <i class="fas fa-building"></i>
-            {{ job.company.name }}
-          </div>
+          <div class="job-title">Assistant System Engineer</div>
+          <div class="job-company"><i class="fas fa-building"></i> TCS</div>
         </div>
-        <div class="exp-badge">
-          <i class="fas fa-layer-group"></i>
-          {{ job.experience_level }}
-        </div>
+        <div class="exp-badge"><i class="fas fa-layer-group"></i> Fresher</div>
       </div>
-
-      <!-- DESCRIPTION -->
-      {% if job.description %}
-      <p class="job-description">{{ job.description }}</p>
-      {% endif %}
-
-      <!-- META CHIPS -->
+      <p class="job-description">Entry-level engineering role focused on software development, testing, and support for enterprise clients. Selected candidates go through TCS's National Qualifier Test (NQT) before joining.</p>
       <div class="meta-row">
-        <div class="meta-chip">
-          <i class="fas fa-location-dot"></i>
-          {{ job.location }}
-        </div>
-        <div class="meta-chip">
-          <i class="fas fa-graduation-cap"></i>
-          Min. CGPA &nbsp;<strong>{{ job.min_cgpa }}</strong>
-        </div>
+        <div class="meta-chip"><i class="fas fa-location-dot"></i> Pan India</div>
+        <div class="meta-chip"><i class="fas fa-graduation-cap"></i> Min. CGPA &nbsp;<strong>6.0</strong></div>
+        <div class="meta-chip"><i class="fas fa-indian-rupee-sign"></i> ₹3.36 LPA</div>
       </div>
-
-      <!-- SKILLS -->
-      {% if job.required_skills.all %}
       <div class="card-divider"></div>
-      <div class="skills-label">
-        <i class="fas fa-code"></i> Required Skills
-      </div>
+      <div class="skills-label"><i class="fas fa-code"></i> Required Skills</div>
       <div class="skills-chips">
-        {% for skill in job.required_skills.all %}
-        <span class="skill-chip">{{ skill.name }}</span>
-        {% endfor %}
+        <span class="skill-chip">C / C++</span>
+        <span class="skill-chip">Java</span>
+        <span class="skill-chip">Python</span>
+        <span class="skill-chip">SQL</span>
+        <span class="skill-chip">Data Structures</span>
+        <span class="skill-chip">Aptitude</span>
       </div>
-      {% endif %}
-
     </div>
-    {% endfor %}
+
+    <!-- TCS 2 -->
+    <div class="job-card">
+      <div class="card-top">
+        <div class="card-title-group">
+          <div class="job-title">Systems Engineer</div>
+          <div class="job-company"><i class="fas fa-building"></i> TCS</div>
+        </div>
+        <div class="exp-badge"><i class="fas fa-layer-group"></i> 0–1 Year</div>
+      </div>
+      <p class="job-description">Works on application development, maintenance, and client delivery projects. Involves hands-on coding, debugging, and working with cross-functional Agile teams across TCS delivery units.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><i class="fas fa-location-dot"></i> Bangalore / Pune / Hyderabad</div>
+        <div class="meta-chip"><i class="fas fa-graduation-cap"></i> Min. CGPA &nbsp;<strong>6.5</strong></div>
+        <div class="meta-chip"><i class="fas fa-indian-rupee-sign"></i> ₹7 LPA</div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="skills-label"><i class="fas fa-code"></i> Required Skills</div>
+      <div class="skills-chips">
+        <span class="skill-chip">Java / Spring Boot</span>
+        <span class="skill-chip">REST APIs</span>
+        <span class="skill-chip">MySQL</span>
+        <span class="skill-chip">Git</span>
+        <span class="skill-chip">Agile / Scrum</span>
+        <span class="skill-chip">Problem Solving</span>
+      </div>
+    </div>
+
+    <!-- TCS 3 -->
+    <div class="job-card">
+      <div class="card-top">
+        <div class="card-title-group">
+          <div class="job-title">Data Engineer Trainee</div>
+          <div class="job-company"><i class="fas fa-building"></i> TCS</div>
+        </div>
+        <div class="exp-badge"><i class="fas fa-layer-group"></i> Fresher</div>
+      </div>
+      <p class="job-description">Part of TCS's TCS iON Digital Age Literacy program. Role involves building and maintaining data pipelines, working with big data tools, and supporting analytics teams.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><i class="fas fa-location-dot"></i> Chennai / Mumbai</div>
+        <div class="meta-chip"><i class="fas fa-graduation-cap"></i> Min. CGPA &nbsp;<strong>6.0</strong></div>
+        <div class="meta-chip"><i class="fas fa-indian-rupee-sign"></i> ₹4.5 LPA</div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="skills-label"><i class="fas fa-code"></i> Required Skills</div>
+      <div class="skills-chips">
+        <span class="skill-chip">Python</span>
+        <span class="skill-chip">SQL</span>
+        <span class="skill-chip">Pandas / NumPy</span>
+        <span class="skill-chip">Hadoop</span>
+        <span class="skill-chip">Power BI</span>
+        <span class="skill-chip">Statistics</span>
+      </div>
+    </div>
+
+    <!-- TCS 4 -->
+    <div class="job-card">
+      <div class="card-top">
+        <div class="card-title-group">
+          <div class="job-title">Cybersecurity Analyst Trainee</div>
+          <div class="job-company"><i class="fas fa-building"></i> TCS</div>
+        </div>
+        <div class="exp-badge"><i class="fas fa-layer-group"></i> Fresher</div>
+      </div>
+      <p class="job-description">Recruited through TCS NQT Cyber Security track. Responsible for monitoring security incidents, vulnerability assessments, and supporting SOC operations across enterprise client environments.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><i class="fas fa-location-dot"></i> Pan India</div>
+        <div class="meta-chip"><i class="fas fa-graduation-cap"></i> Min. CGPA &nbsp;<strong>6.0</strong></div>
+        <div class="meta-chip"><i class="fas fa-indian-rupee-sign"></i> ₹3.8 LPA</div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="skills-label"><i class="fas fa-code"></i> Required Skills</div>
+      <div class="skills-chips">
+        <span class="skill-chip">Networking Basics</span>
+        <span class="skill-chip">Linux</span>
+        <span class="skill-chip">SIEM Tools</span>
+        <span class="skill-chip">Python Scripting</span>
+        <span class="skill-chip">Ethical Hacking</span>
+      </div>
+    </div>
+
+  </div><!-- end job-list TCS -->
+
+
+  <!-- ══════════════ INFOSYS ══════════════ -->
+  <div class="company-section" style="margin-top: 38px;">
+    <div class="company-logo-badge"><i class="fas fa-building"></i> Infosys</div>
+    <span class="company-role-count">4 roles</span>
   </div>
 
-  {% else %}
+  <div class="job-list">
 
-  <div class="empty-state">
-    <i class="fas fa-briefcase"></i>
-    <h3>No jobs available right now</h3>
-    <p>Check back soon — new openings are added regularly.</p>
-  </div>
+    <!-- Infosys 1 -->
+    <div class="job-card">
+      <div class="card-top">
+        <div class="card-title-group">
+          <div class="job-title">Systems Engineer</div>
+          <div class="job-company"><i class="fas fa-building"></i> Infosys</div>
+        </div>
+        <div class="exp-badge"><i class="fas fa-layer-group"></i> Fresher</div>
+      </div>
+      <p class="job-description">Flagship campus hiring role at Infosys. Involves full-stack development, testing, and deployment across client projects. Candidates complete Infosys's intensive Mysore training program before going live.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><i class="fas fa-location-dot"></i> Pan India</div>
+        <div class="meta-chip"><i class="fas fa-graduation-cap"></i> Min. CGPA &nbsp;<strong>6.5</strong></div>
+        <div class="meta-chip"><i class="fas fa-indian-rupee-sign"></i> ₹3.6 LPA</div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="skills-label"><i class="fas fa-code"></i> Required Skills</div>
+      <div class="skills-chips">
+        <span class="skill-chip">Java</span>
+        <span class="skill-chip">Python</span>
+        <span class="skill-chip">C++</span>
+        <span class="skill-chip">DBMS</span>
+        <span class="skill-chip">OS Concepts</span>
+        <span class="skill-chip">Verbal Ability</span>
+      </div>
+    </div>
 
-  {% endif %}
+    <!-- Infosys 2 -->
+    <div class="job-card">
+      <div class="card-top">
+        <div class="card-title-group">
+          <div class="job-title">Digital Specialist Engineer</div>
+          <div class="job-company"><i class="fas fa-building"></i> Infosys</div>
+        </div>
+        <div class="exp-badge"><i class="fas fa-layer-group"></i> 0–1 Year</div>
+      </div>
+      <p class="job-description">High-performance track for students with strong coding skills (Hackwithinfy). Works on cutting-edge cloud, microservices, and AI/ML-driven product engineering for Infosys digital clients.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><i class="fas fa-location-dot"></i> Bangalore / Pune</div>
+        <div class="meta-chip"><i class="fas fa-graduation-cap"></i> Min. CGPA &nbsp;<strong>7.0</strong></div>
+        <div class="meta-chip"><i class="fas fa-indian-rupee-sign"></i> ₹6.5 LPA</div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="skills-label"><i class="fas fa-code"></i> Required Skills</div>
+      <div class="skills-chips">
+        <span class="skill-chip">DSA</span>
+        <span class="skill-chip">React / Angular</span>
+        <span class="skill-chip">Node.js</span>
+        <span class="skill-chip">AWS / Azure</span>
+        <span class="skill-chip">Docker</span>
+        <span class="skill-chip">System Design</span>
+      </div>
+    </div>
 
-</div>
+    <!-- Infosys 3 -->
+    <div class="job-card">
+      <div class="card-top">
+        <div class="card-title-group">
+          <div class="job-title">Junior Associate — Data Science</div>
+          <div class="job-company"><i class="fas fa-building"></i> Infosys</div>
+        </div>
+        <div class="exp-badge"><i class="fas fa-layer-group"></i> Fresher</div>
+      </div>
+      <p class="job-description">Part of Infosys's AI &amp; Analytics division. Involves building ML models, data preprocessing pipelines, and deploying insights for BFSI and retail clients using cloud platforms.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><i class="fas fa-location-dot"></i> Hyderabad / Bangalore</div>
+        <div class="meta-chip"><i class="fas fa-graduation-cap"></i> Min. CGPA &nbsp;<strong>7.0</strong></div>
+        <div class="meta-chip"><i class="fas fa-indian-rupee-sign"></i> ₹5 LPA</div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="skills-label"><i class="fas fa-code"></i> Required Skills</div>
+      <div class="skills-chips">
+        <span class="skill-chip">Python</span>
+        <span class="skill-chip">Machine Learning</span>
+        <span class="skill-chip">Scikit-learn</span>
+        <span class="skill-chip">TensorFlow</span>
+        <span class="skill-chip">SQL</span>
+        <span class="skill-chip">Statistics</span>
+      </div>
+    </div>
+
+    <!-- Infosys 4 -->
+    <div class="job-card">
+      <div class="card-top">
+        <div class="card-title-group">
+          <div class="job-title">Technology Analyst</div>
+          <div class="job-company"><i class="fas fa-building"></i> Infosys</div>
+        </div>
+        <div class="exp-badge"><i class="fas fa-layer-group"></i> 0–2 Years</div>
+      </div>
+      <p class="job-description">A step up from Systems Engineer — involves leading small modules, client interaction, and technical delivery. Focuses on Java EE, cloud-native apps, and DevOps pipelines in Agile teams.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><i class="fas fa-location-dot"></i> Pan India</div>
+        <div class="meta-chip"><i class="fas fa-graduation-cap"></i> Min. CGPA &nbsp;<strong>6.5</strong></div>
+        <div class="meta-chip"><i class="fas fa-indian-rupee-sign"></i> ₹9.5 LPA</div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="skills-label"><i class="fas fa-code"></i> Required Skills</div>
+      <div class="skills-chips">
+        <span class="skill-chip">Java EE</span>
+        <span class="skill-chip">Microservices</span>
+        <span class="skill-chip">CI/CD</span>
+        <span class="skill-chip">Kubernetes</span>
+        <span class="skill-chip">REST APIs</span>
+        <span class="skill-chip">Leadership</span>
+      </div>
+    </div>
+
+  </div><!-- end job-list Infosys -->
+
+</div><!-- end main -->
 
 </body>
 </html>
