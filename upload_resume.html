@@ -578,7 +578,83 @@ body::before {
   .actions { flex-direction: column; }
   .skill-gap-grid { grid-template-columns: 1fr; }
 }
+/* ── LOADING OVERLAY ── */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.spinner-box {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-outer {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 4px solid var(--teal-dim);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.spinner-inner {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--teal-dim);
+  border-bottom-color: var(--teal-dark);
+  border-radius: 50%;
+  animation: spin-reverse 1.5s linear infinite;
+}
+
+.loading-content {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.loading-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.loading-sub {
+  font-size: 0.95rem;
+  color: var(--muted);
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 </style>
+
 </head>
 
 <body data-has-analysis="{% if analysis %}true{% else %}false{% endif %}" data-score="{% if analysis %}{{ analysis.analysis_score }}{% else %}0{% endif %}" data-ats="{% if analysis %}{{ analysis.ats_score|default:0 }}{% else %}0{% endif %}">
@@ -826,7 +902,28 @@ body::before {
 
 </div>
 
+  <!-- LOADING OVERLAY -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner-box">
+      <div class="spinner-outer"></div>
+      <div class="spinner-inner"></div>
+      <i class="fas fa-brain" style="color: var(--teal); font-size: 20px;"></i>
+    </div>
+    <div class="loading-content">
+      <div class="loading-title">Analyzing Your Resume</div>
+      <div class="loading-sub">Our AI is extracting skills, calculating ATS scores, and finding your best career matches...</div>
+    </div>
+  </div>
+
 <script>
+  // Show loading overlay on form submission
+  var uploadForm = document.querySelector('form');
+  if (uploadForm) {
+    uploadForm.addEventListener('submit', function() {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+    });
+  }
+
   var hasAnalysis = document.body.dataset.hasAnalysis === 'true';
   var score = parseInt(document.body.dataset.score) || 0;
   var ats   = parseInt(document.body.dataset.ats)   || 0;
