@@ -1,0 +1,7 @@
+django==6.0.3
+openai
+openai-whisper
+pymupdf
+PyPDF2
+requests
+django-simple-captcha
