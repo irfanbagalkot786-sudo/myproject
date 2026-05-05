@@ -11,6 +11,7 @@ from .models import (
     ResumeAnalysis, Company, JobRole, Recommendation, Question, InterviewSession,
     CommunicationSession, CommunicationTurn, IntelligentRecommendation, Assessment
 )
+import random
 import json
 import os
 import subprocess
@@ -1123,82 +1124,206 @@ def communication_skills(request):
     """Renders the main communication practice interface."""
     return render(request, 'communication_skills.html')
 
+# ── REPLACE YOUR EXISTING process_comm_turn VIEW IN views.py WITH THIS ──
+# Task 3: Enriched AI prompt with detailed grammar rules, vocabulary categories,
+# fluency metrics, and professional communication coaching content.
+
+# ── REPLACE YOUR EXISTING process_comm_turn VIEW IN views.py WITH THIS ──
+
 @csrf_exempt
 @login_required
 def process_comm_turn(request):
-    """AJAX endpoint to process a single voice-to-text turn with AI coaching."""
+    """AJAX endpoint — conversational AI tutor that teaches, explains, and coaches communication."""
     if request.method == 'POST':
         try:
-            data      = json.loads(request.body)
-            user_text = data.get('text', '').strip()
+            data       = json.loads(request.body)
+            user_text  = data.get('text', '').strip()
             session_id = data.get('session_id')
-            
+            history    = data.get('history', [])   # full conversation history from frontend
+
             if not user_text:
                 return JsonResponse({'status': 'error', 'message': 'No text provided'})
 
             student = request.user.studentprofile
-            
+
             # Get or create session
             if session_id:
-                session = CommunicationSession.objects.get(id=session_id, student=student)
+                try:
+                    session = CommunicationSession.objects.get(id=session_id, student=student)
+                except CommunicationSession.DoesNotExist:
+                    session = CommunicationSession.objects.create(student=student)
             else:
                 session = CommunicationSession.objects.create(student=student)
 
-            # AI Prompt for Coaching
-            prompt = f"""
-            You are the "SmartPlace Communication Coach", a specialized AI assistant for senior placement preparation.
-            Your ONLY goal is to evaluate and improve the student's communication skills, confidence, and professional presence for corporate interviews.
+            # ── SYSTEM PROMPT: Conversational tutor + teacher ──
+            system_prompt = """You are "SmartPlace Communication Coach" — a warm, friendly, highly intelligent English communication tutor AND conversational partner for students preparing for corporate placements in India.
 
-            STUDENT RESPONSE: "{user_text}"
+You have TWO modes that you naturally blend together:
 
-            CONSTRAINTS:
-            - Focus strictly on: Grammar, Sentence Formation, Vocabulary, Fluency, and Professional Etiquette.
-            - Do not answer general questions that are NOT related to communication or interview skills.
-            - Be encouraging but professional. Always suggest "Better ways to say" something if the student is colloquial.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MODE 1: NATURAL CONVERSATION PARTNER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+You hold real back-and-forth conversations just like a human would:
+- If someone says "How are you?" → Reply naturally: "I'm doing great, thank you for asking! How are you feeling today? Ready for some practice?"
+- If someone says "I am fine" → Continue naturally: "Wonderful! I'm glad to hear that. So, shall we dive into some communication practice today? What topic would you like to work on?"
+- If someone introduces themselves → Respond warmly and ask a follow-up question about their goals
+- If someone asks "What is your name?" → "I am SmartPlace Communication Coach, your personal guide to mastering professional English! What shall I call you?"
+- Always respond to what was SAID first, then coach gently
+- Keep the conversation flowing: question → answer → question → answer
 
-            CRITERIA FOR EVALUATION:
-            1. Grammar & Correctness.
-            2. Vocabulary (Professionalism vs Slang).
-            3. Fluency & Confidence.
-            
-            OUTPUT:
-            - A natural oral response (will be spoken via TTS). Keep it concise (2-3 sentences).
-            - A Coaching Tip: Point out exactly where they can improve.
-            
-            STRICT JSON FORMAT:
-            {{
-              "response": "Your spoken feedback/follow-up question",
-              "coaching_tip": "Specific actionable advice on word choice/grammar",
-              "score": 0-100
-            }}
-            """
-            
-            # Use OpenAI to generate response and coaching tip
-            raw = openai_generate(prompt)
-            
-            # Robust JSON extraction
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MODE 2: ENGLISH TEACHER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+When the student asks about grammar, vocabulary, tenses — TEACH them fully with examples:
+
+TENSES (when asked, teach rule + examples + drill):
+Simple Present: "I work every day." — habitual actions, general truths
+Present Continuous: "I am working right now." — actions happening now
+Present Perfect: "I have completed the project." — past with present relevance
+Simple Past: "I finished the report yesterday." — completed past action
+Past Continuous: "I was preparing when the call came." — interrupted past action
+Future Simple: "I will present tomorrow." — definite future
+Future Perfect: "I will have submitted it by Friday." — completed future action
+→ Always give 2-3 examples, then say: "Now you try — make your own sentence using this tense!"
+
+ARTICLES (a / an / the):
+"a" before consonant sounds: a university, a car, a team
+"an" before vowel sounds: an apple, an hour, an MBA
+"the" for specific/known things: the manager called, the report is ready
+No article for general plurals/uncountables: "Dogs are loyal", "Water is essential"
+Common Indian English errors: "I went to market" → "I went to the market"
+
+PREPOSITIONS (common Indian English mistakes):
+"discuss about" → "discuss" (discuss already implies 'about')
+"reach to" → "reach" (reach is transitive)
+"cope up with" → "cope with"
+"revert back" → "revert" (revert already means go back)
+"I am having a meeting" → "I have a meeting" (state verbs not used in continuous)
+
+SUBJECT-VERB AGREEMENT:
+"He go" → "He goes" (third person singular -s)
+"The data are" vs "The data is" (both acceptable; corporate: "is")
+"Neither of them are" → "Neither of them is"
+
+VOCABULARY UPGRADES (always give in context):
+basically → fundamentally / in essence
+stuff → aspects / components / elements
+I think → I believe / In my assessment / From my perspective
+ok/yeah → certainly / absolutely / indeed
+guys → colleagues / team members
+got → received / obtained / achieved
+want → aspire to / aim to / intend to
+hard work → diligence / perseverance / dedication
+good at → proficient in / adept at / skilled in
+help → facilitate / assist / support
+problem → challenge / obstacle
+show → demonstrate / showcase / exhibit
+very good → exceptional / outstanding / exemplary
+
+FILLER WORDS to eliminate: "um", "uh", "like", "you know", "basically", "actually", "right?" — point out gently and give restructured sentence
+
+INTERVIEW COACHING:
+STAR Method for behavioral questions: Situation → Task → Action → Result
+Self-introduction: Name → Education → Skills/Experience → Career Goals → Why this company
+Confidence language: "I am confident that..." / "I have successfully..." / "My key strength is..."
+Avoid self-deprecation: "I'm not sure but..." → "In my understanding..."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESPONSE PATTERN (always follow):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. RESPOND naturally to what was said (like a real conversation)
+2. CORRECT gently if there was a grammar/vocab error
+3. EXPLAIN the rule if it helps learning
+4. INVITE — end with a question or prompt to keep going
+
+RULES:
+- Never just correct without responding to content
+- If sentence is perfect → compliment and ask a follow-up question
+- If student asks to practice interviews → ask interview questions one at a time
+- If student asks to practice tenses → teach tense, give examples, ask student to try
+- 3-5 sentences max in response (TTS-friendly, no bullet points in response field)
+- coaching_tip: quote exact error → corrected version → brief reason (or praise if correct)"""
+
+            # ── BUILD MESSAGES WITH CONVERSATION HISTORY ──
+            messages = [{"role": "system", "content": system_prompt}]
+
+            # Add recent history for context (last 20 turns = 10 exchanges)
+            recent_history = history[-20:] if len(history) > 20 else history
+            for turn in recent_history[:-1]:  # all but current message (already in user_text)
+                role = turn.get('role', 'user')
+                content = turn.get('content', '')
+                if role in ('user', 'assistant') and content:
+                    messages.append({"role": role, "content": content})
+
+            # Current user message with JSON instruction embedded
+            messages.append({
+                "role": "user",
+                "content": f"""{user_text}
+
+[SYSTEM: Respond ONLY with this JSON, no extra text, no markdown fences:]
+{{
+  "response": "Your warm natural reply (3-5 sentences, TTS-ready). Respond to content first, correct/teach second, always end with question or prompt.",
+  "coaching_tip": "If error found: 'You said [exact phrase] — better: [corrected version]. Reason: [one line]'. If perfect: 'Excellent! Your sentence was grammatically correct and professional.' If teaching: summarize key rule in one sentence.",
+  "score": <integer 0-100>
+}}"""
+            })
+
+            # Call OpenAI directly with messages (not via openai_generate wrapper)
             try:
-                if "```" in raw:
-                    parts = raw.split("```")
-                    for p in parts:
-                        p = p.strip()
-                        if p.startswith("json"): p = p[4:].strip()
-                        try:
-                            result = json.loads(p)
-                            if "response" in result: break
-                        except: continue
-                else:
+                api_response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=messages,
+                    max_tokens=600,
+                    temperature=0.75,
+                )
+                raw = api_response.choices[0].message.content
+            except Exception as api_err:
+                print(f"OpenAI API error: {api_err}")
+                raw = None
+
+            # ── ROBUST JSON EXTRACTION ──
+            result = None
+            if raw:
+                raw = raw.strip()
+                # Direct parse
+                try:
                     result = json.loads(raw)
-            except Exception as parse_err:
-                print("COMM_JSON_PARSE_ERROR:", parse_err, "RAW:", raw)
-                # Fallback if parsing fails but model likely responded something
+                except Exception:
+                    pass
+
+                # Extract from code block
+                if result is None and "```" in raw:
+                    for part in raw.split("```"):
+                        part = part.strip()
+                        if part.startswith("json"):
+                            part = part[4:].strip()
+                        try:
+                            parsed = json.loads(part)
+                            if "response" in parsed:
+                                result = parsed
+                                break
+                        except Exception:
+                            continue
+
+                # Regex extract JSON object
+                if result is None:
+                    import re
+                    match = re.search(r'\{[\s\S]*?"response"[\s\S]*?\}', raw)
+                    if match:
+                        try:
+                            result = json.loads(match.group())
+                        except Exception:
+                            pass
+
+            if result is None:
+                print("JSON PARSE FAILED. RAW:", raw)
                 result = {
-                    "response": raw[:200] if len(raw) < 500 else "I'm sorry, I had trouble processing that. Could you say it again?",
-                    "coaching_tip": "Focus on clear pronunciation.",
-                    "score": 75
+                    "response": "I heard you! Could you say that again more clearly so I can give you the best feedback?",
+                    "coaching_tip": "Speak in complete, clear sentences for accurate evaluation.",
+                    "score": 70
                 }
-            
-            # Save the turn
+
+            # ── SAVE TURN TO DB ──
             CommunicationTurn.objects.create(
                 session=session,
                 user_text=user_text,
@@ -1206,16 +1331,14 @@ def process_comm_turn(request):
                 coaching_feedback=result.get('coaching_tip', ''),
                 score=result.get('score', 70)
             )
-            
-            # Update session score (correct average calculation)
+
+            # Update session running average score
             turns = session.turns.all()
             if turns.exists():
                 all_scores = [t.score for t in turns if t.score is not None]
                 if all_scores:
                     session.score = int(sum(all_scores) / len(all_scores))
-                else:
-                    session.score = int(result.get('score', 70))
-                session.save()
+                    session.save()
 
             return JsonResponse({
                 'status': 'success',
@@ -1227,12 +1350,102 @@ def process_comm_turn(request):
 
         except Exception as e:
             print("COMM_AGENT_ERROR:", e)
+            import traceback
+            traceback.print_exc()
             error_msg = str(e).lower()
-            if "exhausted" in error_msg or "429" in error_msg:
+            if "429" in error_msg or "rate" in error_msg or "exhausted" in error_msg:
                 return JsonResponse({
-                    'status': 'error', 
-                    'message': 'The AI Coach is currently taking a short break (API Limit Reached). Please try again in a few minutes.'
+                    'status': 'error',
+                    'message': 'The AI Coach is taking a short break (API limit reached). Please try again in a few minutes.'
                 }, status=429)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+
+
+
+@csrf_exempt
+@login_required
+def generate_vocab(request):
+    if request.method == 'GET':
+        # Get recently shown words from frontend to avoid repeats
+        exclude_param = request.GET.get('exclude', '')
+        exclude_words = [w.strip() for w in exclude_param.split(',') if w.strip()]
+
+        # High-entropy seed — different every single call
+        seed = random.randint(100000, 9999999)
+        
+        avoid_clause = ''
+        if exclude_words:
+            avoid_clause = f"Do NOT use any of these words: {', '.join(exclude_words)}."
+
+        prompt = f"""
+You are a Vocabulary Master. Generate exactly one UNIQUE advanced professional vocabulary word.
+
+SEED (use this to vary your response): {seed}
+{avoid_clause}
+
+Rules:
+- Pick a genuinely different word each time.
+- It must be suitable for corporate/professional communication.
+- The word must NOT be a common everyday word.
+
+Return ONLY valid JSON in this exact format, no markdown, no backticks, no extra text:
+{{
+  "word": "Word",
+  "pronunciation": "/prəˌnʌnsiˈeɪʃən/",
+  "meaning": "Clear meaning of the word.",
+  "example": "A professional example sentence using the word."
+}}
+"""
+        try:
+            raw = openai_generate(prompt)
+            if not raw:
+                raise Exception("No response from AI")
+            raw = raw.strip()
+            if "```" in raw:
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            data = json.loads(raw.strip())
+            return JsonResponse({'status': 'success', 'data': data})
+        except Exception as e:
+            print("Generate Vocab Error:", e)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+
+
+@csrf_exempt
+@login_required
+def check_grammar(request):
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.body)
+            sentence = body.get('sentence', '').strip()
+            if not sentence:
+                return JsonResponse({'status': 'error', 'message': 'No sentence provided'})
+
+            prompt = f"""
+            You are a Grammar Guru. Analyze the following sentence and correct any grammatical errors. If the sentence is already perfect, suggest a more professional alternative.
+            Sentence: "{sentence}"
+            
+            Return ONLY valid JSON in this exact format, no markdown, no backticks:
+            {{
+              "fixed_text": "The corrected or improved sentence.",
+              "explanation": "A brief explanation of what was changed or improved."
+            }}
+            """
+            raw = openai_generate(prompt)
+            if not raw:
+                raise Exception("No response from AI")
+            raw = raw.strip()
+            if "```" in raw:
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            data = json.loads(raw.strip())
+            return JsonResponse({'status': 'success', 'data': data})
+        except Exception as e:
+            print("Check Grammar Error:", e)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
