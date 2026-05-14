@@ -768,17 +768,76 @@
 
         let userClickedStop = false;
         let accumulatedTranscript = "";
+        let finalAccuracy = 0;
+        let finalWordCount = 0;
+        let latestSessionTranscript = "";
+
+        function processHighlighting(transcript) {
+            // Strip ALL punctuation, hyphens, and quotes for ultra-forgiving matching
+            const spokenWords = transcript.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(Boolean);
+            const spans = targetP.querySelectorAll('span');
+            
+            // Reset all styling first
+            spans.forEach(span => {
+                span.style.color = 'var(--ink)';
+                span.style.fontWeight = 'normal';
+                span.style.backgroundColor = 'transparent';
+                span.style.padding = '0';
+            });
+
+            let matchedCount = 0;
+            let spanIndex = 0;
+
+            for (let i = 0; i < spokenWords.length && spanIndex < spans.length; i++) {
+                const spokenWord = spokenWords[i];
+                // Look ahead up to 15 words in case they skip a whole sentence
+                for (let j = spanIndex; j < Math.min(spanIndex + 15, spans.length); j++) {
+                    const spanWord = spans[j].textContent.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    
+                    // Fuzzy Match: Exact, or substring if word is long enough to avoid false positives
+                    const isMatch = (spanWord === spokenWord) || 
+                                    (spanWord.length > 3 && spokenWord.includes(spanWord)) || 
+                                    (spokenWord.length > 3 && spanWord.includes(spokenWord));
+
+                    if (isMatch) {
+                        spans[j].style.color = '#fff';
+                        spans[j].style.backgroundColor = 'var(--teal)';
+                        spans[j].style.borderRadius = '4px';
+                        spans[j].style.padding = '2px 4px';
+                        spans[j].style.fontWeight = '800';
+                        matchedCount++;
+                        spanIndex = j + 1;
+                        break;
+                    }
+                }
+            }
+            
+            finalWordCount = matchedCount; // Show words successfully matched
+            finalAccuracy = Math.round((matchedCount / spans.length) * 100) || 0;
+        }
 
         startReadingBtn.addEventListener('click', () => {
             // FIX: If already reading, stop cleanly
             if (isReading) {
                 userClickedStop = true;
-                if (readingRecognition) {
-                    try { readingRecognition.stop(); } catch(err) {}
-                }
                 clearInterval(scrollInterval);
                 startReadingBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
                 startReadingBtn.disabled = true;
+
+                isReading = false;
+                startReadingBtn.style.display = 'none';
+                
+                const fullTranscript = accumulatedTranscript + " " + latestSessionTranscript;
+                processHighlighting(fullTranscript);
+                
+                accuracyVal.textContent = finalAccuracy + '%';
+                wordCountVal.textContent = finalWordCount;
+                insights.style.display = 'block';
+                postReading.style.display = 'block';
+
+                if (readingRecognition) {
+                    try { readingRecognition.stop(); } catch(err) {}
+                }
                 return;
             }
 
@@ -797,53 +856,9 @@
             readingRecognition.lang = 'en-US';
             startReadingBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Reading';
 
-            let finalAccuracy = 0;
-            let finalWordCount = 0;
-            let latestSessionTranscript = "";
-
-            function processHighlighting(transcript) {
-                // Strip ALL punctuation, hyphens, and quotes for ultra-forgiving matching
-                const spokenWords = transcript.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(Boolean);
-                const spans = targetP.querySelectorAll('span');
-                
-                // Reset all styling first
-                spans.forEach(span => {
-                    span.style.color = 'var(--ink)';
-                    span.style.fontWeight = 'normal';
-                    span.style.backgroundColor = 'transparent';
-                    span.style.padding = '0';
-                });
-
-                let matchedCount = 0;
-                let spanIndex = 0;
-
-                for (let i = 0; i < spokenWords.length && spanIndex < spans.length; i++) {
-                    const spokenWord = spokenWords[i];
-                    // Look ahead up to 15 words in case they skip a whole sentence
-                    for (let j = spanIndex; j < Math.min(spanIndex + 15, spans.length); j++) {
-                        const spanWord = spans[j].textContent.toLowerCase().replace(/[^a-z0-9]/g, '');
-                        
-                        // Fuzzy Match: Exact, or substring if word is long enough to avoid false positives
-                        const isMatch = (spanWord === spokenWord) || 
-                                        (spanWord.length > 3 && spokenWord.includes(spanWord)) || 
-                                        (spokenWord.length > 3 && spanWord.includes(spokenWord));
-
-                        if (isMatch) {
-                            spans[j].style.color = '#fff';
-                            spans[j].style.backgroundColor = 'var(--teal)';
-                            spans[j].style.borderRadius = '4px';
-                            spans[j].style.padding = '2px 4px';
-                            spans[j].style.fontWeight = '800';
-                            matchedCount++;
-                            spanIndex = j + 1;
-                            break;
-                        }
-                    }
-                }
-                
-                finalWordCount = matchedCount; // Show words successfully matched
-                finalAccuracy = Math.round((matchedCount / spans.length) * 100) || 0;
-            }
+            finalAccuracy = 0;
+            finalWordCount = 0;
+            latestSessionTranscript = "";
 
             scrollInterval = setInterval(() => { targetContainer.scrollTop += 1; }, 100);
 
@@ -862,22 +877,15 @@
                 if (!userClickedStop) {
                     accumulatedTranscript += " " + latestSessionTranscript;
                     latestSessionTranscript = "";
-                    try { readingRecognition.start(); } catch(err) {}
+                    setTimeout(() => {
+                        if (isReading && !userClickedStop && readingRecognition) {
+                            try { readingRecognition.start(); } catch(err) {
+                                console.error('Auto-restart failed:', err);
+                            }
+                        }
+                    }, 150);
                     return;
                 }
-
-                // Actually stopped by the user
-                clearInterval(scrollInterval);
-                isReading = false;
-                startReadingBtn.style.display = 'none';
-                
-                const fullTranscript = accumulatedTranscript + " " + latestSessionTranscript;
-                processHighlighting(fullTranscript);
-                
-                accuracyVal.textContent = finalAccuracy + '%';
-                wordCountVal.textContent = finalWordCount;
-                insights.style.display = 'block';
-                postReading.style.display = 'block';
             };
 
             readingRecognition.onerror = (err) => {
@@ -1070,6 +1078,10 @@
             };
 
             recognition.onend = () => {
+                if (!manualStop) {
+                    try { recognition.start(); } catch(e) {}
+                    return;
+                }
                 isListening = false;
                 micBtn.classList.remove('listening');
                 micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
@@ -1087,18 +1099,19 @@
                     // We manually stopped the mic to send the text, so ignore this error.
                     return;
                 }
+                if (e.error === 'no-speech') {
+                    return; // Let onend handle the auto-restart
+                }
                 
                 console.error('Recognition error:', e.error);
+                manualStop = true;
                 isListening = false;
-                manualStop = false;
                 finalTranscript = '';
                 interimTranscript = '';
                 micBtn.classList.remove('listening');
                 micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
 
-                if (e.error === 'no-speech') {
-                    micStatusText.placeholder = 'No speech detected.';
-                } else if (e.error === 'not-allowed') {
+                if (e.error === 'not-allowed') {
                     micStatusText.placeholder = 'Microphone access denied.';
                 } else if (e.error === 'network') {
                     micStatusText.placeholder = 'Network error. Check connection.';
@@ -1235,6 +1248,7 @@
             overlay.classList.remove('hidden');
             synth.cancel();
             if (isListening) {
+                manualStop = true;
                 try { recognition.stop(); } catch(e) {}
             }
         });
