@@ -1,46 +1,25 @@
-from django.urls import path
-from . import views 
-from .views import student_profile
-from django.conf import settings
-from django.conf.urls.static import static
-from django.views.generic import TemplateView
-from django.contrib.auth import views as auth_views
-from django.views.generic import RedirectView
+"""
+URL configuration for placement_ai project.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/6.0/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import path, include
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('smart_placement_portal.urls')),
+    path('captcha/', include('captcha.urls')),
 
-    path('', TemplateView.as_view(template_name='home.html'), name='home'),
-    path('login/', views.login_view, name='login'),
-    path('register/', views.register_view, name='register'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('profile/', views.student_profile, name='student_profile'),
-    path('skills/', views.skills_view, name='skills'),
-    path('add-custom-skill/', views.add_custom_skill, name='add_custom_skill'),
-    path('delete-custom-skill/<int:skill_id>/', views.delete_custom_skill, name='delete_custom_skill'),
-    path('add-project/', views.add_project, name='add_project'),        
-    path('projects/', views.view_projects, name='projects'),             
-    path('delete-project/<int:project_id>/', views.delete_project, name='delete_project'),  
-    path('test/', views.test, name='test'),
-    path('result/', views.result, name='result'),
-    path('save-assessment/', views.save_assessment, name='save_assessment'),
-    path('upload-resume/', views.upload_resume, name='upload_resume'),
-    path('analyze-resume/', views.analyze_resume, name='analyze_resume'),
-    path('companies/', views.company_list, name='companies'),
-    path('jobs/', views.job_list, name='jobs'),
-    path('generate-recommendations/', views.generate_recommendations, name='generate_recommendations'),
-    path('recommendations/', views.recommendations, name='recommendations'),
-    path('virtual-interview/', views.virtual_interview, name='virtual_interview'),
-    path('save-interview/', views.save_interview, name='save_interview'),
-    path('interview-results/', views.interview_results, name='interview_results'),
-    path('generate-tech-questions/', views.generate_tech_questions, name='generate_tech_questions'),
-    path('interview-detail/<int:interview_id>/', views.interview_detail, name='interview_detail'),
-    path('process/<int:interview_id>/', views.process_interview, name='process_interview'),
-    path('delete-interview/<int:interview_id>/', views.delete_interview, name='delete_interview'),
-    path('logout/', views.logout_view, name='logout'),
-    path('remove-photo/', views.remove_photo, name='remove_photo'),
-    path('update-photo/', views.update_photo, name='update_photo'),
-    path('delete-skill/<int:skill_id>/', views.delete_skill, name='delete_skill'),
-    path('generate-ai-questions/', views.generate_ai_questions, name='generate_ai_questions'),
-    path('communication-skills/', views.communication_skills, name='communication_skills'),
-    path('process-comm-turn/', views.process_comm_turn, name='process_comm_turn'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
