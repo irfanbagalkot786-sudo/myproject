@@ -811,7 +811,7 @@ def generate_tech_questions(request):
         try:
             data     = json.loads(request.body)
             language = data.get('language', 'Python')
-            prompt   = f"Generate exactly 9 technical interview questions for a candidate specializing in {language}. Return ONLY valid JSON as a list of strings: [\"question 1\", \"question 2\", ...]"
+            prompt   = f"Generate exactly 9 technical interview questions for a candidate specializing in {language}. Return ONLY valid JSON with a key 'questions' containing a list of strings."
             raw = openai_generate(prompt)
             if not raw:
                 raise Exception("No response from AI")
@@ -820,7 +820,8 @@ def generate_tech_questions(request):
                 raw = raw.split("```")[1]
                 if raw.startswith("json"):
                     raw = raw[4:]
-            questions = json.loads(raw.strip())
+            parsed = json.loads(raw.strip())
+            questions = parsed.get("questions", parsed) if isinstance(parsed, dict) else parsed
             return JsonResponse({'status': 'success', 'questions': questions[:9]})
         except Exception as e:
             print("ERROR generating tech questions:", e)
